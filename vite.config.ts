@@ -1,11 +1,26 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import {defineConfig, type Plugin} from 'vite';
+
+// Preloads the self-hosted Vazirmatn font so text does not first render in a fallback font.
+function preloadFont(): Plugin {
+  return {
+    name: 'mevent-preload-font',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, ctx) {
+        const font = Object.keys(ctx.bundle || {}).find(f => /Vazirmatn-Variable-.*\.woff2$/.test(f));
+        return font ? [{ tag: 'link', attrs: { rel: 'preload', href: `/${font}`, as: 'font', type: 'font/woff2', crossorigin: '' }, injectTo: 'head' }] : [];
+      },
+    },
+  };
+}
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), preloadFont()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
