@@ -5,7 +5,7 @@ import { Network, Search, Check } from 'lucide-react';
 import { Event } from '../types';
 
 export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
-  const { user } = useAuth();
+  const { dbUserId } = useAuth();
   const { toasts, addToast, removeToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -20,8 +20,8 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
 
   useEffect(() => {
     // Fetch all events by this organizer
-    if (user?.id) {
-      fetch(`/api/organizer/events?userId=${user.id}`)
+    if (dbUserId) {
+      fetch(`/api/organizer/events?userId=${dbUserId}`)
         .then(res => res.json())
         .then(data => {
           if (data.data) {
@@ -34,7 +34,7 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
           }
         });
     }
-  }, [user, initialData]);
+  }, [dbUserId, initialData]);
 
   const toggleEvent = (id: number) => {
     if (selectedEventIds.includes(id)) {
@@ -52,11 +52,10 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
     try {
       const payload = {
         ...formData,
-        organizerId: user?.id,
         eventIds: selectedEventIds, // Backend must handle assigning these events to the chain
       };
 
-      const res = await fetch(isAdmin && initialData ? `/api/admin/chains/${initialData.id}` : '/api/chains', {
+      const res = await fetch(initialData ? `/api/admin/chains/${initialData.id}` : '/api/chains', {
         method: initialData ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

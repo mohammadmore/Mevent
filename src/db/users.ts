@@ -28,7 +28,7 @@ export async function getUserProfile(userId: number) {
 
 export async function updateUserPreferences(userId: number, preferences: string[]) {
   const result = await db.update(users)
-    .set({ preferences: JSON.stringify(preferences) })
+    .set({ preferences })
     .where(eq(users.id, userId))
     .returning();
   return result[0];

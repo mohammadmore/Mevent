@@ -1,13 +1,33 @@
 import { db } from './index.ts';
 import { events, interactions } from './schema.ts';
-import { eq, gt, and, inArray, sql, or, isNull } from 'drizzle-orm';
+import { eq, gte, and, sql, or, isNull, type SQL } from 'drizzle-orm';
 
-export async function getNearbyEvents(userLat?: number, userLng?: number, radiusKm: number = 10) {
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+// Published events that have not finished yet (or have no fixed date).
+function upcomingCondition() {
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  return and(
+    eq(events.status, 'PUBLISHED'),
+    or(
+      isNull(events.startTime),
+      gte(events.endTime, now),
+      and(isNull(events.endTime), gte(events.startTime, startOfToday))
+    )
+  )!;
+}
+
+function tagCondition(tag?: string): SQL | undefined {
+  if (!tag) return undefined;
+  const bare = tag.replace(/^#/, '');
+  return sql`(${events.tags} @> ${JSON.stringify([bare])}::jsonb OR ${events.tags} @> ${JSON.stringify(['#' + bare])}::jsonb)`;
+}
+
+export async function getNearbyEvents(userLat?: number, userLng?: number, radiusKm: number = 10, tag?: string) {
+  const baseCondition = and(upcomingCondition(), tagCondition(tag));
 
   if (userLat === undefined || userLng === undefined || isNaN(userLat) || isNaN(userLng)) {
-    return await db.select().from(events).where(or(gt(events.startTime, thirtyDaysAgo), isNull(events.startTime))).limit(100);
+    return await db.select().from(events).where(baseCondition).limit(100);
   }
 
   const distanceSql = sql<number>`(
@@ -53,7 +73,7 @@ export async function getNearbyEvents(userLat?: number, userLng?: number, radius
     .from(events)
     .where(
       and(
-        or(gt(events.startTime, thirtyDaysAgo), isNull(events.startTime)),
+        baseCondition,
         sql`(${events.lat} IS NULL OR ${events.lng} IS NULL OR ${distanceSql} <= ${radiusKm})`
       )
     )
@@ -61,9 +81,6 @@ export async function getNearbyEvents(userLat?: number, userLng?: number, radius
 }
 
 export async function getRecommendedEvents(lat?: number, lng?: number) {
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
   if (lat !== undefined && lng !== undefined && !isNaN(lat) && !isNaN(lng)) {
     const distanceSql = sql<number>`(
       6371 * 2 * ASIN(
@@ -93,6 +110,7 @@ export async function getRecommendedEvents(lat?: number, lng?: number) {
         lat: events.lat,
         lng: events.lng,
         cost: events.cost,
+        capacity: events.capacity,
         tags: events.tags,
         hubId: events.hubId,
         organizerId: events.organizerId,
@@ -105,11 +123,11 @@ export async function getRecommendedEvents(lat?: number, lng?: number) {
         distance: distanceSql,
       })
       .from(events)
-      .where(or(gt(events.startTime, thirtyDaysAgo), isNull(events.startTime)))
+      .where(upcomingCondition())
       .orderBy(sql`CASE WHEN ${events.lat} IS NOT NULL AND ${events.lng} IS NOT NULL THEN ${distanceSql} ELSE 999999 END`).limit(100);
   }
 
-  return await db.select().from(events).where(or(gt(events.startTime, thirtyDaysAgo), isNull(events.startTime))).limit(100);
+  return await db.select().from(events).where(upcomingCondition()).limit(100);
 }
 
 export async function getSavedEvents(userId: number) {
@@ -147,6 +165,9 @@ export async function createEvent(data: typeof events.$inferInsert) {
   return result[0];
 }
 
-export async function getOrganizerEvents(organizerId: number) {
-  return await db.select().from(events).where(eq(events.organizerId, organizerId));
+export async function getOrganizerEvents(organizerId: number, publishedOnly = false) {
+  const condition = publishedOnly
+    ? and(eq(events.organizerId, organizerId), eq(events.status, 'PUBLISHED'))
+    : eq(events.organizerId, organizerId);
+  return await db.select().from(events).where(condition);
 }

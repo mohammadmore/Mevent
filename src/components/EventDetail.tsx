@@ -201,12 +201,16 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
   const handleShare = async () => {
     if (dbUserId) {
       try {
-        await fetch(`/api/users/${user?.uid}/points`, {
+        // Sharing is rewarded once per event; the server decides whether points are due.
+        const res = await fetch('/api/interactions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: 50, reason: 'share_event' })
+          body: JSON.stringify({ eventId: event.id, type: 'SHARE' })
         });
-        addToast('۵۰ امتیاز بابت اشتراک‌گذاری رویداد دریافت کردید!', 'success');
+        const data = res.ok ? await res.json() : null;
+        if (data?.pointsAwarded > 0) {
+          addToast(`${data.pointsAwarded.toLocaleString('fa-IR')} امتیاز بابت اشتراک‌گذاری رویداد دریافت کردید!`, 'success');
+        }
       } catch (err) {}
     }
 

@@ -553,7 +553,7 @@ export default function AdminPanel() {
                 <div className="mt-4 p-4 bg-slate-100 dark:bg-white/5 rounded-xl space-y-2 text-xs">
                   <div className="flex justify-between font-bold">
                     <span>کد کار پس‌زمینه: {pNum(asyncJob.id)}</span>
-                    <span className="text-teal-600 dark:text-[#d9ff00]">{asyncJob.status === "RUNNING" ? "در حال اجرا" : asyncJob.status === "DONE" ? "پایان یافته" : asyncJob.status === "ERROR" ? "خطا" : asyncJob.status} ({pNum(asyncJob.progress)}٪)</span>
+                    <span className="text-teal-600 dark:text-[#d9ff00]">{asyncJob.status === "RUNNING" ? "در حال اجرا" : asyncJob.status === "COMPLETED" ? "پایان یافته" : asyncJob.status === "FAILED" ? "خطا" : asyncJob.status} ({pNum(asyncJob.progress)}٪)</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
                     <div

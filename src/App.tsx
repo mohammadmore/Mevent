@@ -245,39 +245,35 @@ export default function App() {
     if (!dbUserId || !paymentEvent) return;
     setBuyingTicketId(paymentEvent.id);
     
-    // Viral feature: 10% discount on second ticket if buying for a friend
-    const totalAmount = buyForFriend ? (paymentEvent.cost * 1.9) : paymentEvent.cost;
-    
+    // Viral feature: 10% discount on second ticket if buying for a friend.
+    // The price is computed on the server; the client only says which event and whether it is for two.
     try {
       const res = await fetch('/api/tickets/buy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: dbUserId,
           eventId: paymentEvent.id,
-          amount: totalAmount,
           plusOne: buyForFriend
         })
       });
       const data = await res.json();
       if (res.ok) {
         addToast(buyForFriend ? 'بلیت شما و دوستتان با موفقیت خریداری شد!' : 'خرید بلیت با موفقیت انجام شد', 'success');
-        
-        // Add 20 points for buying a ticket for a friend (Gamification)
         if (buyForFriend) {
-          await fetch(`/api/users/${user?.uid}/points`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 20, reason: 'buy_for_friend' })
-          });
           addToast('۲۰ امتیاز جایزه برای دعوت دوست دریافت کردید!', 'info');
         }
-        
-        handleInteraction(paymentEvent.id, 'RSVP');
+
+        // The server registers the RSVP together with the ticket.
+        const boughtEvent = paymentEvent;
+        if (!rsvpEvents.some(e => e.id === boughtEvent.id)) {
+          setRsvpEvents(prev => [...prev, boughtEvent]);
+        }
+        fetchRsvpEvents();
+        fetchTickets();
         setPaymentEvent(null); 
         setBuyForFriend(false);
       } else {
-        addToast('خطا در خرید بلیت', 'error');
+        addToast(data?.error || 'خطا در خرید بلیت', 'error');
       }
     } catch (err) {
       console.error(err);
@@ -375,7 +371,17 @@ export default function App() {
     fetch('/api/interactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, type, userId: dbUserId })
+      body: JSON.stringify({ eventId, type })
+    }).then(res => {
+      // Roll back the optimistic update if the server rejected it.
+      if (!res.ok) {
+        if (type === 'SAVE') fetchSavedEvents();
+        if (type === 'RSVP') fetchRsvpEvents();
+        showToast('ثبت تغییر با خطا مواجه شد.', 'error');
+      }
+    }).catch(() => {
+      if (type === 'SAVE') fetchSavedEvents();
+      if (type === 'RSVP') fetchRsvpEvents();
     });
   };
 
@@ -999,10 +1005,9 @@ export default function App() {
                   </div>
                   <button 
                     onClick={() => {
-                      fetch(`/api/admin/users/${profile.id}/role`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ role: 'ORGANIZER' })
+                      fetch('/api/users/me/become-organizer', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
                       }).then(res => {
                         if(res.ok) {
                           showToast('حساب شما با موفقیت به برگزارکننده ارتقا یافت! لطفا یکبار از سیستم خارج و دوباره وارد شوید.', 'success');

@@ -62,13 +62,21 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
           waypoints
         }
       };
-      setTimeout(() => {
+      const res = await fetch(initialData ? `/api/admin/vibes/${initialData.id}` : '/api/vibes', {
+        method: initialData ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
         addToast('حال و هوا با موفقیت ثبت شد', 'success');
-        setLoading(false);
         if (onSuccess) onSuccess();
-      }, 1000);
+      } else {
+        const data = await res.json().catch(() => null);
+        addToast(data?.error || 'خطا در ثبت', 'error');
+      }
     } catch (err) {
       addToast('خطا در ثبت', 'error');
+    } finally {
       setLoading(false);
     }
   };

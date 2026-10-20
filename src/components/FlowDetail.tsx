@@ -13,7 +13,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
   
   useEffect(() => {
     // Flow filters events by its tags. We simulate fetching events matching flow.tag.
-    fetch(`/api/events/nearby?tag=${flow.tag}`)
+    fetch(`/api/events/nearby?tag=${encodeURIComponent(flow.tag || '')}`)
       .then(res => res.json())
       .then(data => setEvents(data.data || []))
       .catch(console.error);

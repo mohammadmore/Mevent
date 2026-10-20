@@ -20,14 +20,27 @@ export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
     if (!formData.title || !formData.tag) return addToast('عنوان و تگ الزامی است', 'error');
     setLoading(true);
     try {
-      // Mock save
-      setTimeout(() => {
+      const res = await fetch(initialData ? `/api/admin/flows/${initialData.id}` : '/api/flows', {
+        method: initialData ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title || formData.name,
+          description: formData.description,
+          tag: formData.tag,
+          coverImage: formData.coverImage || formData.imageUrl,
+          status: formData.status,
+        }),
+      });
+      if (res.ok) {
         addToast('جریان با موفقیت ثبت شد', 'success');
-        setLoading(false);
         if (onSuccess) onSuccess();
-      }, 1000);
+      } else {
+        const data = await res.json().catch(() => null);
+        addToast(data?.error || 'خطا در ثبت', 'error');
+      }
     } catch (err) {
       addToast('خطا در ثبت', 'error');
+    } finally {
       setLoading(false);
     }
   };

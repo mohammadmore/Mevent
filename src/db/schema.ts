@@ -20,6 +20,7 @@ export const users = pgTable('users', {
   coverImage: text('cover_image'),
   bio: text('bio'),
   organizerType: text('organizer_type').default('INDIVIDUAL'),
+  advancedDetails: jsonb('advanced_details').default('{}'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -161,6 +162,7 @@ export const places = pgTable('places', {
   amenities: jsonb('amenities').default('[]'),
   imageUrl: text('image_url'),
   galleryUrls: jsonb('gallery_urls').default('[]'),
+  advancedDetails: jsonb('advanced_details').default('{}'),
   status: text('status').default('PUBLISHED').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
@@ -226,6 +228,7 @@ export const vibes = pgTable('vibes', {
   bestTimeToExperience: text('best_time'),
   imageUrls: jsonb('image_urls').default('[]'),
   tags: jsonb('tags').default('[]'),
+  advancedDetails: jsonb('advanced_details').default('{}'),
   status: text('status').default('PUBLISHED').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });

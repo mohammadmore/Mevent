@@ -64,7 +64,10 @@ async function initDatabaseSchemaAndIndexes() {
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS points INTEGER DEFAULT 0;",
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;",
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;",
-    "ALTER TABLE hubs ADD COLUMN IF NOT EXISTS followers_count INTEGER DEFAULT 0;"
+    "ALTER TABLE hubs ADD COLUMN IF NOT EXISTS followers_count INTEGER DEFAULT 0;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;",
+    "ALTER TABLE places ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;",
+    "ALTER TABLE vibes ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;"
   ];
 
   for (const q of alterQueries) {
