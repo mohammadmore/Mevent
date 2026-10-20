@@ -162,6 +162,27 @@ async function initDatabaseSchemaAndIndexes() {
       value JSONB NOT NULL,
       expires_at TIMESTAMP NOT NULL
     );`,
+    `CREATE TABLE IF NOT EXISTS otp_codes (
+      id SERIAL PRIMARY KEY,
+      phone TEXT NOT NULL,
+      purpose TEXT NOT NULL DEFAULT 'LOGIN',
+      code_hash TEXT NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      expires_at TIMESTAMP NOT NULL,
+      consumed_at TIMESTAMP,
+      ip TEXT,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS sessions (
+      id SERIAL PRIMARY KEY,
+      token_hash TEXT NOT NULL UNIQUE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      user_agent TEXT,
+      ip TEXT,
+      expires_at TIMESTAMP NOT NULL,
+      last_seen_at TIMESTAMP DEFAULT now(),
+      created_at TIMESTAMP DEFAULT now()
+    );`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -195,6 +216,10 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_point_tx_user ON point_transactions (user_id, created_at);',
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_reports_reporter_target ON reports (reporter_id, target_type, target_id);',
     'CREATE INDEX IF NOT EXISTS idx_trips_user ON trips (user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_otp_phone_created ON otp_codes (phone, created_at);',
+    'CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);',
+    // One account per phone number.
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];
 
   for (const query of indexQueries) {

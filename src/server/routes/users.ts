@@ -1,5 +1,4 @@
 import { Express } from 'express';
-import crypto from 'crypto';
 import { eq, desc, and, inArray } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { users, interactions } from '../../db/schema.ts';
@@ -10,17 +9,7 @@ import { PUBLIC_USER_FIELDS, toPublicUser, parseJsonArray, formatEvents } from '
 import { getFromCache, setToCache, invalidateCachePattern } from '../../lib/sharedStore.ts';
 import { changePoints, getPointHistory, levelFor, POINT_VALUE_TOMAN, MAX_POINTS_SHARE } from '../../lib/points.ts';
 import { notify } from '../../lib/notifications.ts';
-
-export const INVITER_POINTS = 100;
-export const INVITEE_POINTS = 50;
-
-function newInviteCode() {
-  return crypto.randomBytes(6).toString('base64url').replace(/[^A-Za-z0-9]/g, '').slice(0, 8).toUpperCase().padEnd(8, 'X');
-}
-
-function selfView(user: typeof users.$inferSelect) {
-  return { ...user, level: levelFor(user.points) };
-}
+import { createUserWithInvite, newInviteCode, selfView } from '../accounts.ts';
 
 export function registerUserRoutes(app: Express) {
   // Creates the DB user on first sign-in and keeps the e-mail in sync. Identity comes from the
@@ -40,49 +29,12 @@ export function registerUserRoutes(app: Express) {
       return res.json({ data: selfView(user), created: false });
     }
 
-    const name = (decoded.name || req.body?.name || 'بدون نام').toString().slice(0, 100);
-    const inviteCodeUsed = typeof req.body?.inviteCode === 'string' ? req.body.inviteCode.trim().toUpperCase() : '';
-
-    const result = await db.transaction(async (tx) => {
-      const inserted = await tx.insert(users).values({
-        uid: decoded.uid,
-        email: decoded.email || null,
-        name,
-        inviteCode: newInviteCode(),
-      }).onConflictDoNothing({ target: users.uid }).returning();
-
-      // Lost a race with a parallel sync for the same account: just return the row.
-      if (!inserted[0]) {
-        const [row] = await tx.select().from(users).where(eq(users.uid, decoded.uid));
-        return { user: row, inviter: null as null | typeof users.$inferSelect };
-      }
-
-      let user = inserted[0];
-      let inviter: typeof users.$inferSelect | null = null;
-      if (inviteCodeUsed) {
-        [inviter] = await tx.select().from(users).where(eq(users.inviteCode, inviteCodeUsed));
-        if (inviter && inviter.id !== user.id) {
-          [user] = await tx.update(users).set({ referredById: inviter.id }).where(eq(users.id, user.id)).returning();
-          await changePoints(tx, inviter.id, INVITER_POINTS, 'INVITE_ACCEPTED', { type: 'USER', id: user.id });
-          await changePoints(tx, user.id, INVITEE_POINTS, 'INVITE_JOINED', { type: 'USER', id: inviter.id });
-          [user] = await tx.select().from(users).where(eq(users.id, user.id));
-        } else {
-          inviter = null;
-        }
-      }
-      return { user, inviter };
-    });
-
-    if (result.inviter) {
-      invalidateCachePattern('leaderboard');
-      notify(result.inviter.id, {
-        type: 'INVITE',
-        title: 'دوستتان به میونت پیوست',
-        body: `${result.user.name} با لینک دعوت شما عضو شد و ${INVITER_POINTS.toLocaleString('fa-IR')} امتیاز گرفتید.`,
-        url: '/profile',
-      }).catch(() => {});
-    }
-    res.json({ data: selfView(result.user), created: true });
+    const { user, created } = await createUserWithInvite({
+      uid: decoded.uid,
+      email: decoded.email || null,
+      name: (decoded.name || req.body?.name || 'بدون نام').toString(),
+    }, typeof req.body?.inviteCode === 'string' ? req.body.inviteCode : null);
+    res.json({ data: selfView(user), created });
   }));
 
   app.get('/api/users/leaderboard', asyncRoute(async (req, res) => {

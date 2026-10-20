@@ -344,3 +344,30 @@ export const rateLimits = pgTable('rate_limits', {
   count: integer('count').notNull(),
   resetAt: timestamp('reset_at').notNull(),
 });
+
+// One-time SMS login codes. Only a keyed hash of the code is stored.
+// purpose: LOGIN | LINK (attach a phone number to an existing account)
+export const otpCodes = pgTable('otp_codes', {
+  id: serial('id').primaryKey(),
+  phone: text('phone').notNull(),
+  purpose: text('purpose').default('LOGIN').notNull(),
+  codeHash: text('code_hash').notNull(),
+  attempts: integer('attempts').default(0).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  consumedAt: timestamp('consumed_at'),
+  ip: text('ip'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_otp_phone_created').on(t.phone, t.createdAt)]);
+
+// Server-side login sessions (phone login). The browser holds the random token in an
+// httpOnly cookie; only its SHA-256 hash is stored, so a database leak does not leak sessions.
+export const sessions = pgTable('sessions', {
+  id: serial('id').primaryKey(),
+  tokenHash: text('token_hash').notNull().unique(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  userAgent: text('user_agent'),
+  ip: text('ip'),
+  expiresAt: timestamp('expires_at').notNull(),
+  lastSeenAt: timestamp('last_seen_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_sessions_user').on(t.userId)]);

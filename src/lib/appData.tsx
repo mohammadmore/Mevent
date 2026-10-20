@@ -25,7 +25,7 @@ interface AppData {
   profile: Profile | null;
   profileLoaded: boolean;
   refreshProfile: () => Promise<Profile | null>;
-  setProfile: (p: Profile) => void;
+  setProfile: React.Dispatch<React.SetStateAction<Profile | null>>;
   savedEvents: Event[];
   rsvpEvents: Event[];
   refreshLists: () => void;

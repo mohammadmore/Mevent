@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
+  connectAuthEmulator, signInWithEmailAndPassword
+} from "firebase/auth";
 import config from "../../firebase-applet-config.json";
+
+// Loaded on demand (dynamic import) and only when Google sign-in is enabled on the server.
 
 export const app = initializeApp(config);
 export const auth = getAuth(app);
@@ -14,4 +19,4 @@ if (import.meta.env.VITE_FIREBASE_AUTH_EMULATOR) {
   (window as any).__meventTestSignIn = (email: string, password: string) => signInWithEmailAndPassword(auth, email, password);
 }
 
-export { signInWithPopup, signOut, onAuthStateChanged };
+export { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged };

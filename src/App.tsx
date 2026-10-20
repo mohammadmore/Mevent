@@ -1,8 +1,9 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { Sun, Moon, MapPin, Sparkles, MessageCircle, Plane, Bell, WifiOff, ExternalLink } from 'lucide-react';
+import { Sun, Moon, MapPin, Sparkles, MessageCircle, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
 import { HubsPanel } from './components/HubsPanel';
 import { CheckoutModal } from './components/CheckoutModal';
+import { PhoneLogin } from './components/PhoneLogin';
 import { useAuth, rememberInviteCode } from './lib/AuthContext';
 import { AppDataProvider, useAppData, RETURN_TO_KEY } from './lib/appData';
 import { navigate, useLocation, matchPath, goBack } from './lib/router';
@@ -68,9 +69,9 @@ function useOnline() {
 }
 
 function LoginScreen() {
-  const { login, isLoggingIn, loginBlockedReason } = useAuth();
+  const { login, isLoggingIn, loginBlockedReason, config } = useAuth();
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center space-y-6 py-16">
+    <div className="flex flex-col items-center justify-center min-h-full text-center space-y-6 py-12">
       <div className="w-20 h-20 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-3xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00] rotate-12">
         <Sparkles className="w-10 h-10" />
       </div>
@@ -78,26 +79,30 @@ function LoginScreen() {
         <h1 className="text-3xl font-bold text-[#515739] dark:text-gray-100 mb-2">Mevent</h1>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">کشف هوشمند رویدادها و ارتباط با افراد</p>
       </div>
-      {loginBlockedReason ? (
-        <div className="max-w-sm mx-auto bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-2xl p-4 text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
-          <p className="mb-3">{loginBlockedReason}</p>
-          <button
-            onClick={() => navigator.clipboard?.writeText(window.location.href).then(() => showToast('لینک کپی شد؛ آن را در مرورگر باز کنید.', 'success'))}
-            className="font-bold underline inline-flex items-center gap-1"
-          >
-            <ExternalLink className="w-4 h-4" /> کپی لینک برای باز کردن در مرورگر
-          </button>
-        </div>
-      ) : (
-        <button
-          onClick={login}
-          disabled={isLoggingIn}
-          className="w-full max-w-sm mx-auto bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-200 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 shadow-sm disabled:opacity-50"
-        >
-          {isLoggingIn ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600" /> : (
-            <><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" className="w-5 h-5" /> ورود با حساب گوگل</>
+
+      {config?.phone !== false && <PhoneLogin />}
+
+      {config?.google && (
+        <div className="w-full max-w-sm mx-auto space-y-3">
+          {config?.phone !== false && (
+            <div className="flex items-center gap-3 text-xs text-gray-400"><span className="flex-1 h-px bg-gray-200 dark:bg-white/10" /> یا <span className="flex-1 h-px bg-gray-200 dark:bg-white/10" /></div>
           )}
-        </button>
+          {loginBlockedReason ? (
+            <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">{loginBlockedReason}</p>
+          ) : (
+            <button
+              onClick={login}
+              disabled={isLoggingIn}
+              className="w-full bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 shadow-sm disabled:opacity-50 text-sm"
+            >
+              {isLoggingIn ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600" /> : 'ورود با حساب گوگل'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {config && !config.phone && !config.google && (
+        <p className="text-sm text-red-600">ورود به حساب موقتاً در دسترس نیست.</p>
       )}
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline">فعلاً رویدادها را ببینم</button>
     </div>

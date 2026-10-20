@@ -14,7 +14,9 @@ import { sendUpload } from './src/lib/storage';
 import { startBackgroundJobs } from './src/lib/notifications';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
+import { registerAuthRoutes, pruneOtpCodes } from './src/server/routes/auth';
 import { registerUserRoutes } from './src/server/routes/users';
+import { pruneExpiredSessions } from './src/server/session';
 import { registerDiscoveryRoutes } from './src/server/routes/discovery';
 import { registerContentRoutes } from './src/server/routes/content';
 import { registerCommerceRoutes, expireStaleOrders } from './src/server/routes/commerce';
@@ -55,10 +57,13 @@ async function startServer() {
   // Uploaded images (local disk in development, Cloud Storage when UPLOAD_BUCKET is set).
   app.get('/uploads/:name', asyncRoute(async (req, res) => sendUpload(req.params.name, res)));
 
+  // API responses depend on the session cookie; a CDN or shared proxy must never cache them.
+  app.use('/api', (_req, res, next) => { res.setHeader('Cache-Control', 'private, no-cache'); res.setHeader('Vary', 'Cookie, Authorization'); next(); });
   app.use('/api', limiters.default);
   app.use('/api', validateInput);
   app.use('/api', authenticate);
 
+  registerAuthRoutes(app);
   registerUserRoutes(app);
   registerDiscoveryRoutes(app);
   registerContentRoutes(app);
@@ -110,7 +115,7 @@ async function startServer() {
   }
 
   await dbReady;
-  startBackgroundJobs([expireStaleOrders, pruneSharedStore]);
+  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes]);
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);

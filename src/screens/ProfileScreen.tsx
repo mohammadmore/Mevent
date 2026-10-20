@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3 } from 'lucide-react';
+import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone } from 'lucide-react';
 import GamificationPanel from '../components/GamificationPanel';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { useAppData } from '../lib/appData';
@@ -8,6 +8,7 @@ import { api, showToast } from '../lib/apiClient';
 import { confirmDialog, promptDialog } from '../lib/dialog';
 import { navigate } from '../lib/router';
 import { pNum } from '../lib/format';
+import { normalizeIranMobile, maskMobile } from '../lib/phone';
 
 export function ProfileScreen() {
   const { profile, setProfile, refreshProfile } = useAppData();
@@ -46,6 +47,36 @@ export function ProfileScreen() {
     } catch { /* toast shown */ }
   };
 
+  // Attach a mobile number (Google accounts), so the user can sign in by SMS later.
+  const linkPhone = async () => {
+    const raw = await promptDialog({ title: 'اتصال شماره موبایل', message: 'با این شماره می‌توانید همیشه با پیامک وارد حسابتان شوید.', placeholder: '09123456789', confirmText: 'ارسال کد' });
+    if (!raw) return;
+    const phone = normalizeIranMobile(raw);
+    if (!phone) { showToast('شماره موبایل معتبر نیست.', 'error'); return; }
+    try {
+      const sent = await api<any>('/api/auth/otp/request', { body: { phone, purpose: 'LINK' } });
+      const code = await promptDialog({
+        title: 'کد تأیید',
+        message: `کد ارسال‌شده به ${sent.phone} را وارد کنید.${sent.devCode ? ` (محیط توسعه: ${sent.devCode})` : ''}`,
+        placeholder: '••••••',
+        confirmText: 'تأیید',
+      });
+      if (!code) return;
+      const res = await api<any>('/api/auth/phone/link', { body: { phone, code } });
+      setProfile(res.data);
+      showToast(res.message, 'success');
+    } catch { /* toast shown */ }
+  };
+
+  const signOutOthers = async () => {
+    const ok = await confirmDialog({ title: 'خروج از دستگاه‌های دیگر', message: 'همه دستگاه‌هایی که با شماره شما وارد شده‌اند (به‌جز همین دستگاه) خارج می‌شوند.', confirmText: 'خروج از بقیه' });
+    if (!ok) return;
+    try {
+      const res = await api<any>('/api/auth/logout-all', { body: {} });
+      showToast(res.message, 'success');
+    } catch { /* toast shown */ }
+  };
+
   const signOut = async () => {
     await logout();
     navigate('/login', { replace: true });
@@ -59,7 +90,9 @@ export function ProfileScreen() {
         <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#d9ff00] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100">{profile.name}</h2>
-          <p className="text-gray-600 dark:text-gray-400">{profile.email} • {profile.city}</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {[profile.phone ? maskMobile(profile.phone) : null, profile.email, profile.city].filter(Boolean).join(' • ')}
+          </p>
           <button onClick={() => setEditing(true)} className="mt-2 text-sm text-teal-600 dark:text-[#d9ff00] hover:underline inline-flex items-center gap-1"><Edit3 className="w-4 h-4" /> ویرایش پروفایل</button>
         </div>
       </div>
@@ -126,6 +159,18 @@ export function ProfileScreen() {
         <h3 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">برای پیشنهادهای بهتر از علایق و رویدادهایی که دیده‌اید استفاده می‌کنیم. هر زمان بخواهید می‌توانید آن‌ها را تغییر دهید یا پاک کنید.</p>
         <div className="space-y-3">
+          {!profile.phone && (
+            <button onClick={linkPhone} className="w-full flex items-center gap-3 p-4 rounded-xl border border-teal-600/30 bg-teal-600/5 hover:border-teal-600/60 text-right">
+              <Smartphone className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+              <span><span className="block font-bold text-gray-900 dark:text-gray-100">اتصال شماره موبایل</span><span className="text-xs text-gray-500">ورود با پیامک، حتی وقتی ورود با گوگل در دسترس نباشد</span></span>
+            </button>
+          )}
+          {profile.phone && (
+            <button onClick={signOutOthers} className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:border-teal-600/50 text-right">
+              <MonitorSmartphone className="w-5 h-5 text-gray-500" />
+              <span><span className="block font-bold text-gray-900 dark:text-gray-100">خروج از دستگاه‌های دیگر</span><span className="text-xs text-gray-500">اگر روی دستگاه دیگری وارد شده‌اید و به آن دسترسی ندارید</span></span>
+            </button>
+          )}
           <button onClick={clearHistory} className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 text-right">
             <Trash2 className="w-5 h-5 text-gray-500" />
             <span><span className="block font-bold text-gray-900 dark:text-gray-100">پاک‌سازی تاریخچه بازدیدها</span><span className="text-xs text-gray-500">رویدادهایی که مشاهده کرده‌اید</span></span>

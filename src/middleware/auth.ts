@@ -4,12 +4,19 @@ import { eq } from 'drizzle-orm';
 import { adminAuth } from '../lib/firebase-admin.ts';
 import { db } from '../db/index.ts';
 import { users } from '../db/schema.ts';
+import { userFromSession } from '../server/session.ts';
+
+// Google sign-in (Firebase) can be turned off, e.g. when the server is hosted in Iran and
+// Google's token-signing keys are not reachable. Phone login does not depend on it.
+export const googleLoginEnabled = process.env.AUTH_GOOGLE_ENABLED !== 'false';
 
 export type DbUser = typeof users.$inferSelect;
 
 export interface AuthRequest extends Request {
   firebaseUser?: DecodedIdToken;
   dbUser?: DbUser;
+  /** Set when the request was authenticated with a phone-login session cookie. */
+  sessionId?: number;
 }
 
 function extractBearer(req: Request): string | null {
@@ -20,13 +27,24 @@ function extractBearer(req: Request): string | null {
 }
 
 /**
- * Verifies the Firebase ID token when one is present and attaches the decoded
- * token and the matching DB user to the request. Requests without a token pass
- * through anonymously; requests with an invalid token are rejected.
+ * Identifies the caller from (1) a phone-login session cookie, or (2) a Firebase ID token in
+ * the Authorization header when Google login is enabled, and attaches the DB user.
+ * Requests without credentials pass through anonymously; invalid tokens are rejected.
  */
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const session = await userFromSession(req, res);
+    if (session) {
+      req.dbUser = session.user;
+      req.sessionId = session.sessionId;
+      return next();
+    }
+  } catch (error) {
+    return next(error);
+  }
+
   const token = extractBearer(req);
-  if (!token) return next();
+  if (!token || !googleLoginEnabled) return next();
 
   let decoded: DecodedIdToken;
   try {
