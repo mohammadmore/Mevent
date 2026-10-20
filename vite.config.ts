@@ -11,6 +11,19 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Large libraries get their own long-cached chunks; maps and charts load only when used.
+          manualChunks: {
+            firebase: ['firebase/app', 'firebase/auth'],
+            motion: ['motion/react'],
+            leaflet: ['leaflet', 'react-leaflet', 'react-leaflet-cluster'],
+            datepicker: ['react-multi-date-picker'],
+          },
+        },
+      },
+    },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.

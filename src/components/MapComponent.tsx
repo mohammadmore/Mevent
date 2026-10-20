@@ -1,4 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { api } from '../lib/apiClient';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -25,9 +26,18 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
   const [vibes, setVibes] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/places').then(res => res.json()).then(data => setPlaces(data || []));
-    fetch('/api/vibes').then(res => res.json()).then(data => setVibes(data || []));
+    api('/api/places', { silent: true }).then(data => setPlaces(data || [])).catch(() => {});
+    api('/api/vibes', { silent: true }).then(data => setVibes(data || [])).catch(() => {});
   }, []);
+
+  // When no list is passed in, show upcoming events around the user (or everywhere).
+  const [ownEvents, setOwnEvents] = useState<Event[]>([]);
+  useEffect(() => {
+    if (events && events.length > 0) return;
+    const near = userLocation ? `&lat=${userLocation.lat}&lng=${userLocation.lng}&radius=50` : '';
+    api<any>(`/api/events?limit=50${near}`, { silent: true }).then(d => setOwnEvents(d.data || [])).catch(() => {});
+  }, [events, userLocation?.lat, userLocation?.lng]);
+  const shownEvents = events && events.length > 0 ? events : ownEvents;
 
   // Default center (e.g., Tehran)
   const defaultCenter: [number, number] = userLocation ? [userLocation.lat, userLocation.lng] : [35.6892, 51.3890];
@@ -45,7 +55,7 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
         <MarkerClusterGroup chunkedLoading>
-        {(events || []).map((event) => {
+        {shownEvents.map((event) => {
           if (event.location && event.location.lat && event.location.lng) {
             return (
               <Marker key={event.id} position={[event.location.lat, event.location.lng]}>

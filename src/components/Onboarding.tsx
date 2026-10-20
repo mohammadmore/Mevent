@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { api } from '../lib/apiClient';
 import { Check, Sparkles } from 'lucide-react';
 
 const PREDEFINED_TAGS = [
@@ -12,15 +13,15 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
   const [existingPreferences, setExistingPreferences] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch(`/api/users/${userId}/profile`)
-      .then(res => res.json())
+    api(`/api/users/${userId}/profile`, { silent: true })
       .then(data => {
         if (data.data?.preferences && data.data.preferences.length > 0) {
           const pref = typeof data.data.preferences === 'string' ? JSON.parse(data.data.preferences) : data.data.preferences;
           setExistingPreferences(pref);
           setSelectedTags(pref);
         }
-      });
+      })
+      .catch(() => {});
   }, [userId]);
 
   const toggleTag = (tag: string) => {
@@ -34,14 +35,10 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
   const handleSave = async () => {
     setLoading(true);
     try {
-      await fetch(`/api/users/${userId}/preferences`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ preferences: selectedTags })
-      });
+      await api(`/api/users/${userId}/preferences`, { method: 'PUT', body: { preferences: selectedTags } });
       onComplete();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      // error toast already shown; stay on this screen so the choice is not lost
     } finally {
       setLoading(false);
     }

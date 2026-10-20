@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
 import { Sparkles } from 'lucide-react';
 
 export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
   const { user } = useAuth();
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialData || {
     title: '',
@@ -72,7 +72,6 @@ export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
           {loading ? 'در حال ثبت...' : 'ثبت جریان'}
         </button>
       </form>
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

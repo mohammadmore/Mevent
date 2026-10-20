@@ -8,6 +8,11 @@ import {
 import { Event, Place } from '../types';
 import JalaliCalendarPicker from './JalaliCalendarPicker';
 import { PriceWidget } from './PriceWidget';
+import { useAuth } from '../lib/AuthContext';
+import { useAppData } from '../lib/appData';
+import { api, showToast } from '../lib/apiClient';
+import { confirmDialog } from '../lib/dialog';
+import { absoluteUrl, navigate } from '../lib/router';
 
 interface TripPlannerModalProps {
   isOpen: boolean;
@@ -15,8 +20,13 @@ interface TripPlannerModalProps {
   userProfile?: any;
   onSelectEvent?: (event: Event) => void;
   onSelectPlace?: (place: Place) => void;
-  onSavePackage?: (pkg: any) => void;
+  /** Opens a saved/shared trip from /trips/:id. */
+  sharedTripId?: string;
 }
+
+const LEGACY_STORAGE_KEY = 'saved_trip_packages';
+// The last generated plan survives closing the modal (e.g. to look at an event and come back).
+let lastGeneratedPackage: any = null;
 
 
 const toPersianDigits = (num: number | string): string => {
@@ -69,8 +79,10 @@ export default function TripPlannerModal({
   userProfile,
   onSelectEvent,
   onSelectPlace,
-  onSavePackage
+  sharedTripId
 }: TripPlannerModalProps) {
+  const { dbUserId } = useAuth();
+  const { requireLogin } = useAppData();
   const [city, setCity] = useState('تهران');
   const [customCity, setCustomCity] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -79,37 +91,47 @@ export default function TripPlannerModal({
   const [tripStyle, setTripStyle] = useState('دوستانه / مجردی');
 
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
-  const [tripPackage, setTripPackage] = useState<any | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [tripPackage, setTripPackage] = useState<any | null>(() => (sharedTripId ? null : lastGeneratedPackage));
   const [activeDayTab, setActiveDayTab] = useState(0);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(() => Boolean(!sharedTripId && lastGeneratedPackage?.id));
   const [copiedLink, setCopiedLink] = useState(false);
-  
-  const [viewMode, setViewMode] = useState<'form' | 'result' | 'list'>('form');
-  const [savedPackages, setSavedPackages] = useState<any[]>(() => {
-    try {
-      const saved = localStorage.getItem('saved_trip_packages');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [loadingShared, setLoadingShared] = useState(Boolean(sharedTripId));
+
+  const [viewMode, setViewMode] = useState<'form' | 'result' | 'list'>(() => (sharedTripId || lastGeneratedPackage ? 'result' : 'form'));
+  // Saved trips live on the server (all devices); trips saved in this browser by older versions are migrated once.
+  const [savedPackages, setSavedPackages] = useState<any[]>([]);
+
+  useEffect(() => { lastGeneratedPackage = tripPackage; }, [tripPackage]);
 
   useEffect(() => {
-    localStorage.setItem('saved_trip_packages', JSON.stringify(savedPackages));
-  }, [savedPackages]);
+    if (!dbUserId) { setSavedPackages([]); return; }
+    (async () => {
+      try {
+        const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || '[]');
+        if (Array.isArray(legacy) && legacy.length > 0) {
+          for (const pkg of legacy) {
+            const { id, ...data } = pkg;
+            await api('/api/trips', { body: { data, isPublic: false }, silent: true }).catch(() => {});
+          }
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        }
+      } catch { /* ignore broken local data */ }
+      api<{ data: any[] }>('/api/trips', { silent: true }).then(d => {
+        setSavedPackages(d.data);
+        if (!sharedTripId && !lastGeneratedPackage && d.data.length > 0) setViewMode('list');
+      }).catch(() => {});
+    })();
+  }, [dbUserId]);
 
   useEffect(() => {
-    if (isOpen) {
-      if (savedPackages.length > 0 && !tripPackage) {
-        setViewMode('list');
-      } else if (!tripPackage) {
-        setViewMode('form');
-      } else {
-        setViewMode('result');
-      }
-    }
-  }, [isOpen]);
+    if (!sharedTripId) return;
+    setLoadingShared(true);
+    api<{ data: any }>(`/api/trips/${sharedTripId}`, { silent: true })
+      .then(d => { setTripPackage(d.data); setIsSaved(Boolean(d.data.isOwner)); setViewMode('result'); setActiveDayTab(0); })
+      .catch(() => { showToast('این برنامه سفر پیدا نشد یا خصوصی است.', 'error'); setViewMode('form'); })
+      .finally(() => setLoadingShared(false));
+  }, [sharedTripId]);
 
   // Set default dates on load
   useEffect(() => {
@@ -155,65 +177,72 @@ export default function TripPlannerModal({
     if (!targetCity) return;
 
     setIsLoading(true);
-    setLoadingStep(1);
-
-    // Simulate animated loading steps
-    const stepInterval = setInterval(() => {
-      setLoadingStep(prev => (prev < 3 ? prev + 1 : prev));
-    }, 900);
+    setElapsed(0);
+    // Honest progress: we only know how long we have been waiting, not a fake step.
+    const timer = setInterval(() => setElapsed(s => s + 1), 1000);
 
     try {
-      const res = await fetch('/api/trip-planner', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          city: targetCity,
-          startDate,
-          endDate,
-          preferences: selectedInterests,
-          tripStyle,
-          userId: userProfile?.id
-        })
+      const data = await api<any>('/api/trip-planner', {
+        body: { city: targetCity, startDate, endDate, preferences: selectedInterests, tripStyle }
       });
-
-      const data = await res.json();
-      clearInterval(stepInterval);
-
-      if (res.ok && data?.data) {
-        setTripPackage(data.data);
-        setActiveDayTab(0);
-        setIsSaved(false);
-        setViewMode('result');
-      } else {
-        alert('خطا در دریافت برنامه سفر. لطفاً مجدداً تلاش کنید.');
+      setTripPackage({ ...data.data, tripStyle });
+      setActiveDayTab(0);
+      setIsSaved(false);
+      setViewMode('result');
+      if (!data.data.aiGenerated) {
+        showToast('دستیار هوشمند در دسترس نبود؛ یک برنامه پیشنهادی ساده بر اساس داده‌های موجود ساخته شد.', 'warning');
       }
-    } catch (err) {
-      console.error(err);
-      clearInterval(stepInterval);
-      alert('خطا در ارتباط با سرور.');
+    } catch {
+      // error toast already shown
     } finally {
+      clearInterval(timer);
       setIsLoading(false);
     }
   };
 
-  const handleSave = () => {
+  /** Saves the plan to the user's account; returns its id. */
+  const saveTrip = async (opts: { isPublic?: boolean } = {}) => {
+    if (!tripPackage || !requireLogin()) return null;
+    const { id, isOwner, ...data } = tripPackage;
+    const ownId = isSaved && id ? id : undefined;
+    const res = await api<{ data: any }>('/api/trips', { body: { id: ownId, data, isPublic: opts.isPublic ?? true } });
+    setTripPackage(res.data);
     setIsSaved(true);
-    if (tripPackage && !tripPackage.id) {
-      const newPkg = { ...tripPackage, id: Date.now().toString(), createdAt: new Date().toISOString() };
-      setSavedPackages(prev => [...prev, newPkg]);
-      setTripPackage(newPkg);
-      if (onSavePackage) onSavePackage(newPkg);
-    } else if (tripPackage && tripPackage.id) {
-      // update existing
-      setSavedPackages(prev => prev.map(p => p.id === tripPackage.id ? tripPackage : p));
-      if (onSavePackage) onSavePackage(tripPackage);
-    }
+    setSavedPackages(prev => [res.data, ...prev.filter(p => p.id !== res.data.id)]);
+    return res.data.id as string;
   };
 
-  const handleShare = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
+  const handleSave = async () => {
+    try {
+      const id = await saveTrip();
+      if (id) showToast('برنامه سفر در حساب شما ذخیره شد و روی همه دستگاه‌هایتان در دسترس است.', 'success');
+    } catch { /* toast shown */ }
+  };
+
+  const handleShare = async () => {
+    try {
+      // A trip link needs a saved, public trip behind it.
+      const id = tripPackage?.id && (isSaved || tripPackage.isPublic) ? tripPackage.id : await saveTrip({ isPublic: true });
+      if (!id) return;
+      const url = absoluteUrl(`/trips/${id}`);
+      if (navigator.share) {
+        await navigator.share({ title: tripPackage.title, text: tripPackage.summary, url }).catch(() => {});
+      } else {
+        await navigator.clipboard?.writeText(url);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2500);
+      }
+    } catch { /* toast shown */ }
+  };
+
+  const deleteTrip = async (pkg: any) => {
+    const ok = await confirmDialog({ title: 'حذف برنامه سفر', message: `برنامه «${pkg.title || pkg.city}» حذف شود؟`, confirmText: 'حذف', danger: true });
+    if (!ok) return;
+    try {
+      await api(`/api/trips/${pkg.id}`, { method: 'DELETE' });
+      setSavedPackages(prev => prev.filter(p => p.id !== pkg.id));
+      if (tripPackage?.id === pkg.id) { setTripPackage(null); setViewMode('form'); }
+    } catch { /* toast shown */ }
   };
 
   const resetForm = () => {
@@ -224,7 +253,7 @@ export default function TripPlannerModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md overflow-y-auto" dir="rtl">
+      <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md overflow-y-auto" dir="rtl" role="dialog" aria-modal="true" aria-label="برنامه‌ریزی سفر">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -262,6 +291,7 @@ export default function TripPlannerModal({
               )}
               <button
                 onClick={onClose}
+                aria-label="بستن"
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/10 flex items-center justify-center text-white transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -272,7 +302,9 @@ export default function TripPlannerModal({
           {/* Body Content */}
           <div className="p-5 sm:p-6 overflow-y-auto flex-1 custom-scrollbar">
             {/* Loading State */}
-            {isLoading ? (
+            {loadingShared ? (
+              <div className="py-16 flex justify-center"><div className="w-10 h-10 rounded-full border-4 border-teal-600/20 border-t-teal-600 animate-spin" /></div>
+            ) : isLoading ? (
               <div className="py-16 flex flex-col items-center justify-center text-center space-y-6">
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border-4 border-teal-600/20 dark:border-[#d9ff00]/20 border-t-teal-600 dark:border-t-[#d9ff00] animate-spin"></div>
@@ -283,17 +315,12 @@ export default function TripPlannerModal({
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                     در حال چیدن پکیج سفر در {customCity || city}...
                   </h3>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                    <p className={loadingStep >= 1 ? 'text-teal-600 dark:text-[#d9ff00] font-medium' : ''}>
-                      ✓ بررسی رویدادها و همایش‌های فعال شهر
-                    </p>
-                    <p className={loadingStep >= 2 ? 'text-teal-600 dark:text-[#d9ff00] font-medium' : ''}>
-                      ✓ یافتن بهترین پاتوق‌ها و کافه‌های متناسب با علایق
-                    </p>
-                    <p className={loadingStep >= 3 ? 'text-teal-600 dark:text-[#d9ff00] font-medium' : ''}>
-                      ✓ تنظیم برنامه زمان‌بندی روزانه با هوش مصنوعی
-                    </p>
-                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    رویدادها و پاتوق‌های این شهر در بازه سفر شما جمع‌آوری و به دستیار هوشمند داده می‌شود تا برنامه روزانه را بچیند.
+                  </p>
+                  <p className="text-xs text-gray-400" aria-live="polite">
+                    {toPersianDigits(elapsed)} ثانیه {elapsed > 20 ? '— کمی بیشتر از معمول طول کشیده، لطفاً صبر کنید' : '— معمولاً کمتر از ۲۰ ثانیه طول می‌کشد'}
+                  </p>
                 </div>
               </div>
             ) : viewMode === 'result' && tripPackage ? (
@@ -328,8 +355,11 @@ export default function TripPlannerModal({
                           {toPersianDigits(tripPackage.days?.length || 3)} روز سفر
                         </span>
                         <span className="bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs px-3 py-1 rounded-full">
-                          سبک: {tripStyle}
+                          سبک: {tripPackage.tripStyle || tripStyle}
                         </span>
+                        {tripPackage.aiGenerated === false && (
+                          <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 text-xs px-3 py-1 rounded-full">برنامه ساده (بدون هوش مصنوعی)</span>
+                        )}
                       </div>
                       <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100">
                         {tripPackage.title}
@@ -349,7 +379,7 @@ export default function TripPlannerModal({
                         }`}
                       >
                         <Bookmark className="w-4 h-4" />
-                        {isSaved ? 'پکیج ذخیره شد' : 'ذخیره پکیج'}
+                        {isSaved ? 'ذخیره شد' : tripPackage.isOwner === false ? 'ذخیره در سفرهای من' : 'ذخیره پکیج'}
                       </button>
 
                       <button
@@ -357,7 +387,7 @@ export default function TripPlannerModal({
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-white dark:bg-[#222226] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                       >
                         <Share2 className="w-4 h-4" />
-                        {copiedLink ? 'کپی شد!' : 'اشتراک‌گذاری'}
+                        {copiedLink ? 'لینک کپی شد!' : 'اشتراک‌گذاری'}
                       </button>
                     </div>
                   </div>
@@ -586,23 +616,21 @@ export default function TripPlannerModal({
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {savedPackages.map(pkg => (
-                      <div key={pkg.id} className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col gap-3 bg-gray-50 dark:bg-white/5 cursor-pointer hover:border-teal-500 dark:hover:border-[#d9ff00] transition-colors" onClick={() => { setTripPackage(pkg); setViewMode('result'); setIsSaved(true); }}>
+                      <div key={pkg.id} className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col gap-3 bg-gray-50 dark:bg-white/5 cursor-pointer hover:border-teal-500 dark:hover:border-[#d9ff00] transition-colors" onClick={() => { setTripPackage(pkg); setViewMode('result'); setIsSaved(true); setActiveDayTab(0); }}>
                         <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100">
                           <MapPin className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" />
                           {pkg.city}
                         </div>
+                        <div className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{pkg.title}</div>
                         <div className="text-xs text-gray-500 flex items-center gap-2">
-                          <Clock className="w-3 h-3" /> {toPersianDigits(new Date(pkg.createdAt).toLocaleDateString('fa-IR'))}
+                          <Clock className="w-3 h-3" /> {new Date(pkg.createdAt).toLocaleDateString('fa-IR', { timeZone: 'Asia/Tehran' })}
                         </div>
                         <div className="text-xs text-gray-600 dark:text-gray-400">
                           {toPersianDigits(pkg.days?.length || 3)} روز
                         </div>
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSavedPackages(prev => prev.filter(p => p.id !== pkg.id));
-                            if (tripPackage?.id === pkg.id) setTripPackage(null);
-                          }}
+                          onClick={(e) => { e.stopPropagation(); deleteTrip(pkg); }}
+                          aria-label="حذف برنامه سفر"
                           className="mt-auto self-end text-red-500 text-xs p-1"
                         >
                           <Trash2 className="w-4 h-4" />

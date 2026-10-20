@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../lib/apiClient';
 import { ArrowRight, Link as LinkIcon, Calendar } from 'lucide-react';
 import { Event } from '../types';
 
@@ -12,8 +13,7 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
   const [chainData, setChainData] = useState<any>(null);
   
   useEffect(() => {
-    fetch(`/api/chains/${chain.id}`)
-      .then(res => res.json())
+    api(`/api/chains/${chain.id}`, { silent: true })
       .then(data => setChainData(data.data ? data.data : data))
       .catch(console.error);
   }, [chain.id]);

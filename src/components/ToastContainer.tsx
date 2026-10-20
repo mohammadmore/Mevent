@@ -14,7 +14,8 @@ export const ToastContainer: React.FC = () => {
   useEffect(() => {
     const unsubscribe = subscribeToToasts(({ text, type }) => {
       const id = Math.random().toString(36).substring(2, 9);
-      setToasts(prev => [...prev, { id, text, type }]);
+      // The same message fired twice in a row (e.g. two failed requests) is shown once; at most 4 at a time.
+      setToasts(prev => prev.some(t => t.text === text) ? prev : [...prev.slice(-3), { id, text, type }]);
 
       setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id));
@@ -27,7 +28,10 @@ export const ToastContainer: React.FC = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-20 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 z-50 flex flex-col gap-2 pointer-events-none">
+    <div className="fixed bottom-24 md:bottom-6 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 z-[400] flex flex-col gap-2 pointer-events-none"
+      role="status"
+      aria-live="polite"
+      dir="rtl">
       {toasts.map(toast => {
         const bgColors = {
           success: 'bg-emerald-900/90 text-emerald-100 border-emerald-700/50',

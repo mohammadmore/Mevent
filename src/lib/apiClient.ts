@@ -88,3 +88,54 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delayMs: num
     }, delayMs);
   };
 }
+
+export interface ApiOptions {
+  method?: string;
+  /** Plain objects are sent as JSON; FormData is sent as-is. */
+  body?: unknown;
+  /** Do not show an error toast (the caller handles the failure). */
+  silent?: boolean;
+  signal?: AbortSignal;
+}
+
+/**
+ * Fetch wrapper used by the UI: checks the HTTP status, parses JSON, and turns failures into
+ * an ApiError with the server's (Persian) message, shown as a toast unless `silent` is set.
+ */
+export async function api<T = any>(url: string, opts: ApiOptions = {}): Promise<T> {
+  const init: RequestInit = { method: opts.method || (opts.body !== undefined ? 'POST' : 'GET'), signal: opts.signal };
+  if (opts.body instanceof FormData) {
+    init.body = opts.body;
+  } else if (opts.body !== undefined) {
+    init.body = JSON.stringify(opts.body);
+    init.headers = { 'Content-Type': 'application/json' };
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(url, init);
+  } catch (err: any) {
+    if (err?.name === 'AbortError') throw err;
+    const message = typeof navigator !== 'undefined' && navigator.onLine === false
+      ? 'شما آفلاین هستید. پس از اتصال به اینترنت دوباره تلاش کنید.'
+      : 'مشکل در برقراری ارتباط با سرور. لطفا اتصال اینترنت خود را بررسی کنید.';
+    if (!opts.silent) showToast(message, 'error');
+    throw new ApiError(message, 0);
+  }
+
+  let data: any = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const message = data?.error || data?.message || (response.status === 429
+      ? 'تعداد درخواست‌های شما بیش از حد مجاز است. لطفا چند ثانیه صبر کنید.'
+      : `خطای سرور (${response.status})`);
+    if (!opts.silent) showToast(message, response.status === 429 ? 'warning' : 'error');
+    throw new ApiError(message, response.status, data);
+  }
+  return data as T;
+}

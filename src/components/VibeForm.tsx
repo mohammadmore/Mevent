@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
 import { Sparkles, Map, Clock, Plus, Trash2 } from 'lucide-react';
 import LocationPicker from './LocationPicker';
 
@@ -16,7 +16,7 @@ const DAYS_OF_WEEK = [
 
 export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
   const { user } = useAuth();
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialData || {
     title: '',
@@ -305,7 +305,6 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
           {loading ? 'در حال ثبت...' : 'ثبت حال و هوا'}
         </button>
       </form>
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

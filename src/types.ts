@@ -66,7 +66,13 @@ export interface Event {
   organizerId: number;
   coOrganizerIds?: number[];
   source: 'UGC' | 'CRAWLER'; // User Generated vs Crawler
-  status: 'PUBLISHED' | 'CANCELLED' | 'DRAFT';
+  status: 'PUBLISHED' | 'CANCELLED' | 'DRAFT' | 'HIDDEN' | 'PENDING';
+  /** Public profile of the organizer (attached by the API). */
+  organizer?: { id: number; name: string; role?: string; bio?: string | null } | null;
+  /** Kilometres from the user's location, when the list was requested with a location. */
+  distance?: number | null;
+  seatsLeft?: number;
+  seatsTaken?: number;
   advancedDetails?: {
     dressCode?: string;
     parking?: string;

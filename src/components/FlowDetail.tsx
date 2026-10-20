@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../lib/apiClient';
 import { ArrowRight, ListFilter, Play } from 'lucide-react';
 import { Event } from '../types';
 
@@ -13,8 +14,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
   
   useEffect(() => {
     // Flow filters events by its tags. We simulate fetching events matching flow.tag.
-    fetch(`/api/events/nearby?tag=${encodeURIComponent(flow.tag || '')}`)
-      .then(res => res.json())
+    api(`/api/events/nearby?tag=${encodeURIComponent(flow.tag || '')}`, { silent: true })
       .then(data => setEvents(data.data || []))
       .catch(console.error);
   }, [flow.tag]);

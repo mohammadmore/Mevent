@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Image as ImageIcon } from 'lucide-react';
 import { User } from '../types';
+import { CITIES } from '../screens/DiscoverScreen';
 
 interface ProfileEditModalProps {
   profile: User;
@@ -11,6 +12,7 @@ interface ProfileEditModalProps {
 export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalProps) {
   const [formData, setFormData] = useState({
     name: profile.name || '',
+    city: profile.city || 'تهران',
     bio: profile.bio || '',
     coverImage: profile.coverImage || '',
     organizerType: profile.organizerType || 'INDIVIDUAL',
@@ -22,9 +24,12 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await onSave(formData);
-    setLoading(false);
-    onClose();
+    try {
+      await onSave(formData);
+      onClose();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,6 +55,18 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
               />
             </div>
             
+            <div>
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">شهر شما</label>
+              <select
+                value={formData.city}
+                onChange={e => setFormData({ ...formData, city: e.target.value })}
+                className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+              >
+                {[...new Set([formData.city, ...CITIES])].map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">رویدادهای این شهر به‌صورت پیش‌فرض در صفحه کشف نمایش داده می‌شوند.</p>
+            </div>
+
             {profile.role === 'ORGANIZER' && (
               <div>
                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">نوع فعالیت</label>

@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Map, Network, Film } from 'lucide-react';
 
-export default function DiscoveryHeader({ onFlowSelect, onVibeSelect, onChainSelect }: { onFlowSelect?: (v: any) => void; onVibeSelect?: (v: any) => void; onChainSelect?: (v: any) => void; }) {
+export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onChainSelect }: { city?: string; onFlowSelect?: (v: any) => void; onVibeSelect?: (v: any) => void; onChainSelect?: (v: any) => void; }) {
   const [flows, setFlows] = useState<any[]>([]);
   const [vibes, setVibes] = useState<any[]>([]);
   const [chains, setChains] = useState<any[]>([]);
   
   useEffect(() => {
-    Promise.all([
-      fetch('/api/flows').then(r => r.json()),
-      fetch('/api/vibes').then(r => r.json()),
-      fetch('/api/chains').then(r => r.json())
-    ]).then(([flowsData, vibesData, chainsData]) => {
-      setFlows(flowsData || []);
-      setVibes(vibesData || []);
-      setChains(chainsData || []);
-    }).catch(console.error);
-  }, []);
+    // Collections for the selected city only; a failure just hides this optional section.
+    const qs = city ? `?city=${encodeURIComponent(city)}` : '';
+    const get = (url: string) => fetch(url).then(r => (r.ok ? r.json() : [])).catch(() => []);
+    Promise.all([get(`/api/flows${qs}`), get(`/api/vibes${qs}`), get(`/api/chains${qs}`)])
+      .then(([flowsData, vibesData, chainsData]) => {
+        setFlows(Array.isArray(flowsData) ? flowsData : []);
+        setVibes(Array.isArray(vibesData) ? vibesData : []);
+        setChains(Array.isArray(chainsData) ? chainsData : []);
+      });
+  }, [city]);
   
   if (!flows.length && !vibes.length && !chains.length) {
     return null; // Don't show if nothing to show

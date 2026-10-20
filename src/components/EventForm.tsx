@@ -1,11 +1,12 @@
 import { motion } from 'motion/react';
+import { api } from '../lib/apiClient';
 import { useState, useRef, FormEvent, useEffect, useMemo } from 'react';
 import { MapPin, Calendar, Clock, CreditCard, Tag, FileText, Type, Image as ImageIcon, Upload, FileSpreadsheet, Info, Ticket, Trash2 } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import { availableIcons, defaultBackgroundIcons } from '../lib/icons';
 import { MoreHorizontal, X } from 'lucide-react';
 import LocationPicker from './LocationPicker';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
 import readXlsxFile from 'read-excel-file/browser';
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
@@ -63,7 +64,7 @@ const cinemaAdvancedFieldsConfig = [
 
 export default function EventForm({ onSuccess, initialData, isAdmin = false }: { onSuccess: () => void, initialData?: any, isAdmin?: boolean }) {
   const { dbUserId } = useAuth();
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [importMode, setImportMode] = useState<'single' | 'batch'>('single');
   const [isForeignCurrency, setIsForeignCurrency] = useState(initialData?.currency && initialData.currency !== 'IRT' ? true : false);
   const [loading, setLoading] = useState(false);
@@ -97,10 +98,9 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
 
   
   useEffect(() => {
-    fetch('/api/hubs').then(res => res.json()).then(data => setHubs(data.data || []));
-    fetch('/api/organizers').then(res => res.json()).then(data => setOrganizers(data.data || []));
-    fetch('/api/admin/settings')
-      .then(res => res.json())
+    api('/api/hubs', { silent: true }).then(data => setHubs(data.data || [])).catch(() => {});
+    api('/api/organizers', { silent: true }).then(data => setOrganizers(data.data || [])).catch(() => {});
+    api('/api/admin/settings', { silent: true })
       .then(data => {
         const cats = data.data?.event_categories;
         if (typeof cats === 'string') {
@@ -296,7 +296,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       }
     } catch (err) {
       console.error(err);
-      alert('خطا در خواندن فایل اکسل. لطفا فرمت فایل را بررسی کنید.');
+      addToast('خطا در خواندن فایل اکسل. لطفا فرمت فایل را بررسی کنید.', 'error');
     } finally {
       setLoading(false);
     }

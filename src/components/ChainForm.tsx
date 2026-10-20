@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../lib/apiClient';
 import { useAuth } from '../lib/AuthContext';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
 import { Network, Search, Check } from 'lucide-react';
 import { Event } from '../types';
 
 export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
   const { dbUserId } = useAuth();
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
@@ -21,8 +22,7 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
   useEffect(() => {
     // Fetch all events by this organizer
     if (dbUserId) {
-      fetch(`/api/organizer/events?userId=${dbUserId}`)
-        .then(res => res.json())
+      api(`/api/organizer/events?userId=${dbUserId}`, { silent: true })
         .then(data => {
           if (data.data) {
             setEvents(data.data);
@@ -32,7 +32,8 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
               setSelectedEventIds(chainEvents.map((e: any) => e.id));
             }
           }
-        });
+        })
+        .catch(() => {});
     }
   }, [dbUserId, initialData]);
 
@@ -75,7 +76,6 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div>
         <label className="block text-sm text-gray-400 mb-1">نام زنجیره (فستیوال/دوره)</label>
         <input 

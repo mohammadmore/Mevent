@@ -4,20 +4,24 @@ import { Calendar, Users, BarChart3, Edit, Copy, Trash2, Eye, Bookmark, CheckCir
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
 import ChainForm from './ChainForm';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
+import { CheckInModal } from './CheckInModal';
+import { confirmDialog } from '../lib/dialog';
+import { api } from '../lib/apiClient';
 
 interface OrganizerPanelProps {
   userId: number;
 }
 
 export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const [attendees, setAttendees] = useState<any[] | null>(null);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [createMode, setCreateMode] = useState<'EVENT' | 'PLACE' | 'CHAIN' | null>(null);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
@@ -28,32 +32,22 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
 
   const toggleStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      if (res.ok) {
-        fetchEvents();
-        addToast(`وضعیت رویداد به ${status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} تغییر یافت`, 'success');
-      }
-    } catch (e) {
-      console.error(e);
-    }
+      await api(`/api/events/${id}`, { method: 'PUT', body: { status } });
+      fetchEvents();
+      addToast(`وضعیت رویداد به ${status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'} تغییر یافت`, 'success');
+    } catch { /* toast shown */ }
   };
 
   const deleteEvent = async (id: number) => {
-    if (!confirm('آیا از حذف این رویداد مطمئن هستید؟')) return;
+    const ok = await confirmDialog({ title: 'حذف رویداد', message: 'این رویداد و همه ثبت‌نام‌های رایگان آن حذف می‌شود. رویدادهایی که بلیت فروخته‌اند را به‌جای حذف، پیش‌نویس کنید.', confirmText: 'حذف', danger: true });
+    if (!ok) return;
     try {
-      const res = await fetch(`/api/events/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setEvents(prev => prev.filter(e => e.id !== id));
-        if (selectedEventId === id) setSelectedEventId(null);
-        addToast('رویداد با موفقیت حذف شد', 'info');
-      }
-    } catch (e) {
-      console.error(e);
-    }
+      // The server refuses (with an explanation) when paid tickets exist.
+      await api(`/api/events/${id}`, { method: 'DELETE' });
+      setEvents(prev => prev.filter(e => e.id !== id));
+      if (selectedEventId === id) setSelectedEventId(null);
+      addToast('رویداد با موفقیت حذف شد', 'info');
+    } catch { /* toast shown */ }
   };
 
   const fetchEvents = async () => {
@@ -72,6 +66,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
   };
 
   useEffect(() => {
+    setAttendees(null);
     if (selectedEventId) {
       fetchStats(selectedEventId);
     }
@@ -102,26 +97,13 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
 
   return (
     <div className="space-y-6">
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-      {/* Scanner Modal */}
-      {showScanner && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl w-full max-w-sm overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-white/10">
-              <h3 className="font-bold text-[#515739] dark:text-gray-100">اسکن بلیت (QR Code)</h3>
-              <button onClick={() => setShowScanner(false)} className="text-gray-400 hover:text-gray-700 dark:text-gray-300">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-6 flex flex-col items-center justify-center bg-gray-100 dark:bg-[#1f1f23] min-h-[300px]">
-              <div className="w-48 h-48 border-2 border-teal-600 dark:border-[#d9ff00] border-dashed rounded-2xl flex items-center justify-center relative overflow-hidden mb-4">
-                <QrCode className="w-16 h-16 text-teal-600/80 dark:text-[#d9ff00]/80" />
-                <div className="absolute top-0 left-0 w-full h-1 bg-teal-600/10 dark:bg-[#d9ff00] animate-[scan_2s_ease-in-out_infinite]"></div>
-              </div>
-              <p className="text-gray-400 text-sm text-center">دوربین را مقابل بارکد بلیت شرکت‌کننده قرار دهید</p>
-            </div>
-          </div>
-        </div>
+      {showScanner && selectedEventId && (
+        <CheckInModal
+          eventId={selectedEventId}
+          eventTitle={events.find(e => e.id === selectedEventId)?.title || ''}
+          onClose={() => setShowScanner(false)}
+          onCheckedIn={() => fetchStats(selectedEventId)}
+        />
       )}
       <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-4">
         <div>
@@ -282,6 +264,9 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                         <span className="text-xs text-orange-600 mt-1">بازدیدها</span>
                       </div>
                     </div>
+                    <p className="text-xs text-gray-500">
+                      ظرفیت: {stats.capacity?.toLocaleString('fa-IR')} • جای خالی: {stats.seatsLeft?.toLocaleString('fa-IR')} • ورود ثبت‌شده: {stats.checkedIn?.toLocaleString('fa-IR')} • لغو شده: {stats.cancelled?.toLocaleString('fa-IR')}
+                    </p>
                     
                     <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-100 flex items-center justify-between">
                       <div>
@@ -299,11 +284,30 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                         مدیریت شرکت‌کنندگان
                       </h4>
                       <div className="flex gap-3">
-                        <button className="flex-1 bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-100 dark:bg-[#1f1f23]">لیست ثبت‌نامی‌ها</button>
+                        <button
+                          onClick={() => {
+                            if (attendees) { setAttendees(null); return; }
+                            api<{ data: any[] }>(`/api/organizer/events/${selectedEventId}/attendees`).then(d => setAttendees(d.data)).catch(() => {});
+                          }}
+                          className="flex-1 bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-100"
+                        >
+                          {attendees ? 'بستن لیست' : 'لیست ثبت‌نامی‌ها'}
+                        </button>
                         <button onClick={() => setShowScanner(true)} className="flex-1 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-2.5 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#c6eb00] shadow-md flex items-center justify-center gap-2">
-                          <QrCode className="w-4 h-4" /> اسکن QR Code
+                          <QrCode className="w-4 h-4" /> ثبت ورود (QR / کد)
                         </button>
                       </div>
+                      {attendees && (
+                        <ul className="mt-4 divide-y divide-gray-100 dark:divide-white/10 text-sm max-h-72 overflow-y-auto">
+                          {attendees.length === 0 && <li className="py-3 text-gray-500">هنوز کسی ثبت‌نام نکرده است.</li>}
+                          {attendees.map((a: any, i: number) => (
+                            <li key={i} className="py-2 flex justify-between gap-2">
+                              <span className="text-gray-800 dark:text-gray-200">{a.name}{a.label ? ` (${a.label})` : ''}</span>
+                              <span className="text-xs text-gray-500">{a.status === 'USED' ? 'وارد شد' : a.status === 'ACTIVE' ? 'بلیت معتبر' : a.status === 'RSVP' ? 'ثبت‌نام رایگان' : a.status}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 ) : (

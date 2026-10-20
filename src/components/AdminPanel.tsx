@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   Shield, Users, Calendar, Activity, DollarSign, Edit, X, Settings, MapPin, Film, Wind,
-  Cpu, Database, RefreshCw, Trash2, Play, CheckCircle, AlertTriangle, Zap, Server
+  Cpu, Database, RefreshCw, Trash2, Play, CheckCircle, AlertTriangle, Zap, Server, Inbox
 } from 'lucide-react';
+import ModerationCenter from './ModerationCenter';
+import { showToast } from '../lib/apiClient';
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
 import ChainForm from './ChainForm';
@@ -24,7 +26,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
   const [editingEvent, setEditingEvent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'events' | 'settings' | 'metrics' | 'places' | 'chains' | 'vibes' | 'flows'>('users');
+  const [activeTab, setActiveTab] = useState<'moderation' | 'users' | 'events' | 'settings' | 'metrics' | 'places' | 'chains' | 'vibes' | 'flows'>('moderation');
+  const [crawlerUrl, setCrawlerUrl] = useState('https://calendar.iranfair.com/fa');
   const [places, setPlaces] = useState<any[]>([]);
   const [chains, setChains] = useState<any[]>([]);
   const [vibes, setVibes] = useState<any[]>([]);
@@ -172,11 +175,11 @@ export default function AdminPanel() {
     try {
       const res = await fetch('/api/admin/cache', { method: 'DELETE' });
       if (res.ok) {
-        alert('کش سیستم با موفقیت پاکسازی شد.');
+        showToast('کش سیستم با موفقیت پاکسازی شد.', 'success');
         fetchMetrics();
       }
     } catch (e) {
-      alert('خطا در پاکسازی کش');
+      showToast('خطا در پاکسازی کش', 'error');
     } finally {
       setActionLoading(false);
     }
@@ -188,15 +191,17 @@ export default function AdminPanel() {
       const res = await fetch('/api/jobs/crawler', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'https://calendar.iranfair.com/fa' })
+        body: JSON.stringify({ url: crawlerUrl })
       });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const data = await res.json();
         setAsyncJob({ id: data.jobId, progress: 10, status: 'RUNNING' });
         pollJobStatus(data.jobId);
+      } else {
+        showToast(data.error || 'خطا در شروع فرآیند پس‌زمینه', 'error');
       }
     } catch (e) {
-      alert('خطا در شروع فرآیند پس‌زمینه');
+      showToast('خطا در شروع فرآیند پس‌زمینه', 'error');
     } finally {
       setActionLoading(false);
     }
@@ -212,6 +217,7 @@ export default function AdminPanel() {
           setAsyncJob(job);
           if (job.status === 'COMPLETED' || job.status === 'FAILED') {
             clearInterval(pollInterval);
+            showToast(job.status === 'COMPLETED' ? (job.result?.message || 'خزش انجام شد.') : `خزش ناموفق بود: ${job.error || ''}`, job.status === 'COMPLETED' ? 'success' : 'error');
             fetchData();
           }
         }
@@ -231,12 +237,13 @@ export default function AdminPanel() {
       });
       if (res.ok) {
         setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+        showToast('نقش کاربر تغییر کرد.', 'success');
       } else {
-        alert('خطا در تغییر نقش کاربر');
+        showToast('خطا در تغییر نقش کاربر', 'error');
       }
     } catch (err) {
       console.error(err);
-      alert('خطا در ارسال درخواست');
+      showToast('خطا در ارسال درخواست', 'error');
     } finally {
       setUpdating(null);
     }
@@ -353,6 +360,18 @@ export default function AdminPanel() {
       {/* Tabs Header */}
       <div className="flex border-b border-gray-300 dark:border-white/10 gap-2 overflow-x-auto" dir="rtl">
         <button
+          onClick={() => setActiveTab('moderation')}
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+            activeTab === 'moderation'
+              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          }`}
+        >
+          <Inbox className="w-4 h-4" />
+          کارهای در انتظار{stats?.pendingOrganizerRequests ? ` (${toPersianDigits(stats.pendingOrganizerRequests)})` : ''}
+        </button>
+
+        <button
           onClick={() => setActiveTab('users')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
             activeTab === 'users'
@@ -447,7 +466,9 @@ export default function AdminPanel() {
 
       {/* Tab Contents */}
       <div>
-        {activeTab === 'metrics' ? (
+        {activeTab === 'moderation' ? (
+          <ModerationCenter />
+        ) : activeTab === 'metrics' ? (
           <div className="space-y-6" dir="rtl">
             {/* Live Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -538,6 +559,14 @@ export default function AdminPanel() {
                   پاکسازی فوری تمامی کش‌ها
                 </button>
 
+                <input
+                  type="url"
+                  dir="ltr"
+                  value={crawlerUrl}
+                  onChange={(e) => setCrawlerUrl(e.target.value)}
+                  aria-label="آدرس صفحه برای خزش"
+                  className="px-3 py-2 rounded-xl text-xs border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1f1f23] min-w-[220px]"
+                />
                 <button
                   onClick={triggerAsyncCrawler}
                   disabled={actionLoading || (asyncJob && asyncJob.status === 'RUNNING')}

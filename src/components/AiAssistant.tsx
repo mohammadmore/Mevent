@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, X, User as UserIcon } from 'lucide-react';
+import { Send, Sparkles, X, User as UserIcon, AlertTriangle } from 'lucide-react';
+import { api } from '../lib/apiClient';
 
 export default function AiAssistant({ onClose }: { onClose: () => void }) {
-  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([
+  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, fallback?: boolean}[]>([
     { role: 'assistant', content: 'سلام! من دستیار هوشمند Mevent هستم. دنبال چه نوع رویدادی می‌گردی؟' }
   ]);
   const [input, setInput] = useState('');
@@ -26,15 +27,12 @@ export default function AiAssistant({ onClose }: { onClose: () => void }) {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg })
-      });
-      const data = await res.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
-    } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'متاسفانه خطایی رخ داد. لطفا دوباره تلاش کنید.' }]);
+      // Recent turns give the assistant context for follow-up questions.
+      const history = messages.slice(1).slice(-8).map(m => ({ role: m.role, text: m.content }));
+      const data = await api<{ reply: string; aiGenerated: boolean }>('/api/chat', { body: { message: userMsg, history }, silent: true });
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply, fallback: !data.aiGenerated }]);
+    } catch (err: any) {
+      setMessages(prev => [...prev, { role: 'assistant', content: err?.status === 429 ? 'تعداد پیام‌ها زیاد بود؛ چند ثانیه دیگر دوباره بپرسید.' : 'متاسفانه خطایی رخ داد. لطفا دوباره تلاش کنید.', fallback: true }]);
     } finally {
       setLoading(false);
     }
@@ -62,10 +60,15 @@ export default function AiAssistant({ onClose }: { onClose: () => void }) {
             </div>
             <div className={`p-3 rounded-2xl max-w-[80%] text-sm leading-relaxed ${
               msg.role === 'user' 
-                ? 'bg-white/90 dark:bg-[#18181b] text-white rounded-tl-none' 
-                : 'bg-white/90 dark:bg-[#18181b] text-gray-200 border border-gray-200 dark:border-white/10 shadow-sm rounded-tr-none whitespace-pre-wrap'
+                ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black rounded-tl-none'
+                : 'bg-white dark:bg-[#18181b] text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-white/10 shadow-sm rounded-tr-none whitespace-pre-wrap'
             }`}>
               {msg.content}
+              {msg.fallback && (
+                <span className="mt-2 flex items-center gap-1 text-[11px] text-amber-600 dark:text-amber-400">
+                  <AlertTriangle className="w-3 h-3" /> پاسخ خودکار؛ دستیار هوشمند فعلاً در دسترس نیست.
+                </span>
+              )}
             </div>
           </div>
         ))}
@@ -88,7 +91,8 @@ export default function AiAssistant({ onClose }: { onClose: () => void }) {
         <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-full px-2 py-1.5 focus-within:border-teal-600 dark:border-[#d9ff00] focus-within:ring-1 focus-within:ring-teal-600 dark:ring-[#d9ff00] transition-all">
           <input 
             type="text"
-            className="flex-1 bg-transparent border-none outline-none px-3 text-sm"
+            className="flex-1 bg-transparent border-none outline-none px-3 text-sm text-gray-900 dark:text-gray-100"
+            aria-label="پیام شما"
             placeholder="سوالت رو اینجا بپرس..."
             value={input}
             onChange={e => setInput(e.target.value)}

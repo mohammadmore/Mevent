@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { useToast, ToastContainer } from './Toast';
+import { useToast } from './Toast';
 import { 
   Store, MapPin, Clock, Plus, Trash2,
   Wifi, BatteryCharging, Car, Sun, Wind, Utensils, Coffee, Dog, Users, 
@@ -75,7 +75,7 @@ const BUSINESS_TYPES = [
 
 export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
   const { user } = useAuth();
-  const { toasts, addToast, removeToast } = useToast();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialData || {
     name: '',
@@ -230,7 +230,6 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           

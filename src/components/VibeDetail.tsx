@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../lib/apiClient';
 import { ArrowRight, Sparkles, Map } from 'lucide-react';
 
 interface VibeDetailProps {
@@ -10,8 +11,7 @@ export function VibeDetail({ vibe, onBack }: VibeDetailProps) {
   const [vibeData, setVibeData] = useState<any>(null);
   
   useEffect(() => {
-    fetch(`/api/vibes/${vibe.id}`)
-      .then(res => res.json())
+    api(`/api/vibes/${vibe.id}`, { silent: true })
       .then(data => setVibeData(data.data ? data.data : data))
       .catch(console.error);
   }, [vibe.id]);

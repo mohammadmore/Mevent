@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Event } from '../types';
 import { useAuth } from '../lib/AuthContext';
-import { useToast } from './Toast';
-import { ArrowRight, MapPin, Map, Calendar, Clock, DollarSign, Share2, Heart, Tag, ArrowLeft, Ticket, ExternalLink, CheckCircle, X, Info, Sparkles } from 'lucide-react';
+import { ArrowRight, MapPin, Map, Calendar, Clock, DollarSign, Share2, Heart, Tag, Ticket, ExternalLink, CheckCircle, X, Info, Sparkles, Flag, Users } from 'lucide-react';
+import { api, showToast } from '../lib/apiClient';
+import { promptDialog } from '../lib/dialog';
+import { absoluteUrl } from '../lib/router';
+import { useAppData } from '../lib/appData';
+import { formatDateParts, fuzzyTimeLabel, pNum } from '../lib/format';
+import { tehranParts } from '../lib/time';
+
+export const REPORT_REASONS = ['اطلاعات نادرست یا گمراه‌کننده', 'کلاهبرداری یا فروش بلیت جعلی', 'محتوای نامناسب یا توهین‌آمیز', 'رویداد لغو شده است', 'تکراری یا اسپم'];
 import { getEventBackgroundIcon } from '../lib/icons';
 import { PriceWidget } from './PriceWidget';
 
@@ -18,18 +25,8 @@ interface EventDetailProps {
 }
 
 
-const formatDetailDate = (dateString: string | Date) => {
-  try {
-    const d = new Date(dateString);
-    const parts = new Intl.DateTimeFormat('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', calendar: 'persian' }).formatToParts(d);
-    const dict = Object.fromEntries(parts.map(p => [p.type, p.value]));
-    const datePart = `${dict.weekday} ${dict.day} ${dict.month} ${dict.year}`;
-    const timePart = new Intl.DateTimeFormat('fa-IR', { timeStyle: 'short', calendar: 'persian' }).format(d);
-    return { datePart, timePart };
-  } catch(e) {
-    return { datePart: '', timePart: '' };
-  }
-};
+// Dates are shown in Iran time for every visitor.
+const formatDetailDate = (dateString: string | Date) => formatDateParts(dateString);
 const advancedLabels: Record<string, string> = {
 
   director: 'کارگردان',
@@ -78,15 +75,11 @@ const advancedLabels: Record<string, string> = {
 
 export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave, onRsvp, isRsvp, onOrganizerClick }: EventDetailProps) {
 
-  const eventDate = new Date(event.startTime);
-
-  const [showToast, setShowToast] = React.useState(false);
   const [advancedFieldsConfig, setAdvancedFieldsConfig] = React.useState<any[]>([]);
   const [basicFieldsConfig, setBasicFieldsConfig] = React.useState<any[]>([]);
   
   React.useEffect(() => {
-    fetch('/api/admin/settings')
-      .then(res => res.json())
+    api('/api/admin/settings', { silent: true })
       .then(data => {
         if (data.data?.event_basic_fields) {
           setBasicFieldsConfig(data.data.event_basic_fields);
@@ -111,8 +104,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
   }, [event.id]);
 
   React.useEffect(() => {
-    fetch(`/api/events/${event.id}/similar`)
-      .then(res => res.json())
+    api(`/api/events/${event.id}/similar`, { silent: true })
       .then(data => {
         if (data && data.data) {
           setSimilarEvents(data.data);
@@ -120,8 +112,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       })
       .catch(console.error);
 
-    fetch(`/api/events/${event.id}/nearby-places`)
-      .then(res => res.json())
+    api(`/api/events/${event.id}/nearby-places`, { silent: true })
       .then(data => {
         if (data && data.data) {
           // Filter by time and assign tags
@@ -146,10 +137,13 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             if (end >= 1 && end <= 11) end += 12;
             if (start >= 1 && start <= 5) start += 12;
             
+            // Opening hours are local (Tehran) wall-clock times, so compare in Tehran time.
             const eventStart = new Date(event.startTime);
-            const eventStartHour = eventStart.getHours() + (eventStart.getMinutes() / 60);
+            const startParts = tehranParts(eventStart);
+            const eventStartHour = startParts.hour + startParts.minute / 60;
             const eventEnd = event.endTime ? new Date(event.endTime) : new Date(eventStart.getTime() + 2 * 60 * 60 * 1000);
-            const eventEndHour = eventEnd.getHours() + (eventEnd.getMinutes() / 60);
+            const endParts = tehranParts(eventEnd);
+            const eventEndHour = endParts.hour + endParts.minute / 60;
             
             const isOpenAt = (hour: number) => {
                const h = (hour + 24) % 24;
@@ -191,8 +185,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       })
       .catch(console.error);
   }, [event.id]);
-  const { user, dbUserId } = useAuth();
-  const { addToast } = useToast();
+  const { dbUserId } = useAuth();
+  const { requireLogin } = useAppData();
   
   const getFieldLabel = (name: string, defaultLabel: string) => {
     return basicFieldsConfig.find(f => f.name === name)?.label || defaultLabel;
@@ -202,41 +196,44 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
     if (dbUserId) {
       try {
         // Sharing is rewarded once per event; the server decides whether points are due.
-        const res = await fetch('/api/interactions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ eventId: event.id, type: 'SHARE' })
-        });
-        const data = res.ok ? await res.json() : null;
+        const data = await api<any>('/api/interactions', { body: { eventId: event.id, type: 'SHARE' }, silent: true });
         if (data?.pointsAwarded > 0) {
-          addToast(`${data.pointsAwarded.toLocaleString('fa-IR')} امتیاز بابت اشتراک‌گذاری رویداد دریافت کردید!`, 'success');
+          showToast(`${pNum(data.pointsAwarded)} امتیاز بابت اشتراک‌گذاری رویداد دریافت کردید!`, 'success');
         }
       } catch (err) {}
     }
 
+    // Always share the event's own address, not whatever page the user is on.
+    const url = absoluteUrl(`/events/${event.id}`);
     if (navigator.share) {
-      navigator.share({
-        title: event.title,
-        text: event.description,
-        url: window.location.href,
-      }).catch(console.error);
+      navigator.share({ title: event.title, text: event.description, url }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      });
+      navigator.clipboard.writeText(url).then(() => showToast('لینک رویداد کپی شد', 'success')).catch(() => {});
     }
   };
+
+  const handleReport = async () => {
+    if (!requireLogin()) return;
+    const reason = await promptDialog({
+      title: 'گزارش تخلف',
+      message: 'چه مشکلی در این رویداد وجود دارد؟ گزارش شما توسط مدیران بررسی می‌شود.',
+      choices: REPORT_REASONS,
+      placeholder: 'یا دلیل را بنویسید...',
+      confirmText: 'ارسال گزارش',
+    });
+    if (!reason) return;
+    api<any>('/api/reports', { body: { targetType: 'EVENT', targetId: event.id, reason } })
+      .then(res => showToast(res.message, 'success'))
+      .catch(() => {});
+  };
+
+  const seatsLeft = typeof event.seatsLeft === 'number' ? event.seatsLeft : null;
+  const soldOut = seatsLeft === 0 && !isRsvp;
 
   const isCinema = event.tags?.includes('سینما');
 
   return (
     <>
-      {showToast && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white dark:bg-[#18181b] text-gray-900 dark:text-white px-4 py-2 rounded-full z-50 text-sm shadow-lg animate-in fade-in slide-in-from-top-2">
-          لینک رویداد کپی شد
-        </div>
-      )}
     <div ref={containerRef} className="fixed inset-0 bg-gradient-to-br from-teal-50/95 via-white to-cyan-50/95 dark:from-[#18181b] dark:via-[#18181b] dark:to-[#18181b] z-[100] overflow-y-auto flex flex-col animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {/* Header Image & Actions */}
       {event.imageUrl ? (
@@ -264,7 +261,15 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             
             <div className="flex items-center gap-2">
               <button 
+                onClick={handleReport}
+                aria-label="گزارش تخلف"
+                className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10"
+              >
+                <Flag className="w-5 h-5" />
+              </button>
+              <button 
                 onClick={handleShare}
+                aria-label="اشتراک‌گذاری"
                 className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10"
               >
                 <Share2 className="w-5 h-5" />
@@ -291,7 +296,15 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           </button>
           <div className="flex items-center gap-2">
             <button 
+              onClick={handleReport}
+              aria-label="گزارش تخلف"
+              className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
+            >
+              <Flag className="w-5 h-5" />
+            </button>
+            <button 
               onClick={handleShare}
+              aria-label="اشتراک‌گذاری"
               className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
             >
               <Share2 className="w-5 h-5" />
@@ -325,7 +338,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             <img loading="lazy" src={`https://api.dicebear.com/7.x/notionists/svg?seed=${event.organizerId || event.title}&backgroundColor=transparent`} alt="Organizer" className="w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
             <div className="flex flex-col">
               <span className="text-xs text-gray-600 dark:text-gray-400">برگزارکننده اصلی</span>
-              <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">مجری رویداد</span>
+              <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">{event.organizer?.name || 'مجری رویداد'}</span>
             </div>
           </div>
           
@@ -357,7 +370,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </div>
             <div>
               <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">تاریخ و زمان</h3>
-              {event.startTime ? <><p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{formatDetailDate(event.startTime).datePart}</p><p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ساعت {formatDetailDate(event.startTime).timePart}</p></> : <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{(event.fuzzyTime?.startsWith('{') ? JSON.parse(event.fuzzyTime).label : event.fuzzyTime) || 'زمان نامشخص'}</p>}
+              {event.startTime ? <><p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{formatDetailDate(event.startTime).datePart}</p><p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ساعت {formatDetailDate(event.startTime).timePart}</p></> : <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{fuzzyTimeLabel(event.fuzzyTime) || 'زمان نامشخص'}</p>}
             </div>
           </div>}
           {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10">
@@ -465,7 +478,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                     <h4 className="font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{simEvent.title}</h4>
                     <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-500 dark:text-gray-400">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span className="truncate">{simEvent.fuzzyTime ? (simEvent.fuzzyTime.startsWith("{") ? JSON.parse(simEvent.fuzzyTime).label : simEvent.fuzzyTime) : (simEvent.startTime ? formatDetailDate(simEvent.startTime).datePart : "زمان نامشخص")}</span>
+                      <span className="truncate">{fuzzyTimeLabel(simEvent.fuzzyTime) || (simEvent.startTime ? formatDetailDate(simEvent.startTime).datePart : "زمان نامشخص")}</span>
                     </div>
                   </div>
                 </div>
@@ -513,7 +526,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                         <span>{place.workingHours || 'ساعت کاری نامشخص'}</span>
                       </div>
                       <div className="flex items-center gap-1 font-medium text-orange-500 dark:text-[#d9ff00]">
-                        <span>{Math.round(place.distance * 10) / 10} کیلومتر</span>
+                        <span>{place.distance != null ? `${pNum(Math.round(place.distance * 10) / 10)} کیلومتر` : place.city}</span>
                       </div>
                     </div>
                   </div>
@@ -637,12 +650,18 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       {/* Fixed Bottom Bar for Action */}
       <div className="sticky bottom-0 w-full p-4 bg-white dark:bg-[#18181b] border-t border-gray-200 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 mt-auto">
         <div className="max-w-md mx-auto w-full">
+        {seatsLeft !== null && !event.ticketUrl && (
+          <p className={`text-xs text-center mb-2 flex items-center justify-center gap-1 ${seatsLeft <= 10 ? 'text-orange-600 font-bold' : 'text-gray-500'}`}>
+            <Users className="w-3.5 h-3.5" /> {seatsLeft === 0 ? 'ظرفیت این رویداد تکمیل شده است' : `${pNum(seatsLeft)} جای خالی از ${pNum(event.capacity)}`}
+          </p>
+        )}
         <button 
+          disabled={soldOut}
           onClick={(e) => event.cost > 0 || event.ticketUrl ? onBuyTicket(e, event) : onRsvp(e, event)}
-          className={`w-full ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
+          className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
         >
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
-          {event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : (event.cost > 0 ? 'خرید بلیت' : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
+          {event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'خرید بلیت بیشتر' : 'خرید بلیت') : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
         </button>
         </div>
       </div>

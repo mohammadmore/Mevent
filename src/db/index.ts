@@ -6,6 +6,7 @@ const { Pool } = pg;
 
 declare global {
   var _postgresPool: pg.Pool | undefined;
+  var _dbReady: Promise<void> | undefined;
 }
 
 export const createPool = () => {
@@ -23,8 +24,9 @@ export const createPool = () => {
       console.error('Unexpected error on idle SQL pool client:', err);
     });
 
-    // Auto-create columns and database indexes on startup
-    initDatabaseSchemaAndIndexes().catch(err => {
+    // Auto-create columns, tables and indexes on startup. The server awaits `dbReady`
+    // before accepting traffic so no request hits a half-migrated schema.
+    global._dbReady = initDatabaseSchemaAndIndexes().catch(err => {
       console.warn('Database schema/index initialization warning:', err.message);
     });
   }
@@ -67,14 +69,114 @@ async function initDatabaseSchemaAndIndexes() {
     "ALTER TABLE hubs ADD COLUMN IF NOT EXISTS followers_count INTEGER DEFAULT 0;",
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;",
     "ALTER TABLE places ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;",
-    "ALTER TABLE vibes ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;"
+    "ALTER TABLE vibes ADD COLUMN IF NOT EXISTS advanced_details JSONB DEFAULT '{}'::jsonb;",
+    "ALTER TABLE places ADD COLUMN IF NOT EXISTS created_by_id INTEGER;",
+    "ALTER TABLE vibes ADD COLUMN IF NOT EXISTS created_by_id INTEGER;",
+    "ALTER TABLE flows ADD COLUMN IF NOT EXISTS created_by_id INTEGER;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS invite_code TEXT UNIQUE;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_id INTEGER;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS organizer_status TEXT NOT NULL DEFAULT 'NONE';",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS organizer_request_note TEXT;",
+    "UPDATE users SET organizer_status = 'APPROVED' WHERE role IN ('ORGANIZER', 'ADMIN') AND organizer_status = 'NONE';",
+    "UPDATE users SET invite_code = upper(substr(md5(random()::text || id::text), 1, 8)) WHERE invite_code IS NULL;",
+    `CREATE TABLE IF NOT EXISTS orders (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      event_id INTEGER NOT NULL REFERENCES events(id),
+      quantity INTEGER NOT NULL DEFAULT 1,
+      subtotal INTEGER NOT NULL,
+      discount INTEGER NOT NULL DEFAULT 0,
+      points_used INTEGER NOT NULL DEFAULT 0,
+      amount INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      gateway TEXT,
+      authority TEXT,
+      ref_id TEXT,
+      expires_at TIMESTAMP,
+      paid_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS order_id INTEGER;",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'ACTIVE';",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS code TEXT UNIQUE;",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS holder_label TEXT;",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS used_at TIMESTAMP;",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP;",
+    "UPDATE tickets SET code = upper(substr(md5(random()::text || id::text), 1, 10)) WHERE code IS NULL;",
+    `CREATE TABLE IF NOT EXISTS hub_members (
+      hub_id INTEGER NOT NULL REFERENCES hubs(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT now(),
+      PRIMARY KEY (hub_id, user_id)
+    );`,
+    `CREATE TABLE IF NOT EXISTS trips (
+      id TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      city TEXT NOT NULL,
+      data JSONB NOT NULL,
+      is_public BOOLEAN NOT NULL DEFAULT true,
+      created_at TIMESTAMP DEFAULT now(),
+      updated_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS notifications (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT,
+      url TEXT,
+      dedupe_key TEXT UNIQUE,
+      read_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      endpoint TEXT NOT NULL UNIQUE,
+      keys JSONB NOT NULL,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS reports (
+      id SERIAL PRIMARY KEY,
+      reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      target_type TEXT NOT NULL,
+      target_id INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      details TEXT,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      resolved_by_id INTEGER,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS point_transactions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      delta INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      ref_type TEXT,
+      ref_id INTEGER,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE UNLOGGED TABLE IF NOT EXISTS cache_entries (
+      key TEXT PRIMARY KEY,
+      value JSONB NOT NULL,
+      expires_at TIMESTAMP NOT NULL
+    );`,
+    `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
+      key TEXT PRIMARY KEY,
+      count INTEGER NOT NULL,
+      reset_at TIMESTAMP NOT NULL
+    );`
   ];
 
   for (const q of alterQueries) {
     try {
       await adminPool.query(q);
-    } catch (e) {
-      // Ignore if column exists or permission restricted
+    } catch (e: any) {
+      // Ignore if column exists or permission restricted, but make real problems visible.
+      if (!/already exists|duplicate/i.test(e?.message || '')) {
+        console.warn('Schema migration step failed:', e?.message, '\n', q.slice(0, 120));
+      }
     }
   }
 
@@ -84,6 +186,15 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_interactions_user_type ON interactions (user_id, type);',
     'CREATE INDEX IF NOT EXISTS idx_tickets_event_id ON tickets (event_id);',
     'CREATE INDEX IF NOT EXISTS idx_users_uid ON users (uid);',
+    'CREATE INDEX IF NOT EXISTS idx_events_city_status ON events (city, status);',
+    'CREATE INDEX IF NOT EXISTS idx_places_city_status ON places (city, status);',
+    'CREATE INDEX IF NOT EXISTS idx_orders_authority ON orders (authority);',
+    'CREATE INDEX IF NOT EXISTS idx_orders_status_expires ON orders (status, expires_at);',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets (user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications (user_id, created_at);',
+    'CREATE INDEX IF NOT EXISTS idx_point_tx_user ON point_transactions (user_id, created_at);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_reports_reporter_target ON reports (reporter_id, target_type, target_id);',
+    'CREATE INDEX IF NOT EXISTS idx_trips_user ON trips (user_id);',
   ];
 
   for (const query of indexQueries) {
@@ -103,3 +214,5 @@ async function initDatabaseSchemaAndIndexes() {
 
 const pool = createPool();
 export const db = drizzle(pool, { schema });
+export const dbReady: Promise<void> = global._dbReady || Promise.resolve();
+export type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
