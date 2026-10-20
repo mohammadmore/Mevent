@@ -1,0 +1,2 @@
+sed -i 's/{event.fuzzyTime || (event.startTime ? formatEventDate(event.startTime) : "زمان نامشخص")}/{event.fuzzyTime ? (event.fuzzyTime.startsWith("{") ? JSON.parse(event.fuzzyTime).label : event.fuzzyTime) : (event.startTime ? formatEventDate(event.startTime) : "زمان نامشخص")}/g' src/App.tsx
+sed -i 's/{event.fuzzyTime || (event.startTime ? (/[()]/g}/{event.fuzzyTime ? (event.fuzzyTime.startsWith("{") ? JSON.parse(event.fuzzyTime).label : event.fuzzyTime) : (event.startTime ? .../g' src/components/OrganizerPublicProfile.tsx

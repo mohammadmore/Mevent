@@ -1,0 +1,83 @@
+--- server.ts
++++ server.ts
+@@ -375,32 +375,35 @@
+   app.post('/api/crawler/run', async (req, res) => {
+     try {
+       const { url } = req.body;
+-      const targetUrl = url || 'https://en.wikipedia.org/wiki/List_of_hacker_conventions';
++      const targetUrl = url || 'https://iranfair.com';
+       
+-      const cheerio = await import('cheerio');
+-      const fetchRes = await fetch(targetUrl);
+-      const html = await fetchRes.text();
+-      const $ = cheerio.load(html);
+-      const textContext = $('body').text().replace(/\s+/g, ' ').substring(0, 5000);
+-
+-      const prompt = `Extract ONE realistic event from the following text and adapt it to be a localized event in Tehran, Iran. Translate the title and description to Persian. Return a JSON object with: title, description, startTime (ISO string next week), address (in Tehran), lat (around 35.7), lng (around 51.4), cost (number in Tomans). \n\nText Context: ${textContext}`;
++      const prompt = `Search the web for the upcoming exhibitions (لیست نمایشگاه‌های امسال) on ${targetUrl} (Tehran International Exhibition). Extract ALL upcoming events. Return a JSON object with an 'events' array containing each event: title, description, startTime (ISO string), address (in Tehran), lat (around 35.79 - Tehran International Exhibition Center), lng (around 51.4), cost (number in Tomans, usually 0 for general or standard entry fee).`;
+       
+       const aiResponse = await ai.models.generateContent({
+-        model: "gemini-3.6-flash",
++        model: "gemini-pro-latest",
+         contents: prompt,
+         config: {
++          tools: [{ googleSearch: {} }],
+           responseMimeType: "application/json",
+           responseSchema: {
+             type: Type.OBJECT,
+             properties: {
+-              title: { type: Type.STRING },
+-              description: { type: Type.STRING },
+-              startTime: { type: Type.STRING },
+-              address: { type: Type.STRING },
+-              lat: { type: Type.NUMBER },
+-              lng: { type: Type.NUMBER },
+-              cost: { type: Type.NUMBER },
++              events: {
++                type: Type.ARRAY,
++                items: {
++                  type: Type.OBJECT,
++                  properties: {
++                    title: { type: Type.STRING },
++                    description: { type: Type.STRING },
++                    startTime: { type: Type.STRING },
++                    address: { type: Type.STRING },
++                    lat: { type: Type.NUMBER },
++                    lng: { type: Type.NUMBER },
++                    cost: { type: Type.NUMBER },
++                  }
++                }
++              }
+             }
+           }
+         }
+       });
+       
+-      const eventData = JSON.parse(aiResponse.text || "{}");
++      const data = JSON.parse(aiResponse.text || "{}");
++      const events = data.events || [];
+       const { createEvent } = await import('./src/db/events.ts');
+-      const newEvent = await createEvent({
+-        ...eventData,
+-        startTime: new Date(eventData.startTime),
+-        source: 'CRAWLER',
+-        tags: ['#خزشگر', '#تکنولوژی', '#تهران'],
+-        organizerId: 1
+-      });
++      
++      const newEvents = [];
++      for (const eventData of events) {
++        const newEvent = await createEvent({
++          ...eventData,
++          startTime: new Date(eventData.startTime || new Date()),
++          source: 'CRAWLER',
++          tags: ['#نمایشگاه', '#تهران', '#خزشگر'],
++          organizerId: 1
++        });
++        newEvents.push(newEvent);
++      }
+       
+-      res.json({ message: 'خزشگر با موفقیت محتوا را خواند و یک رویداد ساخت.', data: newEvent });
++      res.json({ message: `خزشگر با موفقیت ${newEvents.length} رویداد ساخت.`, data: newEvents });
+     } catch (err) {
+       console.error(err);
