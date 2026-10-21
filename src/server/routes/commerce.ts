@@ -60,14 +60,18 @@ export async function expireStaleOrders() {
   for (const o of stale) await db.transaction(tx => failOrder(tx, o.id, 'EXPIRED'));
 }
 
-function orderNotification(order: { id: number; eventId: number }, eventTitle: string) {
-  return {
+/** In-app + push + SMS (with the entry codes) once an order's tickets are issued. */
+async function notifyOrderPaid(order: { id: number; userId: number }, eventTitle: string) {
+  const codes = await db.select({ code: tickets.code }).from(tickets)
+    .where(and(eq(tickets.orderId, order.id), eq(tickets.status, 'ACTIVE')));
+  await notify(order.userId, {
     type: 'TICKET',
     title: 'بلیت شما صادر شد',
     body: `بلیت «${eventTitle}» آماده است. کد ورود را در بخش بلیت‌های من ببینید.`,
     url: '/tickets',
     dedupeKey: `order-paid:${order.id}`,
-  };
+    sms: { kind: 'TICKET', params: { title: eventTitle, code: codes.map(c => c.code).join('-') } },
+  });
 }
 
 export function registerCommerceRoutes(app: Express) {
@@ -156,7 +160,7 @@ export function registerCommerceRoutes(app: Express) {
     invalidateCachePattern('leaderboard');
 
     if (body.paid) {
-      notify(userId, orderNotification({ id: body.data.orderId, eventId }, body.eventTitle)).catch(() => {});
+      notifyOrderPaid({ id: body.data.orderId, userId }, body.eventTitle).catch(() => {});
       return res.status(201).json({ ...body, message: 'بلیت با موفقیت صادر شد.' });
     }
 
@@ -194,7 +198,7 @@ export function registerCommerceRoutes(app: Express) {
       return res.redirect(`/tickets?payment=failed&order=${order.id}`);
     }
     await db.transaction(tx => completeOrder(tx, order.id, verification.refId));
-    notify(order.userId, orderNotification(order, event?.title || 'رویداد')).catch(() => {});
+    notifyOrderPaid(order, event?.title || 'رویداد').catch(() => {});
     invalidateCachePattern('admin_stats');
     res.redirect(`/tickets?payment=success&order=${order.id}`);
   }));

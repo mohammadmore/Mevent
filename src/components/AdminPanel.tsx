@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import ModerationCenter from './ModerationCenter';
 import { SiteInfoForm } from './admin/SiteInfoForm';
+import { SmsOutboxCard } from './admin/SmsOutboxCard';
 import { showToast } from '../lib/apiClient';
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
@@ -554,6 +555,7 @@ export default function AdminPanel() {
                   </ul>
                 )}
               </div>
+              <SmsOutboxCard />
             </div>
 
             {/* Cache Control & Background Job Trigger */}

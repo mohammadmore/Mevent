@@ -183,6 +183,22 @@ async function initDatabaseSchemaAndIndexes() {
       last_seen_at TIMESTAMP DEFAULT now(),
       created_at TIMESTAMP DEFAULT now()
     );`,
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS sms_reminders BOOLEAN NOT NULL DEFAULT true;",
+    `CREATE TABLE IF NOT EXISTS sms_messages (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      phone TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      params JSONB NOT NULL DEFAULT '{}'::jsonb,
+      dedupe_key TEXT UNIQUE,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      attempts INTEGER NOT NULL DEFAULT 0,
+      provider TEXT,
+      last_error TEXT,
+      next_attempt_at TIMESTAMP NOT NULL DEFAULT now(),
+      sent_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -218,6 +234,7 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_trips_user ON trips (user_id);',
     'CREATE INDEX IF NOT EXISTS idx_otp_phone_created ON otp_codes (phone, created_at);',
     'CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_sms_status_next ON sms_messages (status, next_attempt_at);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

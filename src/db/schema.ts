@@ -27,6 +27,8 @@ export const users = pgTable('users', {
   // Organizer upgrade requests are reviewed by an admin: NONE | PENDING | APPROVED | REJECTED
   organizerStatus: text('organizer_status').default('NONE').notNull(),
   organizerRequestNote: text('organizer_request_note'),
+  /** Event reminder SMS (ticket and account SMS are always sent). */
+  smsReminders: boolean('sms_reminders').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -371,3 +373,21 @@ export const sessions = pgTable('sessions', {
   lastSeenAt: timestamp('last_seen_at').defaultNow(),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_sessions_user').on(t.userId)]);
+
+// Outgoing SMS (tickets, reminders, event changes). One row per message; dedupe_key makes sending
+// idempotent across instances and retries. status: PENDING | SENDING | SENT | FAILED | SKIPPED
+export const smsMessages = pgTable('sms_messages', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+  phone: text('phone').notNull(),
+  kind: text('kind').notNull(),
+  params: jsonb('params').default('{}').notNull(),
+  dedupeKey: text('dedupe_key').unique(),
+  status: text('status').default('PENDING').notNull(),
+  attempts: integer('attempts').default(0).notNull(),
+  provider: text('provider'),
+  lastError: text('last_error'),
+  nextAttemptAt: timestamp('next_attempt_at').defaultNow().notNull(),
+  sentAt: timestamp('sent_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_sms_status_next').on(t.status, t.nextAttemptAt)]);

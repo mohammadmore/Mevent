@@ -1,7 +1,9 @@
 import { Express } from 'express';
-import { eq, desc, sql, and, gte, lt } from 'drizzle-orm';
+import { eq, desc, sql, and, gte, lt, inArray } from 'drizzle-orm';
+import { retrySms } from '../../lib/smsOutbox.ts';
+import { maskMobile } from '../../lib/phone.ts';
 import { db } from '../../db/index.ts';
-import { users, events, tickets, orders, settings, places, chains, vibes, flows } from '../../db/schema.ts';
+import { users, events, tickets, orders, settings, places, chains, vibes, flows, smsMessages } from '../../db/schema.ts';
 import { createEvent } from '../../db/events.ts';
 import { AuthRequest, requireAdmin } from '../../middleware/auth.ts';
 import { asyncRoute, limiters, metrics, createJob, saveJob, getJob } from '../infra.ts';
@@ -121,6 +123,20 @@ export function registerAdminRoutes(app: Express) {
     }
     await db.insert(settings).values({ key, value }).onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
     res.json({ success: true, message: 'تنظیمات با موفقیت به روز شد.' });
+  }));
+
+  // SMS outbox: counts by status, recent problems, and a retry button.
+  app.get('/api/admin/sms', requireAdmin, asyncRoute(async (req, res) => {
+    const counts = await db.select({ status: smsMessages.status, count: sql<number>`count(*)::int` }).from(smsMessages)
+      .where(sql`${smsMessages.createdAt} > now() - interval '7 days'`).groupBy(smsMessages.status);
+    const problems = await db.select().from(smsMessages).where(inArray(smsMessages.status, ['FAILED', 'SKIPPED']))
+      .orderBy(desc(smsMessages.id)).limit(50);
+    res.json({ data: { counts: Object.fromEntries(counts.map(c => [c.status, Number(c.count)])), problems: problems.map(p => ({ ...p, phone: maskMobile(p.phone) })) } });
+  }));
+
+  app.post('/api/admin/sms/retry', requireAdmin, asyncRoute(async (req, res) => {
+    const ids = (Array.isArray(req.body?.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger).slice(0, 500);
+    res.json({ data: { retried: await retrySms(ids) } });
   }));
 
   app.put('/api/admin/site-info', requireAdmin, asyncRoute(async (req, res) => {

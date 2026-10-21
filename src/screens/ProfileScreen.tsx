@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone } from 'lucide-react';
+import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare } from 'lucide-react';
 import GamificationPanel from '../components/GamificationPanel';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { useAppData } from '../lib/appData';
@@ -67,6 +67,15 @@ export function ProfileScreen() {
       setProfile(res.data);
       showToast(res.message, 'success');
     } catch { /* toast shown */ }
+  };
+
+  const setSmsReminders = async (on: boolean) => {
+    setProfile(p => (p ? { ...p, smsReminders: on } as any : p));
+    try {
+      await api('/api/users/me/sms-preferences', { method: 'PUT', body: { reminders: on } });
+    } catch {
+      setProfile(p => (p ? { ...p, smsReminders: !on } as any : p));
+    }
   };
 
   const signOutOthers = async () => {
@@ -165,6 +174,13 @@ export function ProfileScreen() {
               <Smartphone className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
               <span><span className="block font-bold text-gray-900 dark:text-gray-100">اتصال شماره موبایل</span><span className="text-xs text-gray-500">ورود با پیامک، حتی وقتی ورود با گوگل در دسترس نباشد</span></span>
             </button>
+          )}
+          {profile.phone && (
+            <label className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 cursor-pointer">
+              <MessageSquare className="w-5 h-5 text-gray-500" />
+              <span className="flex-1"><span className="block font-bold text-gray-900 dark:text-gray-100">پیامک یادآوری رویدادها</span><span className="text-xs text-gray-500">یک روز قبل از رویدادهایی که در آن ثبت‌نام کرده‌اید. پیامک بلیت همیشه ارسال می‌شود.</span></span>
+              <input type="checkbox" className="w-5 h-5" checked={(profile as any).smsReminders !== false} onChange={(e) => setSmsReminders(e.target.checked)} aria-label="پیامک یادآوری رویدادها" />
+            </label>
           )}
           {profile.phone && (
             <button onClick={signOutOthers} className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:border-teal-600/50 text-right">

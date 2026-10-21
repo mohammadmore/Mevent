@@ -13,6 +13,7 @@ import { metricsMiddleware, validateInput, limiters, asyncRoute } from './src/se
 import { sendUpload, syncPendingUploads } from './src/lib/storage';
 import { startBackgroundJobs } from './src/lib/notifications';
 import { startDependencyProbes } from './src/lib/dependencies';
+import { flushSmsOutbox } from './src/lib/smsOutbox';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
 import { registerAuthRoutes, pruneOtpCodes } from './src/server/routes/auth';
@@ -118,7 +119,7 @@ async function startServer() {
   }
 
   await dbReady;
-  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads]);
+  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads, flushSmsOutbox]);
   startDependencyProbes();
 
   app.listen(PORT, '0.0.0.0', () => {

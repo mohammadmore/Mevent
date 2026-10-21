@@ -3,6 +3,8 @@ import { and, eq, gte, lte, inArray } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { notifications, pushSubscriptions, interactions, events } from '../db/schema.ts';
 import { registerDependency, isUp, reportFailure, reportSuccess } from './dependencies.ts';
+import { queueSms } from './smsOutbox.ts';
+import type { SmsKind } from './sms.ts';
 
 // In-app notifications (always) + Web Push (when VAPID keys are configured).
 
@@ -25,6 +27,8 @@ export interface NotificationInput {
   url?: string;
   /** When set, the notification is created at most once for this key (safe across instances). */
   dedupeKey?: string;
+  /** Also send this as an SMS (if the user has a phone and a template exists for the kind). */
+  sms?: { kind: SmsKind; params: Record<string, string> };
 }
 
 export async function notify(userId: number, input: NotificationInput) {
@@ -37,11 +41,15 @@ export async function notify(userId: number, input: NotificationInput) {
     dedupeKey: input.dedupeKey || null,
   }).onConflictDoNothing().returning();
 
-  // Only the instance that actually created the row sends the push, so it is never duplicated.
+  // Only the instance that actually created the row sends the push/SMS, so they are never duplicated.
   if (inserted[0] && pushEnabled) {
     sendPush(userId, { title: input.title, body: input.body, url: input.url }).catch(err =>
       console.warn('push send failed:', err?.message)
     );
+  }
+  if (inserted[0] && input.sms) {
+    queueSms({ userId, kind: input.sms.kind, params: input.sms.params, dedupeKey: `notif:${inserted[0].id}` })
+      .catch(err => console.warn('sms queue failed:', err?.message));
   }
   return inserted[0] || null;
 }
@@ -97,6 +105,8 @@ async function sendEventReminders() {
         body: `«${ev.title}» ${w.when} ساعت ${tehranTime.format(ev.startTime!)} شروع می‌شود.`,
         url: `/events/${ev.id}`,
         dedupeKey: `reminder:${w.kind}:${a.userId}:${ev.id}`,
+        // One SMS, the day before (the hour-before reminder is in-app/push only).
+        ...(w.kind === 'day' ? { sms: { kind: 'REMINDER' as const, params: { title: ev.title, when: `${w.when} ساعت ${tehranTime.format(ev.startTime!)}` } } } : {}),
       });
     }
   }
@@ -112,6 +122,7 @@ export function startBackgroundJobs(extraJobs: Array<() => Promise<void>> = []) 
       }
     }
   };
-  setTimeout(run, 10_000).unref();
-  setInterval(run, 5 * 60_000).unref();
+  const interval = Number(process.env.BACKGROUND_JOB_INTERVAL_MS) || 5 * 60_000;
+  setTimeout(run, Math.min(10_000, interval)).unref();
+  setInterval(run, interval).unref();
 }

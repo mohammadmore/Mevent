@@ -96,6 +96,13 @@ export function registerUserRoutes(app: Express) {
     res.json({ success: true, deleted: deleted.length, message: 'تاریخچه بازدیدهای شما پاک شد.' });
   }));
 
+  // Reminder SMS on/off (ticket and login SMS are always sent).
+  app.put('/api/users/me/sms-preferences', requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    if (typeof req.body?.reminders !== 'boolean') return res.status(400).json({ error: 'مقدار نامعتبر است' });
+    const [u] = await db.update(users).set({ smsReminders: req.body.reminders }).where(eq(users.id, req.dbUser!.id)).returning();
+    res.json({ data: { reminders: u.smsReminders } });
+  }));
+
   app.get('/api/users/:id/saved', requireSelfOrAdmin('id'), asyncRoute(async (req, res) => {
     res.json({ data: await formatEvents(await getSavedEvents(parseInt(req.params.id, 10))) });
   }));
