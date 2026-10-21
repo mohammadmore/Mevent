@@ -52,7 +52,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
         </div>
         <h1 className="text-2xl font-bold text-gray-100 mb-2 text-center">علایق خود را انتخاب کنید</h1>
         <p className="text-gray-400 mb-8 leading-relaxed text-center text-sm">
-          برای اینکه موتور هوش مصنوعی Mevent بهترین رویدادها را به شما پیشنهاد دهد، چند مورد از علایق خود را انتخاب کنید.
+          برای اینکه رویدادهای مناسب شما اول نمایش داده شوند، چند مورد از علایق خود را انتخاب کنید.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center">

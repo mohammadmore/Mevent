@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { Sun, Moon, MapPin, Sparkles, MessageCircle, Plane, Bell, WifiOff } from 'lucide-react';
+import { Sun, Moon, MapPin, Sparkles, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
 import { HubsPanel } from './components/HubsPanel';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -21,7 +21,7 @@ const OrganizerPanel = lazy(() => import('./components/OrganizerPanel'));
 const CreatePanel = lazy(() => import('./components/CreatePanel'));
 const MapComponent = lazy(() => import('./components/MapComponent'));
 const TripPlannerModal = lazy(() => import('./components/TripPlannerModal'));
-const AiAssistant = lazy(() => import('./components/AiAssistant'));
+const QuickSearch = lazy(() => import('./components/QuickSearch'));
 const Onboarding = lazy(() => import('./components/Onboarding'));
 
 const OVERLAY_ROUTES: Array<[string, (p: Record<string, string>) => React.ReactNode]> = [
@@ -122,7 +122,7 @@ function Shell() {
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
-  const [showAi, setShowAi] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const lastTabPath = useRef('/');
   const onboardingChecked = useRef(false);
 
@@ -263,7 +263,7 @@ function Shell() {
             activeTab={tabForPath(screenPath)}
             setActiveTab={(tab: string) => navigate(TAB_PATHS[tab] || '/')}
             profile={profile}
-            setShowAiAssistant={setShowAi}
+            setShowQuickSearch={setShowSearch}
           />
         )}
 
@@ -312,14 +312,14 @@ function Shell() {
           </main>
         </div>
 
-        {!bare && !showAi && (
-          <button onClick={() => { if (requireLogin()) setShowAi(true); }} aria-label="دستیار هوشمند" className="absolute bottom-24 left-4 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black p-3 rounded-full shadow-lg hover:scale-105 transition-transform z-30">
-            <MessageCircle className="w-6 h-6" />
+        {!bare && !showSearch && (
+          <button onClick={() => setShowSearch(true)} aria-label="جستجوی سریع" className="absolute bottom-24 left-4 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black p-3 rounded-full shadow-lg hover:scale-105 transition-transform z-30">
+            <Search className="w-6 h-6" />
           </button>
         )}
-        {showAi && (
-          <div className="absolute inset-0 z-50 bg-white/90 dark:bg-[#18181b] flex flex-col">
-            <Suspense fallback={<Spinner />}><AiAssistant onClose={() => setShowAi(false)} /></Suspense>
+        {showSearch && (
+          <div className="absolute inset-0 z-50 bg-white dark:bg-[#141417] flex flex-col">
+            <Suspense fallback={<Spinner />}><QuickSearch onClose={() => setShowSearch(false)} /></Suspense>
           </div>
         )}
 

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Compass, Users, Activity, Shield, Heart, User, PlusCircle } from 'lucide-react';
 
-export default function DockMenu({ activeTab, setActiveTab, profile, setShowAiAssistant }: any) {
+export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuickSearch }: any) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
@@ -37,7 +37,7 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowAiAs
         if (e.clientX >= rect.left && e.clientX <= rect.right) {
           const tabId = (button as HTMLElement).getAttribute('data-id');
           if (tabId && tabId !== activeTab) {
-            setShowAiAssistant(false);
+            setShowQuickSearch(false);
             setActiveTab(tabId);
           }
           break;
@@ -61,7 +61,7 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowAiAs
               key={item.id}
               data-id={item.id}
               onClick={() => {
-                setShowAiAssistant(false);
+                setShowQuickSearch(false);
                 setActiveTab(item.id);
               }}
               className="relative w-16 h-16 flex items-center justify-center outline-none group touch-none"

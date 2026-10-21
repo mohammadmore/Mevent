@@ -5,6 +5,7 @@ import { getEventBackgroundIcon } from '../lib/icons';
 import { PriceWidget } from './PriceWidget';
 import { useAppData } from '../lib/appData';
 import { eventTimeLabel, formatDistance, haversineKm, pNum } from '../lib/format';
+import { GeneratedAvatar } from './Avatar';
 
 interface EventCardProps {
   event: Event;
@@ -45,7 +46,7 @@ export function EventCard({ event, userLocation }: EventCardProps) {
       <div className="p-4 relative z-10">
         <div className="flex justify-between items-start mb-3">
           <div className="flex gap-3 min-w-0">
-            <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${event.organizerId || event.title}&backgroundColor=transparent`} alt="" className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+            <GeneratedAvatar seed={event.organizerId || event.title} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
             <div className="min-w-0">
               <h3 className="font-bold text-lg mb-1 transition-colors text-[#515739] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</h3>
               {event.organizer?.name && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{event.organizer.name}</p>}

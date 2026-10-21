@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { api, showToast } from '../lib/apiClient';
 import { ArrowRight, MapPin, Map, Clock, Calendar, CheckCircle, X, Navigation, Compass, Camera, Share2, Flag } from 'lucide-react';
 import { promptDialog } from '../lib/dialog';
@@ -6,6 +6,8 @@ import { absoluteUrl } from '../lib/router';
 import { useAppData } from '../lib/appData';
 import { REPORT_REASONS } from './EventDetail';
 import { Event } from '../types';
+import { NavigationLinks } from './NavigationLinks';
+const MiniMap = lazy(() => import('./MiniMap'));
 
 interface PlaceDetailProps {
   place: any;
@@ -257,61 +259,18 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
               </button>
             </div>
             
-            <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[320px] relative">
-              {(p.lat && p.lng) ? (
-                <iframe
-                  title="place-map"
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  style={{ border: 0, minHeight: '320px' }}
-                  src={`https://maps.google.com/maps?q=${p.lat},${p.lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                  allowFullScreen
-                />
-              ) : (
-                <iframe
-                  title="place-map-address"
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  style={{ border: 0, minHeight: '320px' }}
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(p.address || p.name)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                  allowFullScreen
-                />
-              )}
-            </div>
-            
-            <div className="p-4 bg-gray-50 dark:bg-[#1f1f23] border-t border-gray-100 dark:border-white/10 space-y-2">
-              <p className="text-xs text-gray-500 text-center mb-1">مسیریابی مستقیم در نقشه خوان‌ها:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <a 
-                  href={p.lat && p.lng ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address || p.name)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-2.5 rounded-xl text-xs text-center shadow hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Map className="w-4 h-4" />
-                  گوگل مپ
-                </a>
-                <a 
-                  href={p.lat && p.lng ? `https://neshan.org/maps/@${p.lat},${p.lng},16z` : `https://neshan.org/maps/search/${encodeURIComponent(p.address || p.name)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs text-center shadow hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Navigation className="w-4 h-4" />
-                  نشان
-                </a>
-                <a 
-                  href={p.lat && p.lng ? `https://balad.ir/location?lat=${p.lat}&lng=${p.lng}` : `https://balad.ir/search?q=${encodeURIComponent(p.address || p.name)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs text-center shadow hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Compass className="w-4 h-4" />
-                  بلد
-                </a>
+            {p.lat && p.lng ? (
+              <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[320px] relative z-0">
+                <Suspense fallback={<div className="min-h-[320px]" />}>
+                  <MiniMap lat={Number(p.lat)} lng={Number(p.lng)} className="min-h-[320px]" fallback={<p className="p-6 text-sm text-gray-600 dark:text-gray-300">{p.address || 'نقشه در حال حاضر بارگذاری نمی‌شود.'}</p>} />
+                </Suspense>
               </div>
+            ) : (
+              <p className="p-6 text-sm text-gray-600 dark:text-gray-300">{p.address || p.name}</p>
+            )}
+
+            <div className="p-4 bg-gray-50 dark:bg-[#1f1f23] border-t border-gray-100 dark:border-white/10">
+              <NavigationLinks lat={p.lat ? Number(p.lat) : null} lng={p.lng ? Number(p.lng) : null} query={p.address || p.name} />
             </div>
           </div>
         </div>

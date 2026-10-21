@@ -1,20 +1,15 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, Marker, Popup } from 'react-leaflet';
+import { SmartTileLayer, MapUnavailableNotice } from '../lib/mapTiles';
 import { api } from '../lib/apiClient';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { placeIcon } from '../lib/mapSetup';
 import { Event } from '../types';
 import { useState, useEffect } from 'react';
 import { Circle, Polygon } from 'react-leaflet';
 import { PriceWidget } from './PriceWidget';
 
-// Fix for default marker icon in leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
 interface MapProps {
   events: Event[];
@@ -23,6 +18,7 @@ interface MapProps {
 
 export default function MapComponent({ events, userLocation, onEventSelect, onPlaceSelect, onVibeSelect }: MapProps & { onEventSelect?: (e: Event) => void, onPlaceSelect?: (p: any) => void, onVibeSelect?: (v: any) => void }) {
   const [places, setPlaces] = useState<any[]>([]);
+  const [tilesFailed, setTilesFailed] = useState(false);
   const [vibes, setVibes] = useState<any[]>([]);
 
   useEffect(() => {
@@ -44,16 +40,15 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
 
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-white/10 relative z-0">
+      {tilesFailed && <MapUnavailableNotice>نشانگرها سر جایشان هستند؛ برای جزئیات روی هر کدام بزنید یا از فهرست رویدادها استفاده کنید.</MapUnavailableNotice>}
       <MapContainer 
         center={defaultCenter} 
-        zoom={12} 
+        zoom={12}
+        maxZoom={19}
         className="w-full h-full"
         zoomControl={false}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        />
+        <SmartTileLayer onUnavailable={() => setTilesFailed(true)} />
         <MarkerClusterGroup chunkedLoading>
         {shownEvents.map((event) => {
           if (event.location && event.location.lat && event.location.lng) {
@@ -78,15 +73,6 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
         
         {places.map(place => {
           if (place.lat && place.lng) {
-            // Custom icon for places could be added here
-            const placeIcon = new L.Icon({
-              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
-              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
-              shadowSize: [41, 41]
-            });
             return (
               <Marker key={`place-${place.id}`} position={[place.lat, place.lng]} icon={placeIcon}>
                 <Popup>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Event } from '../types';
 import { useAuth } from '../lib/AuthContext';
 import { ArrowRight, MapPin, Map, Calendar, Clock, DollarSign, Share2, Heart, Tag, Ticket, ExternalLink, CheckCircle, X, Info, Sparkles, Flag, Users } from 'lucide-react';
@@ -12,6 +12,9 @@ import { tehranParts } from '../lib/time';
 export const REPORT_REASONS = ['اطلاعات نادرست یا گمراه‌کننده', 'کلاهبرداری یا فروش بلیت جعلی', 'محتوای نامناسب یا توهین‌آمیز', 'رویداد لغو شده است', 'تکراری یا اسپم'];
 import { getEventBackgroundIcon } from '../lib/icons';
 import { PriceWidget } from './PriceWidget';
+import { GeneratedAvatar } from './Avatar';
+import { NavigationLinks } from './NavigationLinks';
+const MiniMap = lazy(() => import('./MiniMap'));
 
 interface EventDetailProps {
   isSaved: boolean;
@@ -91,6 +94,9 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       .catch(console.error);
   }, []);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const coord = (v: unknown) => (v === null || v === undefined || v === '' || isNaN(Number(v)) ? null : Number(v));
+  const mapLat = coord(event.location?.lat ?? (event as any).lat);
+  const mapLng = coord(event.location?.lng ?? (event as any).lng);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
   const [similarEvents, setSimilarEvents] = useState<Event[]>([]);
@@ -335,7 +341,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 p-2 rounded-xl transition-colors"
             onClick={() => onOrganizerClick && onOrganizerClick(event.organizerId)}
           >
-            <img loading="lazy" src={`https://api.dicebear.com/7.x/notionists/svg?seed=${event.organizerId || event.title}&backgroundColor=transparent`} alt="Organizer" className="w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+            <GeneratedAvatar loading="lazy" seed={event.organizerId || event.title} alt="Organizer" className="w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
             <div className="flex flex-col">
               <span className="text-xs text-gray-600 dark:text-gray-400">برگزارکننده اصلی</span>
               <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">{event.organizer?.name || 'مجری رویداد'}</span>
@@ -348,7 +354,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 p-2 rounded-xl transition-colors"
               onClick={() => onOrganizerClick && onOrganizerClick(coId)}
             >
-              <img loading="lazy" src={`https://api.dicebear.com/7.x/notionists/svg?seed=${coId}&backgroundColor=transparent`} alt="Co-Organizer" className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+              <GeneratedAvatar loading="lazy" seed={coId} alt="Co-Organizer" className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
               <div className="flex flex-col">
                 <span className="text-xs text-gray-600 dark:text-gray-400">همکار</span>
               </div>
@@ -682,28 +688,18 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               </button>
             </div>
             
-            <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[300px]">
-              <iframe
-                title="map"
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                style={{ border: 0, minHeight: '300px' }}
-                src={`https://maps.google.com/maps?q=${event.location?.lat || (event as any).lat},${event.location?.lng || (event as any).lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                allowFullScreen
-              />
-            </div>
-            
+            {mapLat != null && mapLng != null ? (
+              <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[300px] relative z-0">
+                <Suspense fallback={<div className="min-h-[300px]" />}>
+                  <MiniMap lat={mapLat} lng={mapLng} fallback={<p className="p-6 text-sm text-gray-600 dark:text-gray-300">{event.location?.address || (event as any).address || 'نقشه در حال حاضر بارگذاری نمی‌شود.'}</p>} />
+                </Suspense>
+              </div>
+            ) : (
+              <p className="p-6 text-sm text-gray-600 dark:text-gray-300">{event.location?.address || (event as any).address}</p>
+            )}
+
             <div className="p-4 bg-gray-50 dark:bg-[#1f1f23] border-t border-gray-100 dark:border-white/10">
-              <a 
-                href={`https://www.google.com/maps/search/?api=1&query=${event.location?.lat || (event as any).lat},${event.location?.lng || (event as any).lng}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-all flex items-center justify-center gap-2"
-              >
-                <Map className="w-5 h-5" />
-                مسیریابی در نقشه خوان
-              </a>
+              <NavigationLinks lat={mapLat} lng={mapLng} query={event.location?.address || (event as any).address} />
             </div>
           </div>
         </div>

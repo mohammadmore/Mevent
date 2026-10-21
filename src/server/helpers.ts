@@ -246,7 +246,7 @@ export async function saveChain(chainId: number | null, body: any, editor: typeo
   return row;
 }
 
-// Maps an AI-extracted event onto known columns only (the model output is untrusted).
+// Maps an extracted (crawled) event onto known columns only; page content is untrusted.
 export function crawledEventToRow(eventData: any, sourceUrl: string, organizerId: number) {
   const startTime = eventData.startTime ? new Date(eventData.startTime) : new Date();
   return {

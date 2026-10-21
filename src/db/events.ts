@@ -135,11 +135,6 @@ export async function queryEvents(opts: EventQuery) {
   };
 }
 
-/** Upcoming events (used by the AI assistant context and simple lists). */
-export async function getRecommendedEvents(limit = 100) {
-  return db.select().from(events).where(upcomingCondition()).orderBy(sql`${events.startTime} ASC NULLS LAST`).limit(limit);
-}
-
 export async function getSimilarEvents(eventId: number, limit = 4) {
   const [current] = await db.select().from(events).where(eq(events.id, eventId)).limit(1);
   if (!current) return [];

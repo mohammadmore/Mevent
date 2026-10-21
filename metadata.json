@@ -1,10 +1,7 @@
 {
   "name": "Mevent",
-  "description": "A smart personalized event discovery assistant with AI-driven recommendations based on time, location, and user micro-habits.",
+  "description": "Event discovery by city, date and interests, with tickets, trip planning and quick search.",
   "requestFramePermissions": [
     "geolocation"
-  ],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]
 }

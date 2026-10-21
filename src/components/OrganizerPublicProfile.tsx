@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Event, User } from '../types';
 import { ArrowRight, MapPin, Calendar, Clock, DollarSign, Share2, Heart, ExternalLink, Activity, Users, Star } from 'lucide-react';
 import { getEventBackgroundIcon } from '../lib/icons';
+import { GeneratedAvatar } from './Avatar';
 
 interface OrganizerPublicProfileProps {
   organizerId: number;
@@ -95,8 +96,8 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
         <div className="px-5 md:px-10 max-w-4xl mx-auto w-full -mt-12 relative z-10">
           {/* Organizer Info */}
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8 text-center md:text-right">
-            <img 
-              src={`https://api.dicebear.com/7.x/notionists/svg?seed=${organizerId}&backgroundColor=transparent`} 
+            <GeneratedAvatar
+              seed={organizerId}
               alt="Organizer Avatar" 
               className="w-24 h-24 rounded-full border-4 border-white dark:border-[#18181b] bg-gray-100 dark:bg-[#1f1f23] shadow-md"
             />

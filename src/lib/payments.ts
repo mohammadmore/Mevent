@@ -6,6 +6,8 @@
 //   PAYMENT_ALLOW_SIMULATED=true  allow instant fake payments (always allowed outside production)
 // Without a gateway in production, paid tickets cannot be bought (a clear error is shown).
 
+import { registerDependency, httpProbe, isUp, reportFailure, reportSuccess } from './dependencies.ts';
+
 const MERCHANT_ID = process.env.ZARINPAL_MERCHANT_ID || '';
 const SANDBOX = process.env.ZARINPAL_SANDBOX === 'true';
 // ZARINPAL_BASE_URL overrides the host (e.g. an egress proxy, or a local stub in tests).
@@ -29,13 +31,29 @@ export function toRial(amount: number, currency: string | null | undefined): num
   throw new Error(`پرداخت با واحد پول ${cur} پشتیبانی نمی‌شود.`);
 }
 
+export const PAYMENT_DEPENDENCY = 'zarinpal';
+if (gatewayMode === 'zarinpal') registerDependency(PAYMENT_DEPENDENCY, 'درگاه پرداخت زرین‌پال', httpProbe(`${HOST}/`));
+
+/** Whether a new payment can be started right now (known reachable or not yet checked). */
+export const gatewayAvailable = () => gatewayMode !== 'zarinpal' || isUp(PAYMENT_DEPENDENCY);
+
 async function post(path: string, body: unknown) {
-  const res = await fetch(`${HOST}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(15000),
-  });
+  const started = Date.now();
+  let res: Response;
+  try {
+    res = await fetch(`${HOST}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (err) {
+    reportFailure(PAYMENT_DEPENDENCY, err);
+    throw err;
+  }
+  // Any answer (even a refusal) means the gateway is reachable.
+  if (res.status >= 500) reportFailure(PAYMENT_DEPENDENCY, new Error(`HTTP ${res.status}`));
+  else reportSuccess(PAYMENT_DEPENDENCY, Date.now() - started);
   const json: any = await res.json().catch(() => ({}));
   return json;
 }

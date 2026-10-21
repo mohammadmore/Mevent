@@ -2,6 +2,7 @@ import webpush from 'web-push';
 import { and, eq, gte, lte, inArray } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { notifications, pushSubscriptions, interactions, events } from '../db/schema.ts';
+import { registerDependency, isUp, reportFailure, reportSuccess } from './dependencies.ts';
 
 // In-app notifications (always) + Web Push (when VAPID keys are configured).
 
@@ -49,9 +50,20 @@ async function sendPush(userId: number, payload: { title: string; body?: string;
   const subs = await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
   const body = JSON.stringify(payload);
   await Promise.all(subs.map(async (sub) => {
+    // Push services are run by browser vendors (Google, Mozilla, Apple) and are often unreachable
+    // from servers in Iran. A host that is down is skipped for a while; the in-app notification
+    // already exists either way.
+    let host = 'unknown';
+    try { host = new URL(sub.endpoint).host; } catch { /* malformed endpoint */ }
+    const dep = `push:${host}`;
+    registerDependency(dep, `اعلان مرورگر (${host})`);
+    if (!isUp(dep)) return;
     try {
-      await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys as any }, body, { TTL: 60 * 60 * 12 });
+      await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys as any }, body, { TTL: 60 * 60 * 12, timeout: 5000 });
+      reportSuccess(dep);
     } catch (err: any) {
+      if (err?.statusCode) reportSuccess(dep); // the service answered
+      else reportFailure(dep, err);
       // The browser revoked the subscription: forget it.
       if (err?.statusCode === 404 || err?.statusCode === 410) {
         await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));

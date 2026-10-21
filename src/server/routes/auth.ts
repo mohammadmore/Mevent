@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { and, desc, eq, gt, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { otpCodes, users } from '../../db/schema.ts';
-import { AuthRequest, requireAuth, googleLoginEnabled } from '../../middleware/auth.ts';
+import { AuthRequest, requireAuth, googleLoginAvailable, notSignedIn } from '../../middleware/auth.ts';
 import { asyncRoute, createRateLimiter } from '../infra.ts';
 import { normalizeIranMobile, maskMobile, toLatinDigits } from '../../lib/phone.ts';
 import { sendVerificationCode, smsProvider, SmsError } from '../../lib/sms.ts';
@@ -82,7 +82,7 @@ export function registerAuthRoutes(app: Express) {
     res.json({
       data: {
         phone: phoneLoginEnabled,
-        google: googleLoginEnabled,
+        google: googleLoginAvailable(),
         codeLength: CODE_LENGTH,
         resendSeconds: RESEND_COOLDOWN_MS / 1000,
       }
@@ -100,7 +100,7 @@ export function registerAuthRoutes(app: Express) {
     const purpose: Purpose = req.body?.purpose === 'LINK' ? 'LINK' : 'LOGIN';
 
     if (purpose === 'LINK') {
-      if (!req.dbUser) return res.status(401).json({ error: 'برای این کار باید وارد حساب کاربری شوید.' });
+      if (!req.dbUser) return notSignedIn(req, res);
       const [owner] = await db.select({ id: users.id }).from(users).where(eq(users.phone, phone));
       if (owner && owner.id !== req.dbUser.id) {
         return res.status(409).json({ error: 'این شماره به حساب دیگری متصل است. برای ادغام حساب‌ها با پشتیبانی تماس بگیرید.' });

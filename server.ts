@@ -10,8 +10,9 @@ import { createServer as createViteServer } from 'vite';
 import { dbReady } from './src/db/index';
 import { authenticate } from './src/middleware/auth';
 import { metricsMiddleware, validateInput, limiters, asyncRoute } from './src/server/infra';
-import { sendUpload } from './src/lib/storage';
+import { sendUpload, syncPendingUploads } from './src/lib/storage';
 import { startBackgroundJobs } from './src/lib/notifications';
+import { startDependencyProbes } from './src/lib/dependencies';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
 import { registerAuthRoutes, pruneOtpCodes } from './src/server/routes/auth';
@@ -22,7 +23,8 @@ import { registerContentRoutes } from './src/server/routes/content';
 import { registerCommerceRoutes, expireStaleOrders } from './src/server/routes/commerce';
 import { registerSocialRoutes } from './src/server/routes/social';
 import { registerAdminRoutes } from './src/server/routes/admin';
-import { registerAiRoutes } from './src/server/routes/ai';
+import { registerPlannerRoutes } from './src/server/routes/planner';
+import { registerConfigRoutes } from './src/server/routes/config';
 
 async function startServer() {
   const app = express();
@@ -70,7 +72,8 @@ async function startServer() {
   registerCommerceRoutes(app);
   registerSocialRoutes(app);
   registerAdminRoutes(app);
-  registerAiRoutes(app);
+  registerPlannerRoutes(app);
+  registerConfigRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {
@@ -115,7 +118,8 @@ async function startServer() {
   }
 
   await dbReady;
-  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes]);
+  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads]);
+  startDependencyProbes();
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);

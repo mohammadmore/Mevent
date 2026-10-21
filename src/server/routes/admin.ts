@@ -1,12 +1,12 @@
 import { Express } from 'express';
-import * as cheerio from 'cheerio';
-import { Type } from '@google/genai';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, and, gte, lt } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { users, events, tickets, orders, settings, places, chains, vibes, flows } from '../../db/schema.ts';
 import { createEvent } from '../../db/events.ts';
 import { AuthRequest, requireAdmin } from '../../middleware/auth.ts';
-import { asyncRoute, limiters, metrics, aiCircuitBreaker, callGemini, createJob, saveJob, getJob } from '../infra.ts';
+import { asyncRoute, limiters, metrics, createJob, saveJob, getJob } from '../infra.ts';
+import { extractEvents } from '../eventExtractor.ts';
+import { dependencySnapshot, probeAll } from '../../lib/dependencies.ts';
 import { normalizePlace, normalizeTaggedItem, normalizeVibe, normalizeFlow, crawledEventToRow } from '../helpers.ts';
 import { getFromCache, setToCache, invalidateCachePattern, clearCache, listCacheKeys, countCacheKeys, cacheStats } from '../../lib/sharedStore.ts';
 import { safeFetchText } from '../../lib/safeFetch.ts';
@@ -15,47 +15,40 @@ import { storageMode } from '../../lib/storage.ts';
 import { gatewayMode } from '../../lib/payments.ts';
 import { invalidateEventCaches } from './content.ts';
 
-const CRAWL_SCHEMA = {
-  type: Type.OBJECT,
-  properties: {
-    events: {
-      type: Type.ARRAY,
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING }, description: { type: Type.STRING }, startTime: { type: Type.STRING },
-          address: { type: Type.STRING }, lat: { type: Type.NUMBER }, lng: { type: Type.NUMBER },
-          cost: { type: Type.NUMBER }, capacity: { type: Type.NUMBER }, tags: { type: Type.STRING },
-        },
-      },
-    },
-  },
-};
-
-/** Fetches a page (through the SSRF guard), asks Gemini to extract events and stores them. */
+/**
+ * Fetches a page or calendar feed (through the SSRF guard), extracts its events in-process and
+ * stores the new ones. An event with the same title on the same day is not added twice.
+ */
 async function crawl(targetUrl: string, organizerId: number, onProgress?: (p: number) => Promise<void>) {
-  const html = await safeFetchText(targetUrl);
-  const $ = cheerio.load(html);
-  let text = $('.container').text();
-  if (!text || text.trim().length < 100) text = $('body').text();
-  text = text.replace(/\s+/g, ' ').substring(0, 15000);
-  await onProgress?.(60);
-
-  const aiResponse = await callGemini({
-    contents: `Extract upcoming events from this page. Year 2026. Translate title and description to Persian if needed. Return JSON { "events": [{ title, description, startTime, address, lat, lng, cost }] }\nText: ${text}`,
-    config: { responseMimeType: 'application/json', responseSchema: CRAWL_SCHEMA },
-  });
-  const data = JSON.parse(aiResponse.text || '{}');
+  const body = await safeFetchText(targetUrl);
+  await onProgress?.(50);
+  const found = extractEvents(body);
+  await onProgress?.(70);
   const created = [];
-  for (const eventData of data.events || []) {
-    if (!eventData.title) continue;
-    created.push(await createEvent(crawledEventToRow(eventData, targetUrl, organizerId)));
+  for (const item of found) {
+    const row = crawledEventToRow(item, targetUrl, organizerId);
+    const dayStart = new Date(row.startTime.getTime() - 12 * 3600_000), dayEnd = new Date(row.startTime.getTime() + 12 * 3600_000);
+    const [dup] = await db.select({ id: events.id }).from(events)
+      .where(and(eq(events.title, row.title), gte(events.startTime, dayStart), lt(events.startTime, dayEnd))).limit(1);
+    if (dup) continue;
+    created.push(await createEvent(row));
   }
-  invalidateEventCaches();
-  return created;
+  if (created.length) invalidateEventCaches();
+  return { created, found: found.length };
+}
+
+function crawlMessage(found: number, added: number) {
+  if (!found) return 'در این صفحه رویدادی با تاریخ مشخص پیدا نشد.';
+  return `${found} رویداد پیدا شد؛ ${added} رویداد جدید ثبت شد${found > added ? ` و ${found - added} مورد تکراری بود` : ''}.`;
 }
 
 export function registerAdminRoutes(app: Express) {
+  // Reachability of external services and whether each one is currently on its fallback.
+  app.get('/api/admin/dependencies', requireAdmin, asyncRoute(async (req, res) => {
+    if (req.query.refresh === '1') await probeAll();
+    res.json({ data: dependencySnapshot() });
+  }));
+
   app.get('/api/health/metrics', requireAdmin, asyncRoute(async (req, res) => {
     const mem = process.memoryUsage();
     res.json({
@@ -65,7 +58,6 @@ export function registerAdminRoutes(app: Express) {
         totalRequests: metrics.totalRequests,
         successfulRequests: metrics.successfulRequests,
         failedRequests: metrics.failedRequests,
-        aiRequestsCount: metrics.aiRequestsCount,
         averageLatencyMs: metrics.totalRequests > 0 ? Math.round(metrics.totalLatencyMs / metrics.totalRequests) : 0,
       },
       cache: {
@@ -74,7 +66,7 @@ export function registerAdminRoutes(app: Express) {
         misses: cacheStats.misses,
         hitRateRatio: cacheStats.hits + cacheStats.misses > 0 ? (cacheStats.hits / (cacheStats.hits + cacheStats.misses)).toFixed(2) : 0,
       },
-      circuitBreaker: aiCircuitBreaker.getStats(),
+      dependencies: dependencySnapshot(),
       infrastructure: { uploads: storageMode, payments: gatewayMode },
       memoryUsage: {
         rssMb: Math.round(mem.rss / 1024 / 1024),
@@ -192,10 +184,10 @@ export function registerAdminRoutes(app: Express) {
         job.status = 'RUNNING';
         job.progress = 20;
         await saveJob(job);
-        const created = await crawl(targetUrl, organizerId, async (p) => { job.progress = p; await saveJob(job); });
+        const { created, found } = await crawl(targetUrl, organizerId, async (p) => { job.progress = p; await saveJob(job); });
         job.status = 'COMPLETED';
         job.progress = 100;
-        job.result = { message: `تعداد ${created.length} رویداد استخراج و ثبت شد.`, eventsCount: created.length };
+        job.result = { message: crawlMessage(found, created.length), eventsCount: created.length, found };
       } catch (err: any) {
         console.error('Job error:', err?.message);
         job.status = 'FAILED';
@@ -213,8 +205,8 @@ export function registerAdminRoutes(app: Express) {
 
   app.post('/api/crawler/run', limiters.crawler, requireAdmin, asyncRoute(async (req: AuthRequest, res) => {
     try {
-      const created = await crawl(req.body?.url || 'https://calendar.iranfair.com/fa', req.dbUser!.id);
-      res.json({ message: `استخراج با موفقیت انجام شد. ${created.length} رویداد افزوده شد.`, data: created });
+      const { created, found } = await crawl(req.body?.url || 'https://calendar.iranfair.com/fa', req.dbUser!.id);
+      res.json({ message: crawlMessage(found, created.length), data: created, found });
     } catch (err: any) {
       res.status(500).json({ error: err?.message ? `خزشگر با خطا مواجه شد: ${err.message}` : 'خزشگر با خطا مواجه شد' });
     }

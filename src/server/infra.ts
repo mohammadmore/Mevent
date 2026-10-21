@@ -1,87 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { GoogleGenAI } from '@google/genai';
 import crypto from 'crypto';
 import { hitRateLimit, getFromCache, setToCache } from '../lib/sharedStore.ts';
-
-// ==========================================
-// GEMINI
-// ==========================================
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: { headers: { 'User-Agent': 'aistudio-build' } },
-});
-
-// Models are tried in order. Override with GEMINI_MODELS="model-a,model-b".
-const MODELS = (process.env.GEMINI_MODELS || 'gemini-3.6-flash,gemini-flash-latest,gemini-2.5-flash')
-  .split(',').map(m => m.trim()).filter(Boolean);
-
-export const aiConfigured = Boolean(process.env.GEMINI_API_KEY);
-
-export async function callGemini(params: { contents: any; config?: any }, retries = 2) {
-  if (!aiConfigured) throw new Error('GEMINI_API_KEY is not configured');
-  let lastError: any = null;
-  for (const model of MODELS) {
-    for (let attempt = 0; attempt < retries; attempt++) {
-      try {
-        metrics.aiRequestsCount++;
-        return await ai.models.generateContent({ ...params, model });
-      } catch (err: any) {
-        lastError = err;
-        console.warn(`Gemini call failed for model ${model} (attempt ${attempt + 1}):`, err?.message || err);
-        // A missing model will not appear on retry; move on to the next one.
-        if (err?.status === 404 || /not found|is not supported/i.test(err?.message || '')) break;
-        if (attempt < retries - 1) await new Promise(r => setTimeout(r, 500));
-      }
-    }
-  }
-  throw lastError;
-}
-
-// ==========================================
-// CIRCUIT BREAKER FOR GEMINI
-// ==========================================
-class CircuitBreaker {
-  private failureCount = 0;
-  private threshold = 3;
-  private state: 'CLOSED' | 'OPEN' | 'HALF-OPEN' = 'CLOSED';
-  private lastStateChange = Date.now();
-  private cooldownMs = 30000;
-
-  /** Runs `action`; on failure (or while open) runs `fallback`. `aiGenerated` tells which one answered. */
-  async execute<T>(action: () => Promise<T>, fallback: () => Promise<T>): Promise<{ value: T; aiGenerated: boolean }> {
-    const now = Date.now();
-    if (this.state === 'OPEN') {
-      if (now - this.lastStateChange > this.cooldownMs) {
-        this.state = 'HALF-OPEN';
-        this.lastStateChange = now;
-      } else {
-        return { value: await fallback(), aiGenerated: false };
-      }
-    }
-    try {
-      const value = await action();
-      if (this.state === 'HALF-OPEN') {
-        this.state = 'CLOSED';
-        this.failureCount = 0;
-      }
-      return { value, aiGenerated: true };
-    } catch (err) {
-      this.failureCount++;
-      console.error(`AI Call Failure (${this.failureCount}/${this.threshold}):`, (err as Error)?.message || err);
-      if (this.failureCount >= this.threshold) {
-        this.state = 'OPEN';
-        this.lastStateChange = Date.now();
-      }
-      return { value: await fallback(), aiGenerated: false };
-    }
-  }
-
-  getStats() {
-    return { state: this.state, failures: this.failureCount, lastChange: new Date(this.lastStateChange).toISOString() };
-  }
-}
-
-export const aiCircuitBreaker = new CircuitBreaker();
 
 // ==========================================
 // METRICS
@@ -90,7 +9,6 @@ export const metrics = {
   totalRequests: 0,
   successfulRequests: 0,
   failedRequests: 0,
-  aiRequestsCount: 0,
   totalLatencyMs: 0,
   startTime: Date.now(),
 };
@@ -159,7 +77,7 @@ export const limiters = {
   tickets: createRateLimiter('tickets', 20),
   account: createRateLimiter('account', 10),
   crawler: createRateLimiter('crawler', 10),
-  ai: createRateLimiter('ai', 15),
+  tripPlanner: createRateLimiter('trip-planner', 30),
   social: createRateLimiter('social', 60),
 };
 

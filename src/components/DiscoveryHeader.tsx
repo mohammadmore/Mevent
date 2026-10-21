@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Map, Network, Film } from 'lucide-react';
+import defaultFlowCover from '../assets/covers/flow.svg';
+import defaultChainCover from '../assets/covers/chain.svg';
 
 export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onChainSelect }: { city?: string; onFlowSelect?: (v: any) => void; onVibeSelect?: (v: any) => void; onChainSelect?: (v: any) => void; }) {
   const [flows, setFlows] = useState<any[]>([]);
@@ -35,7 +37,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
             {flows.map(flow => (
               <div key={flow.id} className="min-w-[280px] h-40 rounded-2xl relative overflow-hidden snap-center cursor-pointer group" onClick={() => onFlowSelect && onFlowSelect(flow)}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-                <img src={flow.coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000'} alt={flow.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={flow.coverImage || defaultFlowCover} alt={flow.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute bottom-4 right-4 z-20">
                   <h3 className="text-white font-bold text-lg">{flow.title}</h3>
                   <p className="text-gray-300 text-sm mt-1">{flow.description}</p>
@@ -78,7 +80,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
             {chains.map(chain => (
               <div key={chain.id} className="min-w-[250px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-4 snap-center cursor-pointer flex items-center gap-4 hover:border-orange-500 transition-colors" onClick={() => onChainSelect && onChainSelect(chain)}>
                 <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-white/5 overflow-hidden shrink-0">
-                  <img src={chain.coverImage || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=300'} alt={chain.name} className="w-full h-full object-cover" />
+                  <img src={chain.coverImage || defaultChainCover} alt={chain.name} className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-800 dark:text-gray-100">{chain.name}</h3>

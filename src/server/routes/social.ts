@@ -194,8 +194,18 @@ export function registerSocialRoutes(app: Express) {
   }));
 
   app.post('/api/trips', limiters.social, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
-    const data = req.body?.data;
-    if (!data || typeof data !== 'object' || !Array.isArray(data.days)) return res.status(400).json({ error: 'برنامه سفر نامعتبر است' });
+    const raw = req.body?.data;
+    if (!raw || typeof raw !== 'object' || !String(raw.city || '').trim() || !(Array.isArray(raw.events) || Array.isArray(raw.days))) {
+      return res.status(400).json({ error: 'برنامه سفر نامعتبر است' });
+    }
+    // Only what the trip view needs is stored; the events are refreshed when the trip is opened.
+    const data = {
+      ...raw,
+      events: (Array.isArray(raw.events) ? raw.events : []).slice(0, 200).map((e: any) => ({
+        id: e?.id, title: e?.title, startTime: e?.startTime ?? null, endTime: e?.endTime ?? null, fuzzyTime: e?.fuzzyTime ?? null,
+        address: e?.address ?? e?.location?.address ?? null, imageUrl: e?.imageUrl ?? null, cost: e?.cost ?? 0,
+      })),
+    };
     const json = JSON.stringify(data);
     if (json.length > 200_000) return res.status(413).json({ error: 'برنامه سفر بیش از حد بزرگ است' });
     const requestedId = typeof req.body.id === 'string' ? req.body.id : null;

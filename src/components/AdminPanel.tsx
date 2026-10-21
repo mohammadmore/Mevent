@@ -151,6 +151,16 @@ export default function AdminPanel() {
     }
   };
 
+  const refreshDependencies = async () => {
+    try {
+      const res = await fetch('/api/admin/dependencies?refresh=1');
+      if (res.ok) {
+        const d = await res.json();
+        setMetricsData((m: any) => ({ ...(m || {}), dependencies: d.data }));
+      }
+    } catch { /* ignore */ }
+  };
+
   const fetchMetrics = async () => {
     try {
       const [mRes, cRes] = await Promise.all([
@@ -520,24 +530,28 @@ export default function AdminPanel() {
                 <div className="flex items-center justify-between text-sm text-gray-500 font-bold">
                   <span className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-amber-500" />
-                    وضعیت مدارشکن هوش مصنوعی (Circuit Breaker)
+                    سرویس‌های بیرونی
                   </span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                    metricsData?.circuitBreaker?.state === 'CLOSED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                  }`}>
-                    {metricsData?.circuitBreaker?.state || 'CLOSED'}
-                  </span>
+                  <button onClick={refreshDependencies} aria-label="بررسی دوباره" className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10">
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
                 </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">تعداد خطاها:</span>
-                    <span className="font-mono font-bold text-gray-800 dark:text-gray-200">{pNum(metricsData?.circuitBreaker?.failures || 0)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">درخواست‌های AI:</span>
-                    <span className="font-mono font-bold text-amber-500">{pNum(metricsData?.metrics?.aiRequestsCount || 0)}</span>
-                  </div>
-                </div>
+                {!(metricsData?.dependencies?.length) ? (
+                  <p className="text-xs text-gray-400">سرویس بیرونی‌ای پیکربندی نشده است.</p>
+                ) : (
+                  <ul className="space-y-2 text-sm">
+                    {metricsData.dependencies.map((d: any) => (
+                      <li key={d.name} className="flex items-center justify-between gap-2" title={d.error || ''}>
+                        <span className="text-gray-600 dark:text-gray-300 truncate">{d.label}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                          d.state === 'up' ? 'bg-emerald-500/10 text-emerald-600' : d.state === 'down' ? 'bg-rose-500/10 text-rose-600' : 'bg-gray-500/10 text-gray-500'
+                        }`}>
+                          {d.state === 'up' ? `در دسترس${d.latencyMs != null ? ` · ${pNum(d.latencyMs)}ms` : ''}` : d.state === 'down' ? 'قطع (پلن B)' : 'نامشخص'}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 

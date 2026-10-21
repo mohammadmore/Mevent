@@ -8,7 +8,7 @@ import { asyncRoute, limiters, publicBaseUrl } from '../infra.ts';
 import { invalidateCachePattern } from '../../lib/sharedStore.ts';
 import { changePoints, POINT_VALUE_TOMAN, MAX_POINTS_SHARE } from '../../lib/points.ts';
 import { notify } from '../../lib/notifications.ts';
-import { gatewayMode, requestPayment, verifyPayment, toRial } from '../../lib/payments.ts';
+import { gatewayMode, gatewayAvailable, requestPayment, verifyPayment, toRial } from '../../lib/payments.ts';
 import { ticketSeatsTaken } from '../seats.ts';
 import { eventUrl } from '../helpers.ts';
 
@@ -113,6 +113,10 @@ export function registerCommerceRoutes(app: Express) {
       }
       const discount = pointsUsed * POINT_VALUE_TOMAN;
       const amount = subtotal - discount;
+      // Gateway known to be unreachable: say so now instead of holding seats for a payment that cannot start.
+      if (amount > 0 && !gatewayAvailable()) {
+        return { status: 503, body: { error: 'درگاه پرداخت موقتاً در دسترس نیست. چند دقیقه دیگر دوباره تلاش کنید.', retryAfter: 60 } };
+      }
 
       const [order] = await tx.insert(orders).values({
         userId, eventId, quantity, subtotal, discount, pointsUsed, amount, status: 'PENDING',

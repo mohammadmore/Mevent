@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
 import { clearCachedUserData } from './pwa';
+import { browserReachesGoogle } from './reachability';
 import { api, showToast } from './apiClient';
 import { setAuthTokenGetter } from './authFetch';
 
@@ -95,10 +96,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let unsubscribe: (() => void) | undefined;
     let cancelled = false;
     (async () => {
-      const [cfg, me] = await Promise.all([
+      const [serverCfg, me] = await Promise.all([
         api<{ data: AuthConfig }>('/api/auth/config', { silent: true }).then(d => d.data).catch(() => ({ phone: true, google: false, codeLength: 6, resendSeconds: 60 })),
         api<{ data: any; via: string | null }>('/api/auth/me', { silent: true }).catch(() => ({ data: null, via: null })),
       ]);
+      if (cancelled) return;
+      // Google sign-in also needs Google reachable from this browser; otherwise hide it (phone login stays).
+      const cfg = serverCfg.google && !(me.data && me.via === 'session') && !(await browserReachesGoogle())
+        ? { ...serverCfg, google: false }
+        : serverCfg;
       if (cancelled) return;
       setConfig(cfg);
 
