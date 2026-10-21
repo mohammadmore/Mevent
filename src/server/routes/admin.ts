@@ -6,6 +6,7 @@ import { createEvent } from '../../db/events.ts';
 import { AuthRequest, requireAdmin } from '../../middleware/auth.ts';
 import { asyncRoute, limiters, metrics, createJob, saveJob, getJob } from '../infra.ts';
 import { extractEvents } from '../eventExtractor.ts';
+import { cleanSiteInfo, saveSiteInfo } from '../siteInfo.ts';
 import { dependencySnapshot, probeAll } from '../../lib/dependencies.ts';
 import { normalizePlace, normalizeTaggedItem, normalizeVibe, normalizeFlow, crawledEventToRow } from '../helpers.ts';
 import { getFromCache, setToCache, invalidateCachePattern, clearCache, listCacheKeys, countCacheKeys, cacheStats } from '../../lib/sharedStore.ts';
@@ -115,11 +116,18 @@ export function registerAdminRoutes(app: Express) {
 
   app.put('/api/admin/settings', requireAdmin, asyncRoute(async (req, res) => {
     const { key, value } = req.body;
-    if (typeof key !== 'string' || !/^[a-z0-9_]{1,64}$/i.test(key) || value === undefined) {
+    if (typeof key !== 'string' || !/^[a-z0-9_]{1,64}$/i.test(key) || value === undefined || key === 'site_info') {
       return res.status(400).json({ error: 'کلید یا مقدار تنظیمات نامعتبر است' });
     }
     await db.insert(settings).values({ key, value }).onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
     res.json({ success: true, message: 'تنظیمات با موفقیت به روز شد.' });
+  }));
+
+  app.put('/api/admin/site-info', requireAdmin, asyncRoute(async (req, res) => {
+    const result = cleanSiteInfo(req.body);
+    if ('error' in result) return res.status(400).json({ error: result.error });
+    await saveSiteInfo(result.value);
+    res.json({ data: result.value, message: 'اطلاعات سایت ذخیره شد.' });
   }));
 
   app.get('/api/admin/places', requireAdmin, asyncRoute(async (req, res) => res.json((await db.select().from(places)).map(normalizePlace))));

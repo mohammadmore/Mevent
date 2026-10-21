@@ -1,4 +1,8 @@
 import { Express } from 'express';
+import { asyncRoute } from '../infra.ts';
+import { getSiteInfo } from '../siteInfo.ts';
+import { CANCEL_DEADLINE_HOURS, PAYMENT_HOLD_MINUTES, FRIEND_TICKET_DISCOUNT } from './commerce.ts';
+import { POINT_VALUE_TOMAN, MAX_POINTS_SHARE } from '../../lib/points.ts';
 
 // Public, non-secret settings the browser needs.
 
@@ -32,6 +36,22 @@ export function tileProviders(): TileProvider[] {
 }
 
 export function registerConfigRoutes(app: Express) {
+  // Business details + the rules the legal pages quote (taken from the code so they never drift).
+  app.get('/api/site-info', asyncRoute(async (_req, res) => {
+    res.json({
+      data: {
+        ...(await getSiteInfo()),
+        rules: {
+          cancelDeadlineHours: CANCEL_DEADLINE_HOURS,
+          paymentHoldMinutes: PAYMENT_HOLD_MINUTES,
+          friendDiscountPercent: Math.round(FRIEND_TICKET_DISCOUNT * 100),
+          pointValueToman: POINT_VALUE_TOMAN,
+          maxPointsSharePercent: Math.round(MAX_POINTS_SHARE * 100),
+        },
+      },
+    });
+  }));
+
   app.get('/api/config/maps', (_req, res) => {
     res.json({ data: { tiles: tileProviders() } });
   });

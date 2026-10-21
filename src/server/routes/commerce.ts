@@ -15,9 +15,9 @@ import { eventUrl } from '../helpers.ts';
 export const FRIEND_TICKET_DISCOUNT = 0.1; // second ticket bought for a friend gets 10% off
 export const FRIEND_TICKET_POINTS = 20;
 export const RSVP_POINTS = 50;
-const PAYMENT_HOLD_MINUTES = 15;
+export const PAYMENT_HOLD_MINUTES = 15;
 // Tickets can be cancelled until this long before the event starts.
-const CANCEL_DEADLINE_HOURS = 2;
+export const CANCEL_DEADLINE_HOURS = 2;
 
 function ticketCode() {
   // Unambiguous characters only (no 0/O, 1/I) so the code can be read out at the door.

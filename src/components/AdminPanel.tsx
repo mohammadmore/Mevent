@@ -4,6 +4,7 @@ import {
   Cpu, Database, RefreshCw, Trash2, Play, CheckCircle, AlertTriangle, Zap, Server, Inbox
 } from 'lucide-react';
 import ModerationCenter from './ModerationCenter';
+import { SiteInfoForm } from './admin/SiteInfoForm';
 import { showToast } from '../lib/apiClient';
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
@@ -670,6 +671,8 @@ export default function AdminPanel() {
                 <Settings className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                 تنظیمات کلی
               </h3>
+
+              <SiteInfoForm />
 
 
               

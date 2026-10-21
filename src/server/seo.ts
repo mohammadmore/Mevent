@@ -14,7 +14,17 @@ function escapeHtml(value: string) {
 
 interface PageMeta { title: string; description: string; image?: string | null }
 
+const STATIC_PAGES: Record<string, PageMeta> = {
+  '/terms': { title: 'قوانین و مقررات', description: 'شرایط استفاده از میونت، خرید بلیت و ثبت رویداد' },
+  '/privacy': { title: 'حریم خصوصی', description: 'چه اطلاعاتی از شما نگه می‌داریم و چطور از آن استفاده می‌کنیم' },
+  '/refund-policy': { title: 'لغو و بازپرداخت', description: 'شرایط لغو بلیت و بازگشت وجه' },
+  '/about': { title: 'درباره ما', description: 'میونت؛ کشف رویدادها، پاتوق‌ها و برنامه سفر' },
+  '/contact': { title: 'تماس با ما', description: 'راه‌های ارتباط با پشتیبانی میونت' },
+};
+
 async function metaFor(pathname: string): Promise<PageMeta | null> {
+  const page = STATIC_PAGES[pathname.replace(/\/$/, '')];
+  if (page) return page;
   const [, kind, rawId] = pathname.match(/^\/(events|places|trips)\/([^/]+)\/?$/) || [];
   if (!kind) return null;
   if (kind === 'events') {

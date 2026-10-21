@@ -9,6 +9,7 @@ import { api } from '../lib/apiClient';
 import { navigate, useLocation } from '../lib/router';
 import { tehranDayRange, tehranWeekendRange, addDays, startOfTehranDay } from '../lib/time';
 import { pNum } from '../lib/format';
+import { SiteFooter } from '../components/SiteFooter';
 
 export const CITIES = ['تهران', 'اصفهان', 'شیراز', 'مشهد', 'تبریز', 'کرج', 'رشت', 'یزد', 'کیش', 'قم', 'اهواز', 'کرمان'];
 const PAGE_SIZE = 12;
@@ -311,6 +312,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           </button>
         </div>
       )}
+      {!hasMore && !loading && <SiteFooter />}
     </div>
   );
 }

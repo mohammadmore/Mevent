@@ -13,6 +13,7 @@ import { DiscoverScreen } from './screens/DiscoverScreen';
 import { TicketsScreen } from './screens/TicketsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
+import { LegalScreen, LEGAL_PATHS } from './screens/LegalScreen';
 import { EventRoute, PlaceRoute, VibeRoute, ChainRoute, FlowRoute, OrganizerRoute, rememberEntity } from './screens/EntityRoutes';
 
 // Heavy, rarely used screens load on demand so the first visit stays fast on mobile.
@@ -34,7 +35,7 @@ const OVERLAY_ROUTES: Array<[string, (p: Record<string, string>) => React.ReactN
 ];
 
 // Screens anyone can open (e.g. from a shared link); the rest ask for sign-in first.
-const PUBLIC_PATHS = ['/', '/map', '/login', '/hubs', '/trip-planner'];
+const PUBLIC_PATHS = ['/', '/map', '/login', '/hubs', '/trip-planner', ...LEGAL_PATHS];
 const isPublicPath = (path: string) =>
   PUBLIC_PATHS.includes(path) || OVERLAY_ROUTES.some(([p]) => matchPath(p, path)) ||
   !!matchPath('/trips/:id', path) || !!matchPath('/invite/:code', path) || !!matchPath('/hubs/:id', path);
@@ -71,7 +72,7 @@ function useOnline() {
 function LoginScreen() {
   const { login, isLoggingIn, loginBlockedReason, config } = useAuth();
   return (
-    <div className="flex flex-col items-center justify-center min-h-full text-center space-y-6 py-12">
+    <div className="flex flex-col items-center justify-center min-h-full text-center space-y-5 py-6">
       <div className="w-20 h-20 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-3xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00] rotate-12">
         <Sparkles className="w-10 h-10" />
       </div>
@@ -104,6 +105,11 @@ function LoginScreen() {
       {config && !config.phone && !config.google && (
         <p className="text-sm text-red-600">ورود به حساب موقتاً در دسترس نیست.</p>
       )}
+      <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
+        ورود یا ثبت‌نام به معنای پذیرش{' '}
+        <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
+        <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> میونت است.
+      </p>
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline">فعلاً رویدادها را ببینم</button>
     </div>
   );
@@ -226,6 +232,7 @@ function Shell() {
       case screenPath === '/tickets' || screenPath === '/saved': return <TicketsScreen />;
       case screenPath === '/profile': return <ProfileScreen />;
       case screenPath === '/notifications': return <NotificationsScreen />;
+      case LEGAL_PATHS.includes(screenPath): return <LegalScreen path={screenPath} />;
       case screenPath === '/create':
         return isOrganizer
           ? <div className={`${card} max-w-2xl`}><CreatePanel onSuccess={() => navigate('/organizer')} /></div>

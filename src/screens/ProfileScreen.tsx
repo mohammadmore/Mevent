@@ -9,6 +9,7 @@ import { confirmDialog, promptDialog } from '../lib/dialog';
 import { navigate } from '../lib/router';
 import { pNum } from '../lib/format';
 import { normalizeIranMobile, maskMobile } from '../lib/phone';
+import { SiteFooter } from '../components/SiteFooter';
 
 export function ProfileScreen() {
   const { profile, setProfile, refreshProfile } = useAppData();
@@ -181,6 +182,8 @@ export function ProfileScreen() {
           </button>
         </div>
       </div>
+
+      <SiteFooter />
 
       {editing && (
         <ProfileEditModal
