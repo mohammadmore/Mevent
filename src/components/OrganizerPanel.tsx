@@ -8,6 +8,7 @@ import { useToast } from './Toast';
 import { CheckInModal } from './CheckInModal';
 import { KycCard } from './KycCard';
 import { CouponManager } from './CouponManager';
+import { EventChangeActions } from './EventChangeActions';
 import { useAppData } from '../lib/appData';
 import { confirmDialog } from '../lib/dialog';
 import { api } from '../lib/apiClient';
@@ -241,6 +242,11 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                   <BarChart3 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                   آمار رویداد
                 </h3>
+                {events.find(e => e.id === selectedEventId) && (
+                  <div className="mb-6">
+                    <EventChangeActions event={events.find(e => e.id === selectedEventId)!} onChanged={() => { fetchEvents(); fetchStats(selectedEventId); }} />
+                  </div>
+                )}
                 
                 {statsLoading ? (
                   <div className="flex justify-center py-10">

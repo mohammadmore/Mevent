@@ -2,7 +2,7 @@ import { Express } from 'express';
 import crypto from 'crypto';
 import { eq, and, inArray, sql, desc, lt } from 'drizzle-orm';
 import { db, DbTransaction } from '../../db/index.ts';
-import { events, interactions, tickets, orders, users } from '../../db/schema.ts';
+import { events, interactions, tickets, orders, users, refunds } from '../../db/schema.ts';
 import { AuthRequest, requireAuth, requireAdmin, requireSelfOrAdmin, isAdmin } from '../../middleware/auth.ts';
 import { asyncRoute, limiters, publicBaseUrl } from '../infra.ts';
 import { invalidateCachePattern } from '../../lib/sharedStore.ts';
@@ -12,6 +12,7 @@ import { gatewayMode, gatewayAvailable, requestPayment, verifyPayment, toRial } 
 import { ticketSeatsTaken } from '../seats.ts';
 import { eventUrl } from '../helpers.ts';
 import { checkCoupon, redeemCoupon, releaseCoupon } from '../coupons.ts';
+import { invalidateEventCaches } from './content.ts';
 
 export const FRIEND_TICKET_DISCOUNT = 0.1; // second ticket bought for a friend gets 10% off
 export const FRIEND_TICKET_POINTS = 20;
@@ -47,13 +48,54 @@ async function completeOrder(tx: DbTransaction, orderId: number, refId: string |
 }
 
 /** Releases the seats of an unpaid order and gives back the points it reserved. */
-async function failOrder(tx: DbTransaction, orderId: number, status: 'FAILED' | 'EXPIRED') {
+async function failOrder(tx: DbTransaction, orderId: number, status: 'FAILED' | 'EXPIRED' | 'CANCELLED') {
   const [order] = await tx.select().from(orders).where(eq(orders.id, orderId)).for('update');
   if (!order || order.status !== 'PENDING') return;
   await tx.update(orders).set({ status }).where(eq(orders.id, orderId));
   await tx.update(tickets).set({ status: 'CANCELLED', cancelledAt: new Date() }).where(eq(tickets.orderId, orderId));
   if (order.pointsUsed > 0) await changePoints(tx, order.userId, order.pointsUsed, 'POINTS_REFUND', { type: 'ORDER', id: order.id });
   await releaseCoupon(tx, orderId);
+}
+
+/** Ticket holders may cancel until the deadline, or until the new start of a rescheduled event. */
+export function canCancelTicket(event: { startTime: Date | null; postponedFrom: Date | null; status: string } | undefined) {
+  if (!event || event.status === 'CANCELLED') return false;
+  if (!event.startTime) return true;
+  const msLeft = event.startTime.getTime() - Date.now();
+  return event.postponedFrom ? msLeft > 0 : msLeft > CANCEL_DEADLINE_HOURS * 3600_000;
+}
+
+/**
+ * Cancels the given active tickets of one order, records the money owed back (real payments only)
+ * and, when nothing is left on the order, settles it: points and discount code come back.
+ * Returns the amount queued for refund.
+ */
+export async function cancelOrderTickets(tx: DbTransaction, order: typeof orders.$inferSelect, rows: { id: number; amount: number }[], reason: string) {
+  if (!rows.length) return 0;
+  await tx.update(tickets).set({ status: 'CANCELLED', cancelledAt: new Date() }).where(inArray(tickets.id, rows.map(r => r.id)));
+  const paid = rows.reduce((sum, r) => sum + r.amount, 0);
+  let owed = 0;
+  if (order.gateway === 'ZARINPAL' && paid > 0) {
+    await tx.insert(refunds).values({ orderId: order.id, userId: order.userId, eventId: order.eventId, ticketIds: rows.map(r => r.id), amount: paid, reason });
+    owed = paid;
+  }
+  const [{ remaining }] = await tx.select({ remaining: sql<number>`count(*)::int` }).from(tickets)
+    .where(and(eq(tickets.orderId, order.id), inArray(tickets.status, ['ACTIVE', 'USED'])));
+  if (Number(remaining) === 0) {
+    const [{ open }] = await tx.select({ open: sql<number>`count(*)::int` }).from(refunds)
+      .where(and(eq(refunds.orderId, order.id), eq(refunds.status, 'REQUESTED')));
+    await tx.update(orders).set({ status: Number(open) > 0 ? 'REFUND_REQUESTED' : 'CANCELLED' }).where(eq(orders.id, order.id));
+    if (order.pointsUsed > 0) await changePoints(tx, order.userId, order.pointsUsed, 'POINTS_REFUND', { type: 'ORDER', id: order.id });
+    await releaseCoupon(tx, order.id);
+  }
+  return owed;
+}
+
+/** An order whose refunds are all paid and that has no valid ticket left becomes REFUNDED. */
+async function settleRefundedOrder(orderId: number) {
+  const [{ open }] = await db.select({ open: sql<number>`count(*)::int` }).from(refunds).where(and(eq(refunds.orderId, orderId), eq(refunds.status, 'REQUESTED')));
+  const [{ valid }] = await db.select({ valid: sql<number>`count(*)::int` }).from(tickets).where(and(eq(tickets.orderId, orderId), inArray(tickets.status, ['ACTIVE', 'USED'])));
+  if (Number(open) === 0 && Number(valid) === 0) await db.update(orders).set({ status: 'REFUNDED' }).where(eq(orders.id, orderId));
 }
 
 export async function expireStaleOrders() {
@@ -243,15 +285,22 @@ export function registerCommerceRoutes(app: Express) {
       .orderBy(desc(tickets.createdAt));
     // Unpaid holds that already expired are noise for the user.
     const visible = rows.filter(r => r.tickets.status !== 'PENDING_PAYMENT' || (r.order?.expiresAt && r.order.expiresAt.getTime() > Date.now()));
+    // Refund state of cancelled tickets ("requested" / "paid").
+    const myRefunds = await db.select({ status: refunds.status, ticketIds: refunds.ticketIds, amount: refunds.amount, paidAt: refunds.paidAt })
+      .from(refunds).where(eq(refunds.userId, userId));
+    const refundByTicket = new Map<number, { status: string; paidAt: Date | null }>();
+    for (const r of myRefunds) for (const id of (r.ticketIds as number[]) || []) refundByTicket.set(id, { status: r.status, paidAt: r.paidAt });
     res.json({
       data: visible.map(r => ({
         ...r,
-        canCancel: r.tickets.status === 'ACTIVE' && (!r.events.startTime || r.events.startTime.getTime() - Date.now() > CANCEL_DEADLINE_HOURS * 3600_000),
+        canCancel: r.tickets.status === 'ACTIVE' && canCancelTicket(r.events),
+        refund: refundByTicket.get(r.tickets.id) || null,
       }))
     });
   }));
 
   // Cancels one ticket. Free tickets are simply released; paid ones go to the refund queue.
+  // After the organizer reschedules an event, holders may cancel right up to the new start time.
   app.post('/api/tickets/:id/cancel', limiters.tickets, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const ticketId = parseInt(req.params.id, 10);
     const outcome = await db.transaction(async (tx) => {
@@ -259,23 +308,19 @@ export function registerCommerceRoutes(app: Express) {
       if (!ticket || (ticket.userId !== req.dbUser!.id && !isAdmin(req))) return { status: 404, body: { error: 'بلیت یافت نشد' } };
       if (ticket.status !== 'ACTIVE') return { status: 400, body: { error: 'این بلیت قابل لغو نیست.' } };
       const [event] = await tx.select().from(events).where(eq(events.id, ticket.eventId));
-      if (event?.startTime && event.startTime.getTime() - Date.now() < CANCEL_DEADLINE_HOURS * 3600_000 && !isAdmin(req)) {
+      if (!canCancelTicket(event) && !isAdmin(req)) {
         return { status: 400, body: { error: `لغو بلیت فقط تا ${CANCEL_DEADLINE_HOURS.toLocaleString('fa-IR')} ساعت پیش از شروع رویداد ممکن است.` } };
       }
-      await tx.update(tickets).set({ status: 'CANCELLED', cancelledAt: new Date() }).where(eq(tickets.id, ticketId));
 
       let refund = 'NONE';
       if (ticket.orderId) {
         const [order] = await tx.select().from(orders).where(eq(orders.id, ticket.orderId)).for('update');
-        const [{ remaining }] = await tx.select({ remaining: sql<number>`count(*)::int` }).from(tickets)
-          .where(and(eq(tickets.orderId, ticket.orderId), eq(tickets.status, 'ACTIVE')));
-        if (order && ticket.amount > 0) refund = order.gateway === 'ZARINPAL' ? 'REQUESTED' : 'AUTOMATIC';
-        if (order && Number(remaining) === 0) {
-          // Whole order cancelled: points spent on it come back, paid money goes to the refund queue.
-          await tx.update(orders).set({ status: order.gateway === 'ZARINPAL' && order.amount > 0 ? 'REFUND_REQUESTED' : 'CANCELLED' }).where(eq(orders.id, order.id));
-          if (order.pointsUsed > 0) await changePoints(tx, order.userId, order.pointsUsed, 'POINTS_REFUND', { type: 'ORDER', id: order.id });
-          await releaseCoupon(tx, order.id);
+        if (order) {
+          const owed = await cancelOrderTickets(tx, order, [ticket], event?.postponedFrom ? 'EVENT_POSTPONED' : 'USER_CANCEL');
+          refund = owed > 0 ? 'REQUESTED' : ticket.amount > 0 ? 'AUTOMATIC' : 'NONE';
         }
+      } else {
+        await tx.update(tickets).set({ status: 'CANCELLED', cancelledAt: new Date() }).where(eq(tickets.id, ticketId));
       }
 
       // No ticket left for this event: the user is no longer attending.
@@ -332,21 +377,121 @@ export function registerCommerceRoutes(app: Express) {
 
   // Refund queue (Zarinpal refunds are paid out from the merchant panel, then marked here).
   app.get('/api/admin/refunds', requireAdmin, asyncRoute(async (req, res) => {
-    const rows = await db.select({ order: orders, eventTitle: events.title, userName: users.name, userEmail: users.email })
-      .from(orders).innerJoin(events, eq(orders.eventId, events.id)).innerJoin(users, eq(orders.userId, users.id))
-      .where(eq(orders.status, 'REFUND_REQUESTED')).orderBy(desc(orders.createdAt));
+    const eventId = parseInt(String(req.query.eventId || ''), 10);
+    const rows = await db.select({ refund: refunds, eventTitle: events.title, userName: users.name, userPhone: users.phone, refId: orders.refId })
+      .from(refunds).innerJoin(events, eq(refunds.eventId, events.id)).innerJoin(users, eq(refunds.userId, users.id))
+      .innerJoin(orders, eq(refunds.orderId, orders.id))
+      .where(and(eq(refunds.status, 'REQUESTED'), Number.isInteger(eventId) ? eq(refunds.eventId, eventId) : undefined))
+      .orderBy(desc(refunds.createdAt)).limit(500);
     res.json({ data: rows });
   }));
 
-  app.post('/api/admin/refunds/:orderId', requireAdmin, asyncRoute(async (req, res) => {
-    const orderId = parseInt(req.params.orderId, 10);
-    const [order] = await db.update(orders).set({ status: 'REFUNDED' })
-      .where(and(eq(orders.id, orderId), eq(orders.status, 'REFUND_REQUESTED'))).returning();
-    if (!order) return res.status(404).json({ error: 'درخواست بازپرداخت یافت نشد' });
-    notify(order.userId, {
-      type: 'TICKET', title: 'مبلغ بلیت بازپرداخت شد',
-      body: `مبلغ ${order.amount.toLocaleString('fa-IR')} تومان به حساب شما بازگردانده شد.`, url: eventUrl(order.eventId),
-    }).catch(() => {});
-    res.json({ success: true });
+  // Marks refunds paid: one (by id) or every open refund of an event ({ eventId }).
+  app.post('/api/admin/refunds/mark-paid', requireAdmin, asyncRoute(async (req: AuthRequest, res) => {
+    const ids = (Array.isArray(req.body?.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger);
+    const eventId = parseInt(req.body?.eventId, 10);
+    if (!ids.length && !Number.isInteger(eventId)) return res.status(400).json({ error: 'بازپرداختی انتخاب نشده است.' });
+    const paid = await db.update(refunds).set({ status: 'PAID', paidAt: new Date(), paidById: req.dbUser!.id })
+      .where(and(eq(refunds.status, 'REQUESTED'), ids.length ? inArray(refunds.id, ids) : eq(refunds.eventId, eventId))).returning();
+    for (const r of paid) await settleRefundedOrder(r.orderId);
+    const titles = new Map((await db.select({ id: events.id, title: events.title }).from(events)
+      .where(inArray(events.id, [...new Set(paid.map(r => r.eventId)), 0]))).map(e => [e.id, e.title]));
+    for (const r of paid) {
+      const title = titles.get(r.eventId) || 'رویداد';
+      notify(r.userId, {
+        type: 'TICKET', title: 'مبلغ بلیت بازپرداخت شد',
+        body: `مبلغ ${r.amount.toLocaleString('fa-IR')} تومان بابت «${title}» به حساب شما بازگردانده شد.`, url: '/tickets',
+        dedupeKey: `refund-paid:${r.id}`,
+        sms: { kind: 'REFUND', params: { amount: r.amount.toLocaleString('en-US'), title } },
+      }).catch(() => {});
+    }
+    res.json({ success: true, data: { paid: paid.length } });
+  }));
+
+  // ---------------- organizer: cancel / reschedule an event ----------------
+  async function ownedEvent(req: AuthRequest) {
+    const [event] = await db.select().from(events).where(eq(events.id, parseInt(req.params.id, 10)));
+    if (!event) return { error: 404 as const };
+    if (event.organizerId !== req.dbUser!.id && !isAdmin(req)) return { error: 403 as const };
+    return { event };
+  }
+
+  /** Everyone affected by a change: ticket holders (incl. unpaid holds) and free RSVPs. */
+  async function attendeeIds(eventId: number) {
+    const holders = await db.selectDistinct({ id: tickets.userId }).from(tickets)
+      .where(and(eq(tickets.eventId, eventId), inArray(tickets.status, ['ACTIVE', 'PENDING_PAYMENT'])));
+    const rsvps = await db.selectDistinct({ id: interactions.userId }).from(interactions)
+      .where(and(eq(interactions.eventId, eventId), eq(interactions.type, 'RSVP')));
+    return [...new Set([...holders, ...rsvps].map(r => r.id))];
+  }
+
+  app.post('/api/organizer/events/:id/cancel', limiters.contentWrite, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    const found = await ownedEvent(req);
+    if ('error' in found) return res.status(found.error).json({ error: found.error === 404 ? 'رویداد یافت نشد' : 'شما دسترسی لازم برای این کار را ندارید.' });
+    const { event } = found;
+    const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim().slice(0, 500) : '';
+    if (reason.length < 5) return res.status(400).json({ error: 'دلیل لغو را بنویسید؛ برای شرکت‌کنندگان ارسال می‌شود.' });
+    if (event.status === 'CANCELLED') return res.status(400).json({ error: 'این رویداد قبلاً لغو شده است.' });
+    const endsAt = event.endTime || event.startTime;
+    if (endsAt && endsAt.getTime() < Date.now()) return res.status(400).json({ error: 'رویداد برگزار شده و قابل لغو نیست.' });
+
+    const notifyIds = await attendeeIds(event.id);
+    let refundTotal = 0, ticketCount = 0;
+    await db.transaction(async (tx) => {
+      const [locked] = await tx.select().from(events).where(eq(events.id, event.id)).for('update');
+      if (locked.status === 'CANCELLED') return;
+      await tx.update(events).set({ status: 'CANCELLED', cancelledAt: new Date(), cancelReason: reason }).where(eq(events.id, event.id));
+      const eventOrders = await tx.select().from(orders).where(and(eq(orders.eventId, event.id), inArray(orders.status, ['PENDING', 'PAID']))).for('update');
+      for (const order of eventOrders) {
+        if (order.status === 'PENDING') { await failOrder(tx, order.id, 'CANCELLED'); continue; }
+        const active = await tx.select({ id: tickets.id, amount: tickets.amount }).from(tickets)
+          .where(and(eq(tickets.orderId, order.id), eq(tickets.status, 'ACTIVE')));
+        ticketCount += active.length;
+        refundTotal += await cancelOrderTickets(tx, order, active, 'EVENT_CANCELLED');
+      }
+    });
+    for (const userId of notifyIds) {
+      notify(userId, {
+        type: 'EVENT_CHANGE', title: `رویداد «${event.title}» لغو شد`,
+        body: `دلیل: ${reason}${event.cost > 0 ? ' — مبلغ بلیت‌ها بدون نیاز به درخواست بازگردانده می‌شود.' : ''}`,
+        url: `/events/${event.id}`, dedupeKey: `event-cancelled:${event.id}:${userId}`,
+        sms: { kind: 'EVENT_CANCELLED', params: { title: event.title } },
+      }).catch(() => {});
+    }
+    invalidateCachePattern('admin_stats');
+    invalidateEventCaches();
+    res.json({ success: true, data: { notified: notifyIds.length, ticketsCancelled: ticketCount, refundTotal } });
+  }));
+
+  app.post('/api/organizer/events/:id/postpone', limiters.contentWrite, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    const found = await ownedEvent(req);
+    if ('error' in found) return res.status(found.error).json({ error: found.error === 404 ? 'رویداد یافت نشد' : 'شما دسترسی لازم برای این کار را ندارید.' });
+    const { event } = found;
+    if (event.status === 'CANCELLED') return res.status(400).json({ error: 'رویداد لغو شده است.' });
+    if (!event.startTime) return res.status(400).json({ error: 'این رویداد زمان مشخصی ندارد؛ از ویرایش رویداد استفاده کنید.' });
+    const start = new Date(req.body?.startTime);
+    const end = req.body?.endTime ? new Date(req.body.endTime) : null;
+    if (isNaN(start.getTime()) || start.getTime() < Date.now() + 3600_000) return res.status(400).json({ error: 'زمان جدید باید دست‌کم یک ساعت بعد از اکنون باشد.' });
+    if (end && (isNaN(end.getTime()) || end <= start)) return res.status(400).json({ error: 'زمان پایان باید بعد از زمان شروع باشد.' });
+    if (start.getTime() === event.startTime.getTime()) return res.status(400).json({ error: 'زمان جدید با زمان فعلی یکی است.' });
+    const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim().slice(0, 500) : '';
+
+    await db.update(events).set({
+      startTime: start, endTime: end ?? (event.endTime ? new Date(start.getTime() + (event.endTime.getTime() - event.startTime.getTime())) : null),
+      postponedFrom: event.postponedFrom ?? event.startTime, cancelReason: reason || null,
+    }).where(eq(events.id, event.id));
+
+    const when = new Intl.DateTimeFormat('fa-IR', { timeZone: 'Asia/Tehran', calendar: 'persian', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(start);
+    const notifyIds = await attendeeIds(event.id);
+    for (const userId of notifyIds) {
+      notify(userId, {
+        type: 'EVENT_CHANGE', title: `زمان «${event.title}» تغییر کرد`,
+        body: `زمان جدید: ${when}.${reason ? ` ${reason}.` : ''}${event.cost > 0 ? ' اگر نمی‌توانید بیایید، تا پیش از زمان جدید بلیت را لغو کنید تا مبلغ کامل بازگردانده شود.' : ''}`,
+        url: `/events/${event.id}`, dedupeKey: `event-postponed:${event.id}:${start.getTime()}:${userId}`,
+        sms: { kind: 'EVENT_POSTPONED', params: { title: event.title, when } },
+      }).catch(() => {});
+    }
+    invalidateEventCaches();
+    res.json({ success: true, data: { notified: notifyIds.length, startTime: start.toISOString() } });
   }));
 }

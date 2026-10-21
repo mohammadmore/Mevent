@@ -234,6 +234,26 @@ async function initDatabaseSchemaAndIndexes() {
       discount INTEGER NOT NULL,
       created_at TIMESTAMP DEFAULT now()
     );`,
+    "ALTER TABLE events ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP;",
+    "ALTER TABLE events ADD COLUMN IF NOT EXISTS cancel_reason TEXT;",
+    "ALTER TABLE events ADD COLUMN IF NOT EXISTS postponed_from TIMESTAMP;",
+    `CREATE TABLE IF NOT EXISTS refunds (
+      id SERIAL PRIMARY KEY,
+      order_id INTEGER NOT NULL REFERENCES orders(id),
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      event_id INTEGER NOT NULL REFERENCES events(id),
+      ticket_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
+      amount INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'REQUESTED',
+      paid_at TIMESTAMP,
+      paid_by_id INTEGER,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    // Refund requests made before the refunds table existed (whole orders only).
+    `INSERT INTO refunds (order_id, user_id, event_id, amount, reason)
+      SELECT o.id, o.user_id, o.event_id, o.amount, 'USER_CANCEL' FROM orders o
+      WHERE o.status = 'REFUND_REQUESTED' AND NOT EXISTS (SELECT 1 FROM refunds r WHERE r.order_id = o.id);`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -273,6 +293,8 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_users_kyc_status ON users (kyc_status);',
     'CREATE INDEX IF NOT EXISTS idx_coupon_redemptions_coupon_user ON coupon_redemptions (coupon_id, user_id);',
     'CREATE INDEX IF NOT EXISTS idx_coupons_organizer ON coupons (organizer_id);',
+    'CREATE INDEX IF NOT EXISTS idx_refunds_status_event ON refunds (status, event_id);',
+    'CREATE INDEX IF NOT EXISTS idx_refunds_order ON refunds (order_id);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

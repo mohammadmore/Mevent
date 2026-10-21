@@ -104,7 +104,8 @@ async function sendEventReminders() {
         title: w.title,
         body: `«${ev.title}» ${w.when} ساعت ${tehranTime.format(ev.startTime!)} شروع می‌شود.`,
         url: `/events/${ev.id}`,
-        dedupeKey: `reminder:${w.kind}:${a.userId}:${ev.id}`,
+        // The start time is part of the key so a rescheduled event gets reminders for its new date.
+        dedupeKey: `reminder:${w.kind}:${a.userId}:${ev.id}:${ev.startTime!.getTime()}`,
         // One SMS, the day before (the hour-before reminder is in-app/push only).
         ...(w.kind === 'day' ? { sms: { kind: 'REMINDER' as const, params: { title: ev.title, when: `${w.when} ساعت ${tehranTime.format(ev.startTime!)}` } } } : {}),
       });

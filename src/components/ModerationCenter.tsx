@@ -77,10 +77,19 @@ export default function ModerationCenter() {
   };
 
   const markRefunded = async (row: any) => {
-    const ok = await confirmDialog({ title: 'ثبت بازپرداخت', message: `مبلغ ${formatToman(row.order.amount)} به ${row.userName} از پنل درگاه بازپرداخت شده است؟`, confirmText: 'بله، بازپرداخت شد' });
+    const ok = await confirmDialog({ title: 'ثبت بازپرداخت', message: `مبلغ ${formatToman(row.refund.amount)} به ${row.userName} از پنل درگاه بازپرداخت شده است؟`, confirmText: 'بله، بازپرداخت شد' });
     if (!ok) return;
-    run(`ref-${row.order.id}`, () => api(`/api/admin/refunds/${row.order.id}`, { body: {} }), 'بازپرداخت ثبت شد و به کاربر اطلاع داده شد.');
+    run(`ref-${row.refund.id}`, () => api('/api/admin/refunds/mark-paid', { body: { ids: [row.refund.id] } }), 'بازپرداخت ثبت شد و به کاربر اطلاع داده شد.');
   };
+
+  const markEventRefunded = async (eventId: number, title: string, rows: any[]) => {
+    const total = rows.reduce((sum, r) => sum + r.refund.amount, 0);
+    const ok = await confirmDialog({ title: 'ثبت بازپرداخت گروهی', message: `همه ${pNum(rows.length)} بازپرداخت «${title}» (جمعاً ${formatToman(total)}) از پنل درگاه انجام شده است؟`, confirmText: 'بله، همه انجام شد' });
+    if (!ok) return;
+    run(`refev-${eventId}`, () => api('/api/admin/refunds/mark-paid', { body: { eventId } }), 'بازپرداخت‌ها ثبت شد و به خریداران اطلاع داده شد.');
+  };
+
+  const refundsByEvent = refunds.reduce<Record<number, any[]>>((groups, r) => ((groups[r.refund.eventId] ||= []).push(r), groups), {});
 
   const btn = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50';
 
@@ -149,17 +158,26 @@ export default function ModerationCenter() {
       </Section>
 
       <Section icon={<RotateCcw className="w-5 h-5 text-amber-500" />} title="درخواست‌های بازپرداخت" count={refunds.length}>
-        <ul className="space-y-3">
-          {refunds.map(row => (
-            <li key={row.order.id} className="border border-gray-100 dark:border-white/10 rounded-xl p-3 flex justify-between gap-3 flex-wrap">
-              <div className="text-sm">
-                <p className="font-bold text-gray-900 dark:text-gray-100">{row.eventTitle}</p>
-                <p className="text-xs text-gray-500 mt-1">{row.userName} ({row.userEmail}) • {formatToman(row.order.amount)} • کد پیگیری درگاه: <span dir="ltr">{row.order.refId || '-'}</span></p>
+        <div className="space-y-4">
+          {(Object.entries(refundsByEvent) as [string, any[]][]).map(([eventId, rows]) => (
+            <div key={eventId} className="border border-gray-100 dark:border-white/10 rounded-xl p-3 space-y-2">
+              <div className="flex justify-between items-center gap-2 flex-wrap">
+                <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{rows[0].eventTitle} <span className="text-xs text-gray-500 font-normal">({pNum(rows.length)} مورد، {formatToman(rows.reduce((s: number, r: any) => s + r.refund.amount, 0))})</span></p>
+                {rows.length > 1 && <button disabled={busy === `refev-${eventId}`} onClick={() => markEventRefunded(Number(eventId), rows[0].eventTitle, rows)} className={`${btn} bg-amber-500 text-black`}><Check className="w-4 h-4" /> همه بازپرداخت شد</button>}
               </div>
-              <button disabled={busy === `ref-${row.order.id}`} onClick={() => markRefunded(row)} className={`${btn} bg-amber-500 text-black self-start`}><Check className="w-4 h-4" /> بازپرداخت شد</button>
-            </li>
+              <ul className="space-y-2">
+                {rows.map((row: any) => (
+                  <li key={row.refund.id} className="flex justify-between gap-3 flex-wrap text-xs border-t border-gray-100 dark:border-white/5 pt-2">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {row.userName} {row.userPhone && <span dir="ltr">({row.userPhone})</span>} • <b>{formatToman(row.refund.amount)}</b> • {row.refund.reason === 'EVENT_CANCELLED' ? 'لغو رویداد' : row.refund.reason === 'EVENT_POSTPONED' ? 'تغییر زمان' : 'لغو خریدار'} • کد پیگیری درگاه: <span dir="ltr">{row.refId || '-'}</span>
+                    </span>
+                    <button disabled={busy === `ref-${row.refund.id}`} onClick={() => markRefunded(row)} className={`${btn} bg-gray-100 dark:bg-white/10`}><Check className="w-4 h-4" /> بازپرداخت شد</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </Section>
     </div>
   );

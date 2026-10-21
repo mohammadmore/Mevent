@@ -88,7 +88,8 @@ export function registerDiscoveryRoutes(app: Express) {
     if (!Number.isInteger(eventId)) return res.status(404).json({ error: 'رویداد مورد نظر یافت نشد.' });
     const [event] = await db.select().from(events).where(eq(events.id, eventId)).limit(1);
     const canSeeHidden = event && (req.dbUser?.id === event.organizerId || isAdmin(req));
-    if (!event || (event.status !== 'PUBLISHED' && !canSeeHidden)) {
+    // Cancelled events stay viewable so ticket holders can see what happened.
+    if (!event || (event.status !== 'PUBLISHED' && event.status !== 'CANCELLED' && !canSeeHidden)) {
       return res.status(404).json({ error: 'رویداد مورد نظر یافت نشد.' });
     }
     const [formatted] = await formatEvents([event]);

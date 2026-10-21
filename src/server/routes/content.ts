@@ -18,7 +18,6 @@ import { assertCanSellPaid } from './kyc.ts';
 export function invalidateEventCaches() {
   invalidateCachePattern('events_list');
   invalidateCachePattern('admin_stats');
-  invalidateCachePattern('ai_events_context');
 }
 
 /** Content from non-admins waits in the moderation queue unless it is saved as a draft. */
@@ -119,7 +118,21 @@ export function registerContentRoutes(app: Express) {
     if (!event) return;
     // An event hidden by moderation stays hidden until an admin restores it.
     if (event.status === 'HIDDEN' && !isAdmin(req) && req.body.status !== undefined) delete req.body.status;
+    // A cancelled event has been refunded: it cannot be published again (create a new event instead).
+    if (event.status === 'CANCELLED') {
+      if (req.body.status !== undefined && req.body.status !== 'CANCELLED') return res.status(400).json({ error: 'رویداد لغوشده دوباره منتشر نمی‌شود؛ رویداد جدیدی بسازید.' });
+      delete req.body.status;
+    }
     const updatedData = buildEventPayload(req.body, true);
+    // Moving an event that people already signed up for goes through "change time", which notifies
+    // them and lets ticket holders cancel with a full refund.
+    if (updatedData.startTime !== undefined && event.startTime && new Date(updatedData.startTime).getTime() !== event.startTime.getTime()) {
+      const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(tickets).where(and(eq(tickets.eventId, event.id), inArray(tickets.status, ['ACTIVE', 'PENDING_PAYMENT'])));
+      const [{ r }] = await db.select({ r: sql<number>`count(*)::int` }).from(interactions).where(and(eq(interactions.eventId, event.id), eq(interactions.type, 'RSVP')));
+      if (Number(n) + Number(r) > 0) {
+        return res.status(409).json({ error: 'این رویداد شرکت‌کننده دارد؛ برای تغییر زمان از دکمه «تغییر زمان» در پنل برگزارکننده استفاده کنید تا به همه اطلاع داده شود.', code: 'USE_POSTPONE' });
+      }
+    }
     // Turning a free event into a paid one (or raising the price) needs a verified organizer too.
     if (updatedData.cost !== undefined && Number(updatedData.cost) > event.cost && !assertCanSellPaid(req, updatedData.cost, res)) return;
     if (isAdmin(req)) {

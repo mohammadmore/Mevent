@@ -84,6 +84,11 @@ export const events = pgTable('events', {
   imageUrl: text('image_url'),
   ticketUrl: text('ticket_url'),
   bgIcon: text('bg_icon').default('Ticket'),
+  // Set when the organizer cancels (status CANCELLED) or reschedules the event.
+  cancelledAt: timestamp('cancelled_at'),
+  cancelReason: text('cancel_reason'),
+  /** Original start time of a rescheduled event; while set, ticket holders may cancel with no deadline. */
+  postponedFrom: timestamp('postponed_from'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -431,3 +436,20 @@ export const couponRedemptions = pgTable('coupon_redemptions', {
   discount: integer('discount').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_coupon_redemptions_coupon_user').on(t.couponId, t.userId)]);
+
+// Money owed back to a buyer (one row per cancellation). Paid out from the gateway's merchant
+// panel, then marked here. reason: USER_CANCEL | EVENT_CANCELLED | EVENT_POSTPONED
+// status: REQUESTED | PAID
+export const refunds = pgTable('refunds', {
+  id: serial('id').primaryKey(),
+  orderId: integer('order_id').references(() => orders.id).notNull(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  eventId: integer('event_id').references(() => events.id).notNull(),
+  ticketIds: jsonb('ticket_ids').default('[]').notNull(),
+  amount: integer('amount').notNull(),
+  reason: text('reason').notNull(),
+  status: text('status').default('REQUESTED').notNull(),
+  paidAt: timestamp('paid_at'),
+  paidById: integer('paid_by_id'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_refunds_status_event').on(t.status, t.eventId)]);

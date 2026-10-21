@@ -14,6 +14,7 @@ interface TicketRow {
   events: any;
   order?: { id: number; status: string } | null;
   canCancel: boolean;
+  refund?: { status: 'REQUESTED' | 'PAID'; paidAt: string | null } | null;
 }
 
 const STATUS_LABEL: Record<string, string> = { ACTIVE: 'معتبر', USED: 'استفاده شده', CANCELLED: 'لغو شده', PENDING_PAYMENT: 'در انتظار پرداخت' };
@@ -104,6 +105,9 @@ export function TicketsScreen() {
                 <div className="flex-1 min-w-0">
                   <button onClick={() => navigate(`/events/${row.events.id}`)} className="font-bold text-[#515739] dark:text-gray-100 mb-1 text-right hover:underline">{row.events.title}</button>
                   <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1 mb-2"><Calendar className="w-3.5 h-3.5" /> {eventTimeLabel(row.events)}</p>
+                  {(row.events as any).postponedFrom && (
+                    <p className="text-xs text-amber-700 dark:text-amber-300 mb-2">زمان رویداد تغییر کرده است؛ تا پیش از زمان جدید می‌توانید بلیت را با بازپرداخت کامل لغو کنید.</p>
+                  )}
                   <p className="text-xs font-mono tracking-widest bg-white dark:bg-black/30 rounded-lg px-2 py-1 inline-block mb-2" dir="ltr">{row.tickets.code}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">{row.tickets.holderLabel || 'بلیت'} • {STATUS_LABEL[row.tickets.status]} • {row.tickets.amount ? formatToman(row.tickets.amount) : 'رایگان'}</p>
                   {row.canCancel && (
@@ -121,7 +125,10 @@ export function TicketsScreen() {
               {past.map(row => (
                 <li key={row.tickets.id} className="text-sm flex justify-between bg-gray-100 dark:bg-white/5 rounded-xl px-3 py-2">
                   <span className="truncate">{row.events.title}</span>
-                  <span className="text-xs text-gray-500 shrink-0">{STATUS_LABEL[row.tickets.status]}{row.order?.status === 'REFUND_REQUESTED' ? ' • در انتظار بازپرداخت' : row.order?.status === 'REFUNDED' ? ' • بازپرداخت شد' : ''}</span>
+                  <span className="text-xs text-gray-500 shrink-0">
+                    {(row.events as any).status === 'CANCELLED' ? 'رویداد لغو شد' : STATUS_LABEL[row.tickets.status]}
+                    {row.refund?.status === 'REQUESTED' ? ' • در انتظار بازپرداخت' : row.refund?.status === 'PAID' ? ' • بازپرداخت شد' : ''}
+                  </span>
                 </li>
               ))}
             </ul>

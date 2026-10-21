@@ -6,7 +6,7 @@ import { api, showToast } from '../lib/apiClient';
 import { promptDialog } from '../lib/dialog';
 import { absoluteUrl } from '../lib/router';
 import { useAppData } from '../lib/appData';
-import { formatDateParts, fuzzyTimeLabel, pNum } from '../lib/format';
+import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum } from '../lib/format';
 import { tehranParts } from '../lib/time';
 
 export const REPORT_REASONS = ['اطلاعات نادرست یا گمراه‌کننده', 'کلاهبرداری یا فروش بلیت جعلی', 'محتوای نامناسب یا توهین‌آمیز', 'رویداد لغو شده است', 'تکراری یا اسپم'];
@@ -234,6 +234,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
   };
 
   const seatsLeft = typeof event.seatsLeft === 'number' ? event.seatsLeft : null;
+  const isCancelled = (event as any).status === 'CANCELLED';
   const soldOut = seatsLeft === 0 && !isRsvp;
 
   const isCinema = event.tags?.includes('سینما');
@@ -368,6 +369,17 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           </div>
         )}
         <h1 className="text-2xl sm:text-3xl font-bold text-[#515739] dark:text-gray-100 mb-6 leading-tight">{event.title}</h1>
+        {isCancelled && (
+          <div role="status" className="mb-6 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 p-4 text-sm text-red-800 dark:text-red-300">
+            <b>این رویداد لغو شده است.</b>{(event as any).cancelReason && <> دلیل: {(event as any).cancelReason}</>}
+            {event.cost > 0 && <span className="block mt-1">مبلغ بلیت‌های خریداری‌شده بدون نیاز به درخواست بازگردانده می‌شود.</span>}
+          </div>
+        )}
+        {!isCancelled && (event as any).postponedFrom && (
+          <div role="status" className="mb-6 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-4 text-sm text-amber-900 dark:text-amber-200">
+            <b>زمان این رویداد تغییر کرده است.</b> زمان قبلی: {formatEventDate((event as any).postponedFrom)}.{(event as any).cancelReason && <> {(event as any).cancelReason}</>}
+          </div>
+        )}
 
         <div className="space-y-5 mb-8">
           {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10">
@@ -662,12 +674,12 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           </p>
         )}
         <button 
-          disabled={soldOut}
+          disabled={soldOut || isCancelled}
           onClick={(e) => event.cost > 0 || event.ticketUrl ? onBuyTicket(e, event) : onRsvp(e, event)}
           className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
         >
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
-          {event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'خرید بلیت بیشتر' : 'خرید بلیت') : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
+          {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'خرید بلیت بیشتر' : 'خرید بلیت') : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
         </button>
         </div>
       </div>
