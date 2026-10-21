@@ -254,6 +254,28 @@ async function initDatabaseSchemaAndIndexes() {
     `INSERT INTO refunds (order_id, user_id, event_id, amount, reason)
       SELECT o.id, o.user_id, o.event_id, o.amount, 'USER_CANCEL' FROM orders o
       WHERE o.status = 'REFUND_REQUESTED' AND NOT EXISTS (SELECT 1 FROM refunds r WHERE r.order_id = o.id);`,
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS transferred_from_id INTEGER;",
+    "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS transferred_at TIMESTAMP;",
+    `CREATE TABLE IF NOT EXISTS waitlist_entries (
+      id SERIAL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      status TEXT NOT NULL DEFAULT 'WAITING',
+      offered_at TIMESTAMP,
+      offer_expires_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS ticket_transfers (
+      id SERIAL PRIMARY KEY,
+      ticket_id INTEGER NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,
+      from_user_id INTEGER NOT NULL REFERENCES users(id),
+      to_phone TEXT NOT NULL,
+      to_user_id INTEGER REFERENCES users(id),
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      responded_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -295,6 +317,11 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_coupons_organizer ON coupons (organizer_id);',
     'CREATE INDEX IF NOT EXISTS idx_refunds_status_event ON refunds (status, event_id);',
     'CREATE INDEX IF NOT EXISTS idx_refunds_order ON refunds (order_id);',
+    'CREATE INDEX IF NOT EXISTS idx_waitlist_event_status ON waitlist_entries (event_id, status);',
+    // One open waiting-list entry per person and event; one pending transfer per ticket.
+    "CREATE UNIQUE INDEX IF NOT EXISTS uq_waitlist_open ON waitlist_entries (event_id, user_id) WHERE status IN ('WAITING', 'OFFERED');",
+    "CREATE UNIQUE INDEX IF NOT EXISTS uq_transfer_pending ON ticket_transfers (ticket_id) WHERE status = 'PENDING';",
+    'CREATE INDEX IF NOT EXISTS idx_transfers_phone_status ON ticket_transfers (to_phone, status);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

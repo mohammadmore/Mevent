@@ -14,6 +14,7 @@ import { getEventBackgroundIcon } from '../lib/icons';
 import { PriceWidget } from './PriceWidget';
 import { GeneratedAvatar } from './Avatar';
 import { NavigationLinks } from './NavigationLinks';
+import { WaitlistControl, WaitlistBanner, useWaitlist } from './WaitlistControl';
 const MiniMap = lazy(() => import('./MiniMap'));
 
 interface EventDetailProps {
@@ -235,6 +236,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
 
   const seatsLeft = typeof event.seatsLeft === 'number' ? event.seatsLeft : null;
   const isCancelled = (event as any).status === 'CANCELLED';
+  const [waitlist, setWaitlist] = useWaitlist(event);
   const soldOut = seatsLeft === 0 && !isRsvp;
 
   const isCinema = event.tags?.includes('سینما');
@@ -673,6 +675,10 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             <Users className="w-3.5 h-3.5" /> {seatsLeft === 0 ? 'ظرفیت این رویداد تکمیل شده است' : `${pNum(seatsLeft)} جای خالی از ${pNum(event.capacity)}`}
           </p>
         )}
+        <WaitlistBanner waitlist={waitlist} />
+        {soldOut && !isCancelled && !event.ticketUrl ? (
+          <WaitlistControl event={event} waitlist={waitlist} onChange={setWaitlist} />
+        ) : (
         <button 
           disabled={soldOut || isCancelled}
           onClick={(e) => event.cost > 0 || event.ticketUrl ? onBuyTicket(e, event) : onRsvp(e, event)}
@@ -681,6 +687,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
           {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'خرید بلیت بیشتر' : 'خرید بلیت') : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
         </button>
+        )}
         </div>
       </div>
 

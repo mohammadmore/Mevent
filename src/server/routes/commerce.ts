@@ -9,10 +9,11 @@ import { invalidateCachePattern } from '../../lib/sharedStore.ts';
 import { changePoints, POINT_VALUE_TOMAN, MAX_POINTS_SHARE } from '../../lib/points.ts';
 import { notify } from '../../lib/notifications.ts';
 import { gatewayMode, gatewayAvailable, requestPayment, verifyPayment, toRial } from '../../lib/payments.ts';
-import { ticketSeatsTaken } from '../seats.ts';
+import { seatsTaken } from '../seats.ts';
 import { eventUrl } from '../helpers.ts';
 import { checkCoupon, redeemCoupon, releaseCoupon } from '../coupons.ts';
 import { invalidateEventCaches } from './content.ts';
+import { convertWaitlist, nudgeWaitlist } from '../waitlist.ts';
 
 export const FRIEND_TICKET_DISCOUNT = 0.1; // second ticket bought for a friend gets 10% off
 export const FRIEND_TICKET_POINTS = 20;
@@ -21,7 +22,7 @@ export const PAYMENT_HOLD_MINUTES = 15;
 // Tickets can be cancelled until this long before the event starts.
 export const CANCEL_DEADLINE_HOURS = 2;
 
-function ticketCode() {
+export function ticketCode() {
   // Unambiguous characters only (no 0/O, 1/I) so the code can be read out at the door.
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const bytes = crypto.randomBytes(10);
@@ -99,9 +100,10 @@ async function settleRefundedOrder(orderId: number) {
 }
 
 export async function expireStaleOrders() {
-  const stale = await db.select({ id: orders.id }).from(orders)
+  const stale = await db.select({ id: orders.id, eventId: orders.eventId }).from(orders)
     .where(and(eq(orders.status, 'PENDING'), lt(orders.expiresAt, new Date()))).limit(200);
   for (const o of stale) await db.transaction(tx => failOrder(tx, o.id, 'EXPIRED'));
+  for (const eventId of new Set(stale.map(o => o.eventId))) nudgeWaitlist(eventId);
 }
 
 /** In-app + push + SMS (with the entry codes) once an order's tickets are issued. */
@@ -144,7 +146,7 @@ export function registerCommerceRoutes(app: Express) {
       }
       if (gatewayMode === 'none') return { status: 503, body: { error: 'درگاه پرداخت هنوز پیکربندی نشده است. لطفاً بعداً تلاش کنید.' } };
 
-      const taken = await ticketSeatsTaken(tx, eventId);
+      const taken = await seatsTaken(tx, event, userId);
       if (taken + quantity > event.capacity) {
         return { status: 400, body: { error: `ظرفیت این رویداد تکمیل است. ظرفیت باقی‌مانده: ${Math.max(0, event.capacity - taken)} بلیت.` } };
       }
@@ -182,6 +184,7 @@ export function registerCommerceRoutes(app: Express) {
         couponId, couponDiscount: couponDisc,
       }).returning();
       if (couponId) await redeemCoupon(tx, couponId, order.id, userId, couponDisc);
+      await convertWaitlist(tx, eventId, userId);
 
       // Discount from points is spread over the tickets so each ticket records what it really cost.
       const prices = quantity > 1 ? [ownPrice, friendPrice] : [ownPrice];
@@ -231,6 +234,7 @@ export function registerCommerceRoutes(app: Express) {
       res.status(201).json({ ...body, paymentUrl });
     } catch (err: any) {
       await db.transaction(tx => failOrder(tx, body.data.orderId, 'FAILED'));
+      nudgeWaitlist(eventId);
       res.status(502).json({ error: err?.message || 'اتصال به درگاه پرداخت ناموفق بود.' });
     }
   }));
@@ -255,12 +259,14 @@ export function registerCommerceRoutes(app: Express) {
     if (order.status === 'PAID') return res.redirect(`/tickets?payment=success&order=${order.id}`);
     if (!ok || order.status !== 'PENDING') {
       await db.transaction(tx => failOrder(tx, order.id, 'FAILED'));
+      nudgeWaitlist(order.eventId);
       return res.redirect(`/tickets?payment=failed&order=${order.id}`);
     }
     const [event] = await db.select().from(events).where(eq(events.id, order.eventId));
     const verification = await verifyPayment({ amountRial: toRial(order.amount, event?.currency), authority });
     if (!verification.ok) {
       await db.transaction(tx => failOrder(tx, order.id, 'FAILED'));
+      nudgeWaitlist(order.eventId);
       return res.redirect(`/tickets?payment=failed&order=${order.id}`);
     }
     await db.transaction(tx => completeOrder(tx, order.id, verification.refId));
@@ -293,7 +299,8 @@ export function registerCommerceRoutes(app: Express) {
     res.json({
       data: visible.map(r => ({
         ...r,
-        canCancel: r.tickets.status === 'ACTIVE' && canCancelTicket(r.events),
+        canCancel: r.tickets.status === 'ACTIVE' && !r.tickets.transferredFromId && canCancelTicket(r.events),
+        canTransfer: r.tickets.status === 'ACTIVE' && r.events.status === 'PUBLISHED' && (!r.events.startTime || r.events.startTime.getTime() > Date.now()),
         refund: refundByTicket.get(r.tickets.id) || null,
       }))
     });
@@ -307,6 +314,8 @@ export function registerCommerceRoutes(app: Express) {
       const [ticket] = await tx.select().from(tickets).where(eq(tickets.id, ticketId)).for('update');
       if (!ticket || (ticket.userId !== req.dbUser!.id && !isAdmin(req))) return { status: 404, body: { error: 'بلیت یافت نشد' } };
       if (ticket.status !== 'ACTIVE') return { status: 400, body: { error: 'این بلیت قابل لغو نیست.' } };
+      // The refund of a ticket belongs to whoever paid for it, not to the person it was given to.
+      if (ticket.transferredFromId && !isAdmin(req)) return { status: 400, body: { error: 'بلیتی که به شما منتقل شده قابل لغو نیست؛ می‌توانید آن را به شخص دیگری منتقل کنید.' } };
       const [event] = await tx.select().from(events).where(eq(events.id, ticket.eventId));
       if (!canCancelTicket(event) && !isAdmin(req)) {
         return { status: 400, body: { error: `لغو بلیت فقط تا ${CANCEL_DEADLINE_HOURS.toLocaleString('fa-IR')} ساعت پیش از شروع رویداد ممکن است.` } };
@@ -332,8 +341,9 @@ export function registerCommerceRoutes(app: Express) {
         )).returning({ id: interactions.id });
         if (removed.length) await changePoints(tx, ticket.userId, -RSVP_POINTS, 'RSVP_CANCELLED', { type: 'EVENT', id: ticket.eventId });
       }
-      return { status: 200, body: { success: true, refund, message: refund === 'REQUESTED' ? 'بلیت لغو شد و درخواست بازپرداخت ثبت شد.' : 'بلیت لغو شد.' } };
+      return { status: 200, body: { success: true, refund, eventId: ticket.eventId, message: refund === 'REQUESTED' ? 'بلیت لغو شد و درخواست بازپرداخت ثبت شد.' : 'بلیت لغو شد.' } };
     });
+    if ((outcome.body as any).eventId) nudgeWaitlist((outcome.body as any).eventId);
     invalidateCachePattern('admin_stats');
     res.status(outcome.status).json(outcome.body);
   }));
@@ -460,6 +470,7 @@ export function registerCommerceRoutes(app: Express) {
     }
     invalidateCachePattern('admin_stats');
     invalidateEventCaches();
+    nudgeWaitlist(event.id); // closes the waiting list
     res.json({ success: true, data: { notified: notifyIds.length, ticketsCancelled: ticketCount, refundTotal } });
   }));
 

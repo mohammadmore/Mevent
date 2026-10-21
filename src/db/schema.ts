@@ -137,6 +137,9 @@ export const tickets = pgTable('tickets', {
   holderLabel: text('holder_label'),
   usedAt: timestamp('used_at'),
   cancelledAt: timestamp('cancelled_at'),
+  /** Set when the ticket was given to this holder by someone else (it then cannot be refunded). */
+  transferredFromId: integer('transferred_from_id'),
+  transferredAt: timestamp('transferred_at'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -453,3 +456,28 @@ export const refunds = pgTable('refunds', {
   paidById: integer('paid_by_id'),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_refunds_status_event').on(t.status, t.eventId)]);
+
+// Waiting list for full events. When seats free up, the next person gets an offer: the seats are
+// held for them until offer_expires_at. status: WAITING | OFFERED | CONVERTED | EXPIRED | CANCELLED
+export const waitlistEntries = pgTable('waitlist_entries', {
+  id: serial('id').primaryKey(),
+  eventId: integer('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  quantity: integer('quantity').default(1).notNull(),
+  status: text('status').default('WAITING').notNull(),
+  offeredAt: timestamp('offered_at'),
+  offerExpiresAt: timestamp('offer_expires_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_waitlist_event_status').on(t.eventId, t.status)]);
+
+// A ticket offered to someone else by mobile number. status: PENDING | ACCEPTED | DECLINED | CANCELLED | EXPIRED
+export const ticketTransfers = pgTable('ticket_transfers', {
+  id: serial('id').primaryKey(),
+  ticketId: integer('ticket_id').references(() => tickets.id, { onDelete: 'cascade' }).notNull(),
+  fromUserId: integer('from_user_id').references(() => users.id).notNull(),
+  toPhone: text('to_phone').notNull(),
+  toUserId: integer('to_user_id').references(() => users.id),
+  status: text('status').default('PENDING').notNull(),
+  respondedAt: timestamp('responded_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_transfers_phone_status').on(t.toPhone, t.status)]);

@@ -12,6 +12,7 @@ import { changePoints } from '../../lib/points.ts';
 import { getVapidPublicKey } from '../../lib/notifications.ts';
 import { RSVP_POINTS } from './commerce.ts';
 import { seatsTaken } from '../seats.ts';
+import { convertWaitlist, nudgeWaitlist } from '../waitlist.ts';
 
 // SAVE and RSVP toggle; VIEW and SHARE are recorded (and rewarded) once per user and event.
 // Points are granted when an interaction is created and taken back when a toggle removes it,
@@ -50,7 +51,7 @@ export function registerSocialRoutes(app: Express) {
         }
         await tx.delete(interactions).where(match);
         await changePoints(tx, userId, -points, `${type}_REMOVED`, { type: 'EVENT', id: parsedEventId });
-        return { status: 200, body: { success: true, action: type === 'SAVE' ? 'unsaved' : 'unrsvped', pointsAwarded: 0 } };
+        return { status: 200, body: { success: true, action: type === 'SAVE' ? 'unsaved' : 'unrsvped', pointsAwarded: 0 }, freedSeat: type === 'RSVP' };
       }
 
       if (type === 'RSVP') {
@@ -58,17 +59,19 @@ export function registerSocialRoutes(app: Express) {
         if (event.cost > 0) {
           return { status: 400, body: { error: 'برای این رویداد باید بلیت تهیه کنید.', code: 'NEEDS_TICKET' } };
         }
-        if (await seatsTaken(tx, event) >= event.capacity) {
+        if (await seatsTaken(tx, event, userId) >= event.capacity) {
           return { status: 400, body: { error: 'ظرفیت این رویداد تکمیل شده است.', code: 'FULL' } };
         }
       }
 
       const [interaction] = await tx.insert(interactions).values({ userId, eventId: parsedEventId, type, metadata: metadata ?? null }).returning();
+      if (type === 'RSVP') await convertWaitlist(tx, parsedEventId, userId);
       const awarded = await changePoints(tx, userId, points, type, { type: 'EVENT', id: parsedEventId });
       return { status: 201, body: { success: true, action: 'created', data: interaction, pointsAwarded: awarded } };
     });
 
     if ((outcome.body as any).pointsAwarded !== undefined) invalidateCachePattern('leaderboard');
+    if ((outcome as any).freedSeat) nudgeWaitlist(parsedEventId);
     res.status(outcome.status).json(outcome.body);
   }));
 

@@ -12,6 +12,7 @@ import {
 } from '../helpers.ts';
 import { getFromCache, setToCache } from '../../lib/sharedStore.ts';
 import { seatsTaken } from '../seats.ts';
+import { waitlistStatus } from '../waitlist.ts';
 
 function parseDate(value: unknown): Date | undefined {
   if (typeof value !== 'string' || !value) return undefined;
@@ -93,8 +94,10 @@ export function registerDiscoveryRoutes(app: Express) {
       return res.status(404).json({ error: 'رویداد مورد نظر یافت نشد.' });
     }
     const [formatted] = await formatEvents([event]);
-    const taken = await seatsTaken(db, event);
-    res.json({ data: { ...formatted, seatsTaken: taken, seatsLeft: Math.max(0, event.capacity - taken) } });
+    // Seats held for this user's own waiting-list offer count as available to them.
+    const taken = await seatsTaken(db, event, req.dbUser?.id);
+    const waitlist = req.dbUser ? await waitlistStatus(event.id, req.dbUser.id) : null;
+    res.json({ data: { ...formatted, seatsTaken: taken, seatsLeft: Math.max(0, event.capacity - taken), waitlist } });
   }));
 
   app.get('/api/events/:id/similar', asyncRoute(async (req, res) => {

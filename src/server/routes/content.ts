@@ -14,6 +14,7 @@ import { saveUpload } from '../../lib/storage.ts';
 import { invalidateCachePattern } from '../../lib/sharedStore.ts';
 import { notify } from '../../lib/notifications.ts';
 import { assertCanSellPaid } from './kyc.ts';
+import { nudgeWaitlist } from '../waitlist.ts';
 
 export function invalidateEventCaches() {
   invalidateCachePattern('events_list');
@@ -144,6 +145,8 @@ export function registerContentRoutes(app: Express) {
     }
     if (Object.keys(updatedData).length > 0) {
       await db.update(events).set(updatedData).where(eq(events.id, event.id));
+      // More seats (or publishing again) may let people from the waiting list in.
+      if (updatedData.capacity !== undefined || updatedData.status !== undefined) nudgeWaitlist(event.id);
     }
     invalidateEventCaches();
     res.json({ success: true, message: 'رویداد با موفقیت ویرایش شد.' });

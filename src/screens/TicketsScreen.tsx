@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import { CreditCard, Calendar, CheckCircle, Bookmark, XCircle, Ticket, WifiOff, Clock } from 'lucide-react';
+import { CreditCard, Calendar, CheckCircle, Bookmark, XCircle, Ticket, WifiOff, Clock, Gift } from 'lucide-react';
 import { useAppData } from '../lib/appData';
 import { useAuth } from '../lib/AuthContext';
 import { api, showToast } from '../lib/apiClient';
-import { confirmDialog } from '../lib/dialog';
+import { confirmDialog, promptDialog } from '../lib/dialog';
 import { navigate, useLocation } from '../lib/router';
 import { EventCard } from '../components/EventCard';
 import { eventTimeLabel, formatToman, pNum } from '../lib/format';
@@ -14,6 +14,7 @@ interface TicketRow {
   events: any;
   order?: { id: number; status: string } | null;
   canCancel: boolean;
+  canTransfer?: boolean;
   refund?: { status: 'REQUESTED' | 'PAID'; paidAt: string | null } | null;
 }
 
@@ -34,6 +35,7 @@ export function TicketsScreen() {
   const { query } = useLocation();
   const [tickets, setTickets] = useState<TicketRow[] | null>(null);
   const [offline, setOffline] = useState(false);
+  const [transfers, setTransfers] = useState<{ incoming: any[]; outgoing: any[] }>({ incoming: [], outgoing: [] });
   const payment = query.get('payment');
 
   const load = () => {
@@ -41,6 +43,31 @@ export function TicketsScreen() {
     api<{ data: TicketRow[] }>(`/api/users/${dbUserId}/tickets`, { silent: true })
       .then(d => { setTickets(d.data); setOffline(!navigator.onLine); })
       .catch(() => { setTickets(t => t || []); setOffline(true); });
+    api<{ data: { incoming: any[]; outgoing: any[] } }>('/api/transfers', { silent: true }).then(d => setTransfers(d.data)).catch(() => {});
+  };
+
+  const transfer = async (row: TicketRow) => {
+    const phone = await promptDialog({
+      title: 'انتقال بلیت',
+      message: `بلیت «${row.events.title}» برای چه شماره‌ای فرستاده شود؟ گیرنده با همین شماره وارد میونت می‌شود و بلیت را می‌پذیرد؛ کد ورود عوض می‌شود. بلیت منتقل‌شده قابل لغو و بازپرداخت نیست.`,
+      placeholder: '09123456789',
+      confirmText: 'ارسال بلیت',
+    });
+    if (!phone) return;
+    try {
+      const res = await api<any>(`/api/tickets/${row.tickets.id}/transfer`, { body: { phone } });
+      showToast(res.message, 'success');
+      load();
+    } catch { /* toast shown */ }
+  };
+
+  const respond = async (id: number, action: 'accept' | 'decline' | 'cancel') => {
+    try {
+      const res = await api<any>(`/api/transfers/${id}/${action}`, { body: {} });
+      showToast(action === 'accept' ? res.message : action === 'decline' ? 'انتقال رد شد.' : 'انتقال لغو شد.', action === 'accept' ? 'success' : 'info');
+      load();
+      if (action === 'accept') refreshLists();
+    } catch { /* toast shown */ }
   };
 
   useEffect(() => { load(); refreshLists(); }, [dbUserId]);
@@ -83,6 +110,20 @@ export function TicketsScreen() {
         </div>
       )}
 
+      {transfers.incoming.length > 0 && (
+        <section className="space-y-2" aria-label="بلیت‌های فرستاده‌شده برای شما">
+          {transfers.incoming.map(t => (
+            <div key={t.id} className="rounded-2xl border border-teal-600/30 bg-teal-600/5 p-4 flex items-center justify-between gap-3 flex-wrap">
+              <p className="text-sm"><Gift className="w-4 h-4 inline ml-1 text-teal-600" /> <b>{t.fromName}</b> بلیت «{t.eventTitle}» را برایتان فرستاده است.</p>
+              <div className="flex gap-2">
+                <button onClick={() => respond(t.id, 'accept')} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">پذیرفتن</button>
+                <button onClick={() => respond(t.id, 'decline')} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-sm">رد</button>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
       <section>
         <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 mb-1 flex items-center gap-2"><Ticket className="w-5 h-5" /> بلیت‌های من</h2>
         <p className="text-xs text-gray-500 mb-4">کد QR را هنگام ورود به برگزارکننده نشان دهید.{offline ? ' (نمایش آفلاین از آخرین دریافت)' : ''}</p>
@@ -110,9 +151,18 @@ export function TicketsScreen() {
                   )}
                   <p className="text-xs font-mono tracking-widest bg-white dark:bg-black/30 rounded-lg px-2 py-1 inline-block mb-2" dir="ltr">{row.tickets.code}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">{row.tickets.holderLabel || 'بلیت'} • {STATUS_LABEL[row.tickets.status]} • {row.tickets.amount ? formatToman(row.tickets.amount) : 'رایگان'}</p>
-                  {row.canCancel && (
-                    <button onClick={() => cancel(row)} className="mt-3 text-xs font-bold text-red-600 hover:underline">لغو بلیت</button>
-                  )}
+                  {(() => {
+                    const pending = transfers.outgoing.find(t => t.ticketId === row.tickets.id);
+                    if (pending) return (
+                      <p className="mt-3 text-xs text-teal-700 dark:text-[#d9ff00]">در انتظار پذیرش <span dir="ltr">{pending.toPhone}</span> · <button onClick={() => respond(pending.id, 'cancel')} className="underline">لغو انتقال</button></p>
+                    );
+                    return (
+                      <div className="mt-3 flex gap-4">
+                        {row.canTransfer && <button onClick={() => transfer(row)} className="text-xs font-bold text-teal-700 dark:text-[#d9ff00] hover:underline">انتقال به دیگری</button>}
+                        {row.canCancel && <button onClick={() => cancel(row)} className="text-xs font-bold text-red-600 hover:underline">لغو بلیت</button>}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

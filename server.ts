@@ -28,6 +28,8 @@ import { registerPlannerRoutes } from './src/server/routes/planner';
 import { registerConfigRoutes } from './src/server/routes/config';
 import { registerKycRoutes } from './src/server/routes/kyc';
 import { registerCouponRoutes } from './src/server/routes/coupons';
+import { registerWaitlistRoutes, expireTransfers } from './src/server/routes/waitlist';
+import { processAllWaitlists } from './src/server/waitlist';
 
 async function startServer() {
   const app = express();
@@ -81,6 +83,7 @@ async function startServer() {
   registerConfigRoutes(app);
   registerKycRoutes(app);
   registerCouponRoutes(app);
+  registerWaitlistRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {
@@ -125,7 +128,7 @@ async function startServer() {
   }
 
   await dbReady;
-  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads, flushSmsOutbox]);
+  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads, flushSmsOutbox, processAllWaitlists, expireTransfers]);
   startDependencyProbes();
 
   app.listen(PORT, '0.0.0.0', () => {

@@ -26,6 +26,21 @@ export async function rsvpCount(exec: Executor, eventId: number): Promise<number
   return Number(row?.count || 0);
 }
 
-export async function seatsTaken(exec: Executor, event: { id: number; cost: number }) {
-  return event.cost > 0 ? ticketSeatsTaken(exec, event.id) : rsvpCount(exec, event.id);
+/** Seats held for people with a live waiting-list offer (except `exceptUserId`'s own hold). */
+export async function offeredSeats(exec: Executor, eventId: number, exceptUserId?: number): Promise<number> {
+  const result: any = await exec.execute(sql`
+    SELECT coalesce(sum(quantity), 0)::int AS held FROM waitlist_entries
+    WHERE event_id = ${eventId} AND status = 'OFFERED' AND offer_expires_at > now()
+      AND user_id <> ${exceptUserId ?? 0}
+  `);
+  return Number(result.rows?.[0]?.held || 0);
+}
+
+/**
+ * Seats nobody else can take: tickets/RSVPs plus seats held for waiting-list offers. Pass the
+ * user who is about to buy so their own offer counts as available to them.
+ */
+export async function seatsTaken(exec: Executor, event: { id: number; cost: number }, forUserId?: number) {
+  const used = event.cost > 0 ? await ticketSeatsTaken(exec, event.id) : await rsvpCount(exec, event.id);
+  return used + await offeredSeats(exec, event.id, forUserId);
 }
