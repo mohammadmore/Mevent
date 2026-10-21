@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare } from 'lucide-react';
+import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare, LifeBuoy } from 'lucide-react';
 import GamificationPanel from '../components/GamificationPanel';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { useAppData } from '../lib/appData';
@@ -188,6 +188,10 @@ export function ProfileScreen() {
               <span><span className="block font-bold text-gray-900 dark:text-gray-100">خروج از دستگاه‌های دیگر</span><span className="text-xs text-gray-500">اگر روی دستگاه دیگری وارد شده‌اید و به آن دسترسی ندارید</span></span>
             </button>
           )}
+          <button onClick={() => navigate('/support')} className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:border-teal-600/50 text-right">
+            <LifeBuoy className="w-5 h-5 text-gray-500" />
+            <span><span className="block font-bold text-gray-900 dark:text-gray-100">پشتیبانی</span><span className="text-xs text-gray-500">مشکل در خرید، بلیت یا حساب؟ درخواست ثبت کنید</span></span>
+          </button>
           <button onClick={clearHistory} className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 text-right">
             <Trash2 className="w-5 h-5 text-gray-500" />
             <span><span className="block font-bold text-gray-900 dark:text-gray-100">پاک‌سازی تاریخچه بازدیدها</span><span className="text-xs text-gray-500">رویدادهایی که مشاهده کرده‌اید</span></span>

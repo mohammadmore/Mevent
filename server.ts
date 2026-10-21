@@ -14,6 +14,10 @@ import { sendUpload, syncPendingUploads } from './src/lib/storage';
 import { startBackgroundJobs } from './src/lib/notifications';
 import { startDependencyProbes } from './src/lib/dependencies';
 import { flushSmsOutbox } from './src/lib/smsOutbox';
+import { captureError, installMonitoring } from './src/lib/monitoring';
+import { registerOpsRoutes } from './src/server/routes/ops';
+import { registerSupportRoutes } from './src/server/routes/support';
+import { scheduledBackup } from './src/lib/backups';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
 import { registerAuthRoutes, pruneOtpCodes } from './src/server/routes/auth';
@@ -32,6 +36,7 @@ import { registerWaitlistRoutes, expireTransfers } from './src/server/routes/wai
 import { processAllWaitlists } from './src/server/waitlist';
 
 async function startServer() {
+  installMonitoring();
   const app = express();
   const PORT = parseInt(process.env.PORT || '3000', 10);
   const isProduction = process.env.NODE_ENV === 'production';
@@ -68,6 +73,13 @@ async function startServer() {
 
   // API responses depend on the session cookie; a CDN or shared proxy must never cache them.
   app.use('/api', (_req, res, next) => { res.setHeader('Cache-Control', 'private, no-cache'); res.setHeader('Vary', 'Cookie, Authorization'); next(); });
+  // Ids are database integers ("1e5", "abc" or 99999999999 are not found rather than a server
+  // error or the wrong row); the only string ids, trip and job UUIDs, contain "-".
+  app.param(['id', 'userId'], (_req, res, next, value: string) => {
+    const bad = /^\d+$/.test(value) ? Number(value) > 2147483647 : !value.includes('-');
+    if (bad) return res.status(404).json({ error: 'مورد درخواستی یافت نشد.' });
+    next();
+  });
   app.use('/api', limiters.default);
   app.use('/api', validateInput);
   app.use('/api', authenticate);
@@ -84,6 +96,8 @@ async function startServer() {
   registerKycRoutes(app);
   registerCouponRoutes(app);
   registerWaitlistRoutes(app);
+  registerOpsRoutes(app);
+  registerSupportRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {
@@ -96,6 +110,7 @@ async function startServer() {
     if (err?.type === 'entity.parse.failed') return res.status(400).json({ error: 'بدنه درخواست JSON معتبر نیست' });
     if (err?.type === 'entity.too.large') return res.status(413).json({ error: 'حجم درخواست بیش از حد مجاز است' });
     console.error('Unhandled API error:', err);
+    captureError(err, { source: 'server', path: `${req.method} ${req.path}`, userId: (req as any).dbUser?.id });
     res.status(500).json({ error: 'خطای داخلی سرور' });
   });
 
@@ -128,7 +143,7 @@ async function startServer() {
   }
 
   await dbReady;
-  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads, flushSmsOutbox, processAllWaitlists, expireTransfers]);
+  startBackgroundJobs([expireStaleOrders, pruneSharedStore, pruneExpiredSessions, pruneOtpCodes, syncPendingUploads, flushSmsOutbox, processAllWaitlists, expireTransfers, scheduledBackup]);
   startDependencyProbes();
 
   app.listen(PORT, '0.0.0.0', () => {

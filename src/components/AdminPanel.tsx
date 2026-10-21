@@ -6,6 +6,7 @@ import {
 import ModerationCenter from './ModerationCenter';
 import { SiteInfoForm } from './admin/SiteInfoForm';
 import { SmsOutboxCard } from './admin/SmsOutboxCard';
+import { ErrorsCard, BackupsCard, SupportAdmin } from './admin/OpsCards';
 import { showToast } from '../lib/apiClient';
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
@@ -28,7 +29,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
   const [editingEvent, setEditingEvent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'moderation' | 'users' | 'events' | 'settings' | 'metrics' | 'places' | 'chains' | 'vibes' | 'flows'>('moderation');
+  const [activeTab, setActiveTab] = useState<'moderation' | 'users' | 'events' | 'settings' | 'metrics' | 'places' | 'chains' | 'vibes' | 'flows' | 'support'>('moderation');
   const [crawlerUrl, setCrawlerUrl] = useState('https://calendar.iranfair.com/fa');
   const [places, setPlaces] = useState<any[]>([]);
   const [chains, setChains] = useState<any[]>([]);
@@ -408,6 +409,18 @@ export default function AdminPanel() {
         </button>
 
         <button
+          onClick={() => setActiveTab('support')}
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+            activeTab === 'support'
+              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          }`}
+        >
+          <Inbox className="w-4 h-4" />
+          پشتیبانی
+        </button>
+
+        <button
           onClick={() => setActiveTab('metrics')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
             activeTab === 'metrics'
@@ -480,6 +493,8 @@ export default function AdminPanel() {
       <div>
         {activeTab === 'moderation' ? (
           <ModerationCenter />
+        ) : activeTab === 'support' ? (
+          <SupportAdmin />
         ) : activeTab === 'metrics' ? (
           <div className="space-y-6" dir="rtl">
             {/* Live Metrics Grid */}
@@ -556,6 +571,8 @@ export default function AdminPanel() {
                 )}
               </div>
               <SmsOutboxCard />
+              <ErrorsCard />
+              <BackupsCard />
             </div>
 
             {/* Cache Control & Background Job Trigger */}

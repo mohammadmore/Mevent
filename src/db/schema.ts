@@ -481,3 +481,56 @@ export const ticketTransfers = pgTable('ticket_transfers', {
   respondedAt: timestamp('responded_at'),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_transfers_phone_status').on(t.toPhone, t.status)]);
+
+// Errors seen by the server or reported by browsers, grouped by fingerprint (one row per kind of error).
+export const errorGroups = pgTable('error_groups', {
+  id: serial('id').primaryKey(),
+  fingerprint: text('fingerprint').notNull().unique(),
+  source: text('source').notNull(),
+  message: text('message').notNull(),
+  stack: text('stack'),
+  path: text('path'),
+  count: integer('count').default(1).notNull(),
+  lastUserId: integer('last_user_id'),
+  resolved: boolean('resolved').default(false).notNull(),
+  firstSeen: timestamp('first_seen').defaultNow().notNull(),
+  lastSeen: timestamp('last_seen').defaultNow().notNull(),
+  lastAlertAt: timestamp('last_alert_at'),
+});
+
+// Support requests. status: OPEN (waiting for staff) | ANSWERED (waiting for the user) | CLOSED
+export const supportTickets = pgTable('support_tickets', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  subject: text('subject').notNull(),
+  category: text('category').notNull(),
+  status: text('status').default('OPEN').notNull(),
+  orderId: integer('order_id'),
+  eventId: integer('event_id'),
+  lastMessageAt: timestamp('last_message_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_support_status').on(t.status, t.lastMessageAt)]);
+
+export const supportMessages = pgTable('support_messages', {
+  id: serial('id').primaryKey(),
+  ticketId: integer('ticket_id').references(() => supportTickets.id, { onDelete: 'cascade' }).notNull(),
+  authorId: integer('author_id').references(() => users.id).notNull(),
+  isStaff: boolean('is_staff').default(false).notNull(),
+  body: text('body').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Database backups. kind: SCHEDULED (at most one per day, see day) | MANUAL
+// status: RUNNING | DONE | FAILED; location: s3 | local
+export const backups = pgTable('backups', {
+  id: serial('id').primaryKey(),
+  kind: text('kind').notNull(),
+  day: text('day').unique(),
+  status: text('status').default('RUNNING').notNull(),
+  location: text('location'),
+  fileName: text('file_name'),
+  sizeBytes: integer('size_bytes'),
+  error: text('error'),
+  startedAt: timestamp('started_at').defaultNow().notNull(),
+  finishedAt: timestamp('finished_at'),
+});

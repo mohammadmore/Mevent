@@ -7,7 +7,9 @@ import { installAuthFetch } from './lib/authFetch';
 import { ToastContainer } from './components/ToastContainer';
 import { DialogHost } from './lib/dialog';
 import { registerServiceWorker } from './lib/pwa';
+import { installErrorReporting } from './lib/errorReporting';
 
+installErrorReporting();
 installAuthFetch();
 registerServiceWorker();
 

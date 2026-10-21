@@ -14,6 +14,7 @@ import { TicketsScreen } from './screens/TicketsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { LegalScreen, LEGAL_PATHS } from './screens/LegalScreen';
+import { SupportScreen } from './screens/SupportScreen';
 import { EventRoute, PlaceRoute, VibeRoute, ChainRoute, FlowRoute, OrganizerRoute, rememberEntity } from './screens/EntityRoutes';
 
 // Heavy, rarely used screens load on demand so the first visit stays fast on mobile.
@@ -43,7 +44,7 @@ const isPublicPath = (path: string) =>
 function tabForPath(path: string) {
   if (path.startsWith('/hubs')) return 'hubs';
   if (path === '/create') return 'create';
-  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications'].includes(path)) return 'profile';
+  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications', '/support'].includes(path) || path.startsWith('/support/')) return 'profile';
   return 'discover';
 }
 
@@ -233,6 +234,8 @@ function Shell() {
       case screenPath === '/profile': return <ProfileScreen />;
       case screenPath === '/notifications': return <NotificationsScreen />;
       case LEGAL_PATHS.includes(screenPath): return <LegalScreen path={screenPath} />;
+      case screenPath === '/support': return <SupportScreen />;
+      case !!matchPath('/support/:id', screenPath): return <SupportScreen ticketId={Number(matchPath('/support/:id', screenPath)!.id)} />;
       case screenPath === '/create':
         return isOrganizer
           ? <div className={`${card} max-w-2xl`}><CreatePanel onSuccess={() => navigate('/organizer')} /></div>

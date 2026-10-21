@@ -120,6 +120,7 @@ export function startBackgroundJobs(extraJobs: Array<() => Promise<void>> = []) 
         await job();
       } catch (err: any) {
         console.warn('background job failed:', err?.message);
+        import('./monitoring.ts').then(m => m.captureError(err, { source: 'job', path: job.name })).catch(() => {});
       }
     }
   };

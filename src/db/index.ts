@@ -276,6 +276,51 @@ async function initDatabaseSchemaAndIndexes() {
       responded_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT now()
     );`,
+    `CREATE TABLE IF NOT EXISTS error_groups (
+      id SERIAL PRIMARY KEY,
+      fingerprint TEXT NOT NULL UNIQUE,
+      source TEXT NOT NULL,
+      message TEXT NOT NULL,
+      stack TEXT,
+      path TEXT,
+      count INTEGER NOT NULL DEFAULT 1,
+      last_user_id INTEGER,
+      resolved BOOLEAN NOT NULL DEFAULT false,
+      first_seen TIMESTAMP NOT NULL DEFAULT now(),
+      last_seen TIMESTAMP NOT NULL DEFAULT now(),
+      last_alert_at TIMESTAMP
+    );`,
+    `CREATE TABLE IF NOT EXISTS support_tickets (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      subject TEXT NOT NULL,
+      category TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      order_id INTEGER,
+      event_id INTEGER,
+      last_message_at TIMESTAMP NOT NULL DEFAULT now(),
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS support_messages (
+      id SERIAL PRIMARY KEY,
+      ticket_id INTEGER NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
+      author_id INTEGER NOT NULL REFERENCES users(id),
+      is_staff BOOLEAN NOT NULL DEFAULT false,
+      body TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS backups (
+      id SERIAL PRIMARY KEY,
+      kind TEXT NOT NULL,
+      day TEXT UNIQUE,
+      status TEXT NOT NULL DEFAULT 'RUNNING',
+      location TEXT,
+      file_name TEXT,
+      size_bytes INTEGER,
+      error TEXT,
+      started_at TIMESTAMP NOT NULL DEFAULT now(),
+      finished_at TIMESTAMP
+    );`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -322,6 +367,9 @@ async function initDatabaseSchemaAndIndexes() {
     "CREATE UNIQUE INDEX IF NOT EXISTS uq_waitlist_open ON waitlist_entries (event_id, user_id) WHERE status IN ('WAITING', 'OFFERED');",
     "CREATE UNIQUE INDEX IF NOT EXISTS uq_transfer_pending ON ticket_transfers (ticket_id) WHERE status = 'PENDING';",
     'CREATE INDEX IF NOT EXISTS idx_transfers_phone_status ON ticket_transfers (to_phone, status);',
+    'CREATE INDEX IF NOT EXISTS idx_support_status ON support_tickets (status, last_message_at);',
+    'CREATE INDEX IF NOT EXISTS idx_support_user ON support_tickets (user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_support_messages_ticket ON support_messages (ticket_id);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

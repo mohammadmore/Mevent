@@ -38,6 +38,7 @@ interface RemoteStore {
   put(name: string, body: Buffer, contentType: string): Promise<void>;
   /** A readable stream, or null when the object does not exist. */
   get(name: string): Promise<Readable | null>;
+  delete(name: string): Promise<void>;
 }
 
 function s3Store(): RemoteStore {
@@ -67,6 +68,11 @@ function s3Store(): RemoteStore {
       if (!res.ok || !res.body) throw new Error(`S3 GET ${res.status}`);
       return Readable.fromWeb(res.body as any);
     },
+    async delete(name) {
+      const res = await client.fetch(url(name), { method: 'DELETE', signal: AbortSignal.timeout(10000) });
+      await res.body?.cancel();
+      if (!res.ok && res.status !== 404) throw new Error(`S3 DELETE ${res.status}`);
+    },
   };
 }
 
@@ -82,6 +88,9 @@ async function gcsStore(): Promise<RemoteStore> {
       const file = bucket.file(PREFIX + name);
       const [exists] = await file.exists();
       return exists ? file.createReadStream() : null;
+    },
+    async delete(name) {
+      await bucket.file(PREFIX + name).delete({ ignoreNotFound: true });
     },
   };
 }
@@ -228,4 +237,33 @@ export async function sendPrivateFile(name: string, res: Response): Promise<void
     reportFailure(DEP, err);
     res.status(503).end();
   }
+}
+
+// ---------------- system objects (database backups) ----------------
+// Kept under backups/ in the object storage; never served to browsers except through the admin route.
+
+const BACKUP_KEY = /^backups\/[A-Za-z0-9._-]{1,100}$/;
+
+/** Uploads a system file; returns false when there is no object storage (or it is down). */
+export async function putSystemObject(key: string, body: Buffer): Promise<boolean> {
+  if (!BACKUP_KEY.test(key)) throw new Error('invalid key');
+  if (storageMode === 'local' || !isUp(DEP)) return false;
+  try {
+    await (await remote()).put(key, body, 'application/octet-stream');
+    reportSuccess(DEP);
+    return true;
+  } catch (err) {
+    reportFailure(DEP, err);
+    return false;
+  }
+}
+
+export async function getSystemObject(key: string): Promise<Readable | null> {
+  if (!BACKUP_KEY.test(key) || storageMode === 'local') return null;
+  return (await remote()).get(key);
+}
+
+export async function deleteSystemObject(key: string): Promise<void> {
+  if (!BACKUP_KEY.test(key) || storageMode === 'local') return;
+  await (await remote()).delete(key);
 }

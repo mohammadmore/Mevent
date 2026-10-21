@@ -80,6 +80,11 @@ export function reportSuccess(name: string, latencyMs?: number) {
   }
 }
 
+type AlertHandler = (name: string, label: string, error: string) => void;
+let alertHandler: AlertHandler | null = null;
+/** Called when a service that was up is found down (monitoring notifies the admins). */
+export function setDependencyAlertHandler(fn: AlertHandler) { alertHandler = fn; }
+
 export function reportFailure(name: string, err: unknown) {
   const dep = registry.get(name);
   if (!dep) return;
@@ -89,7 +94,11 @@ export function reportFailure(name: string, err: unknown) {
   dep.openUntil = Date.now() + Math.min(MAX_COOLDOWN_MS, BASE_COOLDOWN_MS * 2 ** (dep.failures - 1));
   dep.lastError = errorText(err);
   dep.lastCheck = Date.now();
-  if (wasUp) console.warn(`[deps] ${name} is unreachable (${dep.lastError}); using fallback`);
+  if (wasUp) {
+    console.warn(`[deps] ${name} is unreachable (${dep.lastError}); using fallback`);
+    // Push services come and go per browser vendor; only alert for the server's own services.
+    if (!name.startsWith('push:')) alertHandler?.(name, dep.label, dep.lastError || '');
+  }
 }
 
 function errorText(err: unknown) {
