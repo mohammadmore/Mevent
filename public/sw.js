@@ -1,12 +1,14 @@
 /* Mevent service worker: offline app shell, cached data for offline viewing (e.g. tickets at
    the venue), and Web Push notifications. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL_CACHE = `mevent-shell-${VERSION}`;
 const ASSET_CACHE = `mevent-assets-${VERSION}`;
 const API_CACHE = `mevent-api-${VERSION}`;
 const SHELL_URLS = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
-// Never served from cache: they must be live (auth, payments, notification state, AI).
-const NO_CACHE_API = [/^\/api\/auth\//, /^\/api\/payments\//, /^\/api\/push\//, /^\/api\/notifications/, /^\/api\/chat/, /^\/api\/trip-planner/, /^\/api\/admin\//, /^\/api\/jobs\//];
+// Never served from cache: they must be live (auth, payments, notification state), or are private
+// (identity documents, check-in lists: these must not sit in the browser's HTTP cache).
+const NO_CACHE_API = [/^\/api\/auth\//, /^\/api\/payments\//, /^\/api\/push\//, /^\/api\/notifications/, /^\/api\/trip-planner/, /^\/api\/admin\//, /^\/api\/jobs\//,
+  /^\/api\/kyc/, /^\/api\/transfers/, /^\/api\/coupons/, /^\/api\/support/, /checkin/];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(SHELL_CACHE).then(cache => cache.addAll(SHELL_URLS)).then(() => self.skipWaiting()));

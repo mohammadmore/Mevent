@@ -370,6 +370,56 @@ export function registerCommerceRoutes(app: Express) {
     res.status(result.status).json(result.body);
   }));
 
+  // Offline check-in: the door device downloads every ticket of the event as a SHA-256 hash of
+  // "<eventId>:<code>" (codes themselves never leave the server), checks scans locally, and
+  // uploads them later. Scans of the same ticket on two offline devices come back as DUPLICATE.
+  app.get('/api/organizer/events/:id/checkin-manifest', requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    const eventId = parseInt(req.params.id, 10);
+    const [event] = await db.select().from(events).where(eq(events.id, eventId));
+    if (!event) return res.status(404).json({ error: 'رویداد یافت نشد' });
+    if (event.organizerId !== req.dbUser!.id && !isAdmin(req)) return res.status(403).json({ error: 'شما دسترسی لازم برای این کار را ندارید.' });
+    const rows = await db.select({ id: tickets.id, code: tickets.code, status: tickets.status, label: tickets.holderLabel, usedAt: tickets.usedAt, holder: users.name })
+      .from(tickets).innerJoin(users, eq(tickets.userId, users.id))
+      .where(and(eq(tickets.eventId, eventId), inArray(tickets.status, ['ACTIVE', 'USED', 'CANCELLED'])));
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json({
+      data: {
+        eventId, title: event.title, generatedAt: new Date().toISOString(),
+        tickets: rows.filter(r => r.code).map(r => ({
+          h: crypto.createHash('sha256').update(`${eventId}:${r.code}`).digest('hex'),
+          id: r.id, status: r.status, holder: r.holder, label: r.label, usedAt: r.usedAt,
+        })),
+      },
+    });
+  }));
+
+  app.post('/api/organizer/events/:id/checkin/sync', limiters.social, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    const eventId = parseInt(req.params.id, 10);
+    const [event] = await db.select().from(events).where(eq(events.id, eventId));
+    if (!event) return res.status(404).json({ error: 'رویداد یافت نشد' });
+    if (event.organizerId !== req.dbUser!.id && !isAdmin(req)) return res.status(403).json({ error: 'شما دسترسی لازم برای این کار را ندارید.' });
+    const scans = (Array.isArray(req.body?.scans) ? req.body.scans : []).slice(0, 2000);
+    const results: { code: string; result: 'OK' | 'ALREADY' | 'DUPLICATE' | 'INVALID'; usedAt?: Date | null }[] = [];
+    for (const scan of scans) {
+      const code = String(scan?.code || '').trim().toUpperCase().replace(/^MEVENT:/, '').slice(0, 40);
+      const scannedAt = new Date(scan?.scannedAt);
+      const at = isNaN(scannedAt.getTime()) || scannedAt.getTime() > Date.now() ? new Date() : scannedAt;
+      const outcome = await db.transaction(async (tx) => {
+        const [t] = await tx.select().from(tickets).where(and(eq(tickets.code, code), eq(tickets.eventId, eventId))).for('update');
+        if (!t || t.status === 'CANCELLED' || t.status === 'PENDING_PAYMENT') return { code, result: 'INVALID' as const };
+        if (t.status === 'USED') {
+          // Same device re-sending is fine; another device (or earlier entry) means a second entry.
+          const sameScan = t.usedAt && Math.abs(t.usedAt.getTime() - at.getTime()) < 1000;
+          return { code, result: sameScan ? 'ALREADY' as const : 'DUPLICATE' as const, usedAt: t.usedAt };
+        }
+        await tx.update(tickets).set({ status: 'USED', usedAt: at }).where(eq(tickets.id, t.id));
+        return { code, result: 'OK' as const };
+      });
+      results.push(outcome);
+    }
+    res.json({ data: { results, duplicates: results.filter(r => r.result === 'DUPLICATE').length } });
+  }));
+
   // Attendee list for the organizer: ticket holders (with status) and free RSVPs. Names only.
   app.get('/api/organizer/events/:id/attendees', requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const eventId = parseInt(req.params.id, 10);
