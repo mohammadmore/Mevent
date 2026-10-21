@@ -7,6 +7,8 @@ import ChainForm from './ChainForm';
 import { useToast } from './Toast';
 import { CheckInModal } from './CheckInModal';
 import { KycCard } from './KycCard';
+import { CouponManager } from './CouponManager';
+import { useAppData } from '../lib/appData';
 import { confirmDialog } from '../lib/dialog';
 import { api } from '../lib/apiClient';
 
@@ -16,6 +18,7 @@ interface OrganizerPanelProps {
 
 export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
   const { addToast } = useToast();
+  const { profile } = useAppData();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
@@ -326,6 +329,8 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           </div>
         </div>
       )}
+
+      {!createMode && !editingEvent && <CouponManager events={events} isAdmin={profile?.role === 'ADMIN'} />}
     </div>
   );
 }

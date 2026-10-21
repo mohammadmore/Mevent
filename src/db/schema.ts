@@ -113,6 +113,8 @@ export const orders = pgTable('orders', {
   refId: text('ref_id'),
   expiresAt: timestamp('expires_at'),
   paidAt: timestamp('paid_at'),
+  couponId: integer('coupon_id'),
+  couponDiscount: integer('coupon_discount').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_orders_authority').on(t.authority)]);
 
@@ -399,3 +401,33 @@ export const smsMessages = pgTable('sms_messages', {
   sentAt: timestamp('sent_at'),
   createdAt: timestamp('created_at').defaultNow(),
 }, (t) => [index('idx_sms_status_next').on(t.status, t.nextAttemptAt)]);
+
+// Discount codes. organizerId null = site-wide (created by an admin); eventId null = all events in scope.
+// type: PERCENT (value = percent, optional maxDiscount cap) | AMOUNT (value = toman)
+export const coupons = pgTable('coupons', {
+  id: serial('id').primaryKey(),
+  code: text('code').notNull().unique(),
+  organizerId: integer('organizer_id').references(() => users.id),
+  eventId: integer('event_id').references(() => events.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  value: integer('value').notNull(),
+  maxDiscount: integer('max_discount'),
+  minAmount: integer('min_amount').default(0).notNull(),
+  maxUses: integer('max_uses'),
+  usedCount: integer('used_count').default(0).notNull(),
+  perUserLimit: integer('per_user_limit').default(1).notNull(),
+  startsAt: timestamp('starts_at'),
+  endsAt: timestamp('ends_at'),
+  active: boolean('active').default(true).notNull(),
+  createdById: integer('created_by_id').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const couponRedemptions = pgTable('coupon_redemptions', {
+  id: serial('id').primaryKey(),
+  couponId: integer('coupon_id').references(() => coupons.id, { onDelete: 'cascade' }).notNull(),
+  orderId: integer('order_id').references(() => orders.id, { onDelete: 'cascade' }).notNull().unique(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  discount: integer('discount').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_coupon_redemptions_coupon_user').on(t.couponId, t.userId)]);

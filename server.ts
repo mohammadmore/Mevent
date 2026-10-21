@@ -27,6 +27,7 @@ import { registerAdminRoutes } from './src/server/routes/admin';
 import { registerPlannerRoutes } from './src/server/routes/planner';
 import { registerConfigRoutes } from './src/server/routes/config';
 import { registerKycRoutes } from './src/server/routes/kyc';
+import { registerCouponRoutes } from './src/server/routes/coupons';
 
 async function startServer() {
   const app = express();
@@ -79,6 +80,7 @@ async function startServer() {
   registerPlannerRoutes(app);
   registerConfigRoutes(app);
   registerKycRoutes(app);
+  registerCouponRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {

@@ -11,6 +11,7 @@ import { notify } from '../../lib/notifications.ts';
 import { gatewayMode, gatewayAvailable, requestPayment, verifyPayment, toRial } from '../../lib/payments.ts';
 import { ticketSeatsTaken } from '../seats.ts';
 import { eventUrl } from '../helpers.ts';
+import { checkCoupon, redeemCoupon, releaseCoupon } from '../coupons.ts';
 
 export const FRIEND_TICKET_DISCOUNT = 0.1; // second ticket bought for a friend gets 10% off
 export const FRIEND_TICKET_POINTS = 20;
@@ -52,6 +53,7 @@ async function failOrder(tx: DbTransaction, orderId: number, status: 'FAILED' | 
   await tx.update(orders).set({ status }).where(eq(orders.id, orderId));
   await tx.update(tickets).set({ status: 'CANCELLED', cancelledAt: new Date() }).where(eq(tickets.orderId, orderId));
   if (order.pointsUsed > 0) await changePoints(tx, order.userId, order.pointsUsed, 'POINTS_REFUND', { type: 'ORDER', id: order.id });
+  await releaseCoupon(tx, orderId);
 }
 
 export async function expireStaleOrders() {
@@ -109,13 +111,22 @@ export function registerCommerceRoutes(app: Express) {
       const friendPrice = Math.round(event.cost * (1 - FRIEND_TICKET_DISCOUNT));
       const subtotal = ownPrice + (quantity > 1 ? friendPrice : 0);
 
+      // Discount code first, then points on what is left.
+      let couponId: number | null = null;
+      let couponDisc = 0;
+      if (req.body.couponCode) {
+        const c = await checkCoupon(tx, req.body.couponCode, { userId, event, subtotal }, true);
+        if (c.ok === false) return { status: 400, body: { error: c.error, code: 'COUPON_INVALID' } };
+        couponId = c.coupon.id;
+        couponDisc = c.discount;
+      }
       let pointsUsed = 0;
       if (usePoints) {
         const [me] = await tx.select({ points: users.points }).from(users).where(eq(users.id, userId));
-        const maxByShare = Math.floor((subtotal * MAX_POINTS_SHARE) / POINT_VALUE_TOMAN);
+        const maxByShare = Math.floor(((subtotal - couponDisc) * MAX_POINTS_SHARE) / POINT_VALUE_TOMAN);
         pointsUsed = Math.max(0, Math.min(me.points, maxByShare));
       }
-      const discount = pointsUsed * POINT_VALUE_TOMAN;
+      const discount = couponDisc + pointsUsed * POINT_VALUE_TOMAN;
       const amount = subtotal - discount;
       // Gateway known to be unreachable: say so now instead of holding seats for a payment that cannot start.
       if (amount > 0 && !gatewayAvailable()) {
@@ -126,7 +137,9 @@ export function registerCommerceRoutes(app: Express) {
         userId, eventId, quantity, subtotal, discount, pointsUsed, amount, status: 'PENDING',
         gateway: amount === 0 ? 'POINTS' : gatewayMode === 'zarinpal' ? 'ZARINPAL' : 'SIMULATED',
         expiresAt: new Date(Date.now() + PAYMENT_HOLD_MINUTES * 60_000),
+        couponId, couponDiscount: couponDisc,
       }).returning();
+      if (couponId) await redeemCoupon(tx, couponId, order.id, userId, couponDisc);
 
       // Discount from points is spread over the tickets so each ticket records what it really cost.
       const prices = quantity > 1 ? [ownPrice, friendPrice] : [ownPrice];
@@ -149,9 +162,9 @@ export function registerCommerceRoutes(app: Express) {
       // Nothing left to charge (points covered it) or simulated gateway: confirm right away.
       if (amount === 0 || gatewayMode === 'simulated') {
         await completeOrder(tx, order.id, amount === 0 ? null : `SIM-${order.id}`);
-        return { status: 201, body: { data: { orderId: order.id, status: 'PAID', amount, discount, pointsUsed }, paid: true, eventTitle: event.title } };
+        return { status: 201, body: { data: { orderId: order.id, status: 'PAID', amount, discount, pointsUsed, couponDiscount: couponDisc }, paid: true, eventTitle: event.title } };
       }
-      return { status: 201, body: { data: { orderId: order.id, status: 'PENDING', amount, discount, pointsUsed }, needsPayment: true, eventTitle: event.title, currency: event.currency } };
+      return { status: 201, body: { data: { orderId: order.id, status: 'PENDING', amount, discount, pointsUsed, couponDiscount: couponDisc }, needsPayment: true, eventTitle: event.title, currency: event.currency } };
     });
 
     if (result.status !== 201) return res.status(result.status).json(result.body);
@@ -178,6 +191,17 @@ export function registerCommerceRoutes(app: Express) {
       await db.transaction(tx => failOrder(tx, body.data.orderId, 'FAILED'));
       res.status(502).json({ error: err?.message || 'اتصال به درگاه پرداخت ناموفق بود.' });
     }
+  }));
+
+  // Shows what a discount code would take off, before paying (the order re-checks it).
+  app.post('/api/coupons/preview', limiters.tickets, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
+    const eventId = parseInt(req.body?.eventId, 10);
+    const [event] = Number.isInteger(eventId) ? await db.select().from(events).where(eq(events.id, eventId)) : [];
+    if (!event || event.cost <= 0) return res.status(404).json({ error: 'رویداد مورد نظر یافت نشد.' });
+    const subtotal = event.cost + (req.body?.plusOne ? Math.round(event.cost * (1 - FRIEND_TICKET_DISCOUNT)) : 0);
+    const c = await checkCoupon(db, req.body?.code, { userId: req.dbUser!.id, event, subtotal });
+    if (c.ok === false) return res.status(400).json({ error: c.error });
+    res.json({ data: { code: c.coupon.code, discount: c.discount, type: c.coupon.type, value: c.coupon.value } });
   }));
 
   // Zarinpal sends the payer back here; the payment is verified server-to-server before tickets are issued.
@@ -250,6 +274,7 @@ export function registerCommerceRoutes(app: Express) {
           // Whole order cancelled: points spent on it come back, paid money goes to the refund queue.
           await tx.update(orders).set({ status: order.gateway === 'ZARINPAL' && order.amount > 0 ? 'REFUND_REQUESTED' : 'CANCELLED' }).where(eq(orders.id, order.id));
           if (order.pointsUsed > 0) await changePoints(tx, order.userId, order.pointsUsed, 'POINTS_REFUND', { type: 'ORDER', id: order.id });
+          await releaseCoupon(tx, order.id);
         }
       }
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { X, Users, CreditCard, Star, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, Users, CreditCard, Star, AlertTriangle, ShieldCheck, TicketPercent } from 'lucide-react';
 import { useAppData } from '../lib/appData';
-import { api, showToast } from '../lib/apiClient';
+import { api, ApiError, showToast } from '../lib/apiClient';
 import { navigate } from '../lib/router';
 import { formatToman, pNum } from '../lib/format';
 
@@ -14,30 +14,59 @@ export function CheckoutModal() {
   const [plusOne, setPlusOne] = useState(false);
   const [usePoints, setUsePoints] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
+  const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [checkingCoupon, setCheckingCoupon] = useState(false);
 
   useEffect(() => {
     if (!event) return;
     setPlusOne(false);
     setUsePoints(false);
+    setCoupon(null);
+    setCouponInput('');
+    setCouponError(null);
     api<{ data: PaymentConfig }>('/api/payments/config', { silent: true }).then(d => setConfig(d.data)).catch(() => {});
     api<{ data: { points: number } }>('/api/users/me/points', { silent: true }).then(d => setPoints(d.data.points)).catch(() => {});
   }, [event?.id]);
+
+  // The discount depends on the subtotal: check the code again when "+1" changes.
+  useEffect(() => {
+    if (coupon && event) applyCoupon(coupon.code);
+  }, [plusOne]);
+
+  const applyCoupon = async (code = couponInput) => {
+    if (!event || !code.trim()) return;
+    setCheckingCoupon(true);
+    setCouponError(null);
+    try {
+      const res = await api<{ data: { code: string; discount: number } }>('/api/coupons/preview', { body: { code, eventId: event.id, plusOne }, silent: true });
+      setCoupon(res.data);
+      setCouponInput(res.data.code);
+    } catch (err) {
+      setCoupon(null);
+      setCouponError(err instanceof ApiError ? err.message : 'بررسی کد انجام نشد.');
+    } finally {
+      setCheckingCoupon(false);
+    }
+  };
 
   if (!event) return null;
 
   // Same arithmetic as the server (which is the source of truth for the charged amount).
   const friendPrice = Math.round(event.cost * (1 - (config?.friendDiscount ?? 0.1)));
   const subtotal = event.cost + (plusOne ? friendPrice : 0);
+  const couponDiscount = coupon ? Math.min(coupon.discount, subtotal) : 0;
   const pointValue = config?.pointValueToman ?? 10;
-  const usablePoints = Math.max(0, Math.min(points, Math.floor((subtotal * (config?.maxPointsShare ?? 0.5)) / pointValue)));
+  const usablePoints = Math.max(0, Math.min(points, Math.floor(((subtotal - couponDiscount) * (config?.maxPointsShare ?? 0.5)) / pointValue)));
   const discount = usePoints ? usablePoints * pointValue : 0;
-  const total = subtotal - discount;
+  const total = subtotal - couponDiscount - discount;
   const unavailable = config?.mode === 'none';
 
   const pay = async () => {
     setSubmitting(true);
     try {
-      const res = await api<any>('/api/orders', { body: { eventId: event.id, plusOne, usePoints } });
+      const res = await api<any>('/api/orders', { body: { eventId: event.id, plusOne, usePoints, couponCode: coupon?.code } });
       if (res.paymentUrl) {
         // Off to the gateway; it sends the user back to /tickets with the result.
         window.location.href = res.paymentUrl;
@@ -48,8 +77,9 @@ export function CheckoutModal() {
       refreshProfile();
       closeCheckout();
       navigate('/tickets');
-    } catch {
-      // error toast already shown
+    } catch (err) {
+      // error toast already shown; a code that stopped being valid is cleared
+      if (err instanceof ApiError && err.data?.code === 'COUPON_INVALID') { setCoupon(null); setCouponError(err.message); }
     } finally {
       setSubmitting(false);
     }
@@ -96,8 +126,27 @@ export function CheckoutModal() {
           </span>
         </label>
 
+        <form onSubmit={(e) => { e.preventDefault(); applyCoupon(); }} className="mb-5">
+          <div className="flex gap-2">
+            <input
+              value={couponInput}
+              onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(null); if (coupon) setCoupon(null); }}
+              placeholder="کد تخفیف"
+              aria-label="کد تخفیف"
+              dir="ltr"
+              className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1f1f23] text-sm font-mono uppercase"
+            />
+            <button disabled={!couponInput.trim() || checkingCoupon} className="px-4 rounded-xl bg-gray-100 dark:bg-white/10 text-sm font-bold disabled:opacity-50 flex items-center gap-1">
+              <TicketPercent className="w-4 h-4" /> {checkingCoupon ? '...' : 'اعمال'}
+            </button>
+          </div>
+          {couponError && <p className="text-xs text-red-600 mt-1.5" role="alert">{couponError}</p>}
+          {coupon && <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-1.5">کد {coupon.code} اعمال شد: {formatToman(couponDiscount)} تخفیف</p>}
+        </form>
+
         <div className="space-y-1.5 text-sm mb-5 px-1">
           <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">جمع</span><span>{formatToman(subtotal)}</span></div>
+          {couponDiscount > 0 && <div className="flex justify-between text-emerald-600"><span>کد تخفیف</span><span>−{formatToman(couponDiscount)}</span></div>}
           {discount > 0 && <div className="flex justify-between text-amber-600"><span>تخفیف امتیاز</span><span>−{formatToman(discount)}</span></div>}
           <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/10">
             <span className="font-medium text-gray-700 dark:text-gray-300">مبلغ قابل پرداخت</span>

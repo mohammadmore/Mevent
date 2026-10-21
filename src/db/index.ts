@@ -206,6 +206,34 @@ async function initDatabaseSchemaAndIndexes() {
       sent_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT now()
     );`,
+    "ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_id INTEGER;",
+    "ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_discount INTEGER NOT NULL DEFAULT 0;",
+    `CREATE TABLE IF NOT EXISTS coupons (
+      id SERIAL PRIMARY KEY,
+      code TEXT NOT NULL UNIQUE,
+      organizer_id INTEGER REFERENCES users(id),
+      event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+      type TEXT NOT NULL,
+      value INTEGER NOT NULL,
+      max_discount INTEGER,
+      min_amount INTEGER NOT NULL DEFAULT 0,
+      max_uses INTEGER,
+      used_count INTEGER NOT NULL DEFAULT 0,
+      per_user_limit INTEGER NOT NULL DEFAULT 1,
+      starts_at TIMESTAMP,
+      ends_at TIMESTAMP,
+      active BOOLEAN NOT NULL DEFAULT true,
+      created_by_id INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS coupon_redemptions (
+      id SERIAL PRIMARY KEY,
+      coupon_id INTEGER NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
+      order_id INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      discount INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
     `CREATE UNLOGGED TABLE IF NOT EXISTS rate_limits (
       key TEXT PRIMARY KEY,
       count INTEGER NOT NULL,
@@ -243,6 +271,8 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);',
     'CREATE INDEX IF NOT EXISTS idx_sms_status_next ON sms_messages (status, next_attempt_at);',
     'CREATE INDEX IF NOT EXISTS idx_users_kyc_status ON users (kyc_status);',
+    'CREATE INDEX IF NOT EXISTS idx_coupon_redemptions_coupon_user ON coupon_redemptions (coupon_id, user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_coupons_organizer ON coupons (organizer_id);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];
