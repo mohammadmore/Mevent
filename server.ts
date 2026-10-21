@@ -26,6 +26,7 @@ import { registerSocialRoutes } from './src/server/routes/social';
 import { registerAdminRoutes } from './src/server/routes/admin';
 import { registerPlannerRoutes } from './src/server/routes/planner';
 import { registerConfigRoutes } from './src/server/routes/config';
+import { registerKycRoutes } from './src/server/routes/kyc';
 
 async function startServer() {
   const app = express();
@@ -59,6 +60,8 @@ async function startServer() {
 
   // Uploaded images (local disk in development, Cloud Storage when UPLOAD_BUCKET is set).
   app.get('/uploads/:name', asyncRoute(async (req, res) => sendUpload(req.params.name, res)));
+  // Nothing else lives under /uploads (private files have their own authorised route).
+  app.use('/uploads', (_req, res) => { res.status(404).end(); });
 
   // API responses depend on the session cookie; a CDN or shared proxy must never cache them.
   app.use('/api', (_req, res, next) => { res.setHeader('Cache-Control', 'private, no-cache'); res.setHeader('Vary', 'Cookie, Authorization'); next(); });
@@ -75,6 +78,7 @@ async function startServer() {
   registerAdminRoutes(app);
   registerPlannerRoutes(app);
   registerConfigRoutes(app);
+  registerKycRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {

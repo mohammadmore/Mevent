@@ -4,6 +4,7 @@ import { api, showToast } from '../lib/apiClient';
 import { confirmDialog, promptDialog } from '../lib/dialog';
 import { navigate } from '../lib/router';
 import { formatToman, pNum, timeAgo } from '../lib/format';
+import { KycReview } from './admin/KycReview';
 
 // Everything an admin has to act on: organizer applications, content waiting for review,
 // user reports and refund requests.
@@ -104,6 +105,8 @@ export default function ModerationCenter() {
           ))}
         </ul>
       </Section>
+
+      <KycReview />
 
       <Section icon={<Inbox className="w-5 h-5 text-indigo-500" />} title="محتوای در انتظار انتشار" count={queue.length}>
         <ul className="space-y-3">

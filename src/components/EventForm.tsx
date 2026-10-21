@@ -3,6 +3,7 @@ import { api } from '../lib/apiClient';
 import { useState, useRef, FormEvent, useEffect, useMemo } from 'react';
 import { MapPin, Calendar, Clock, CreditCard, Tag, FileText, Type, Image as ImageIcon, Upload, FileSpreadsheet, Info, Ticket, Trash2 } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
+import { useAppData } from '../lib/appData';
 import { availableIcons, defaultBackgroundIcons } from '../lib/icons';
 import { MoreHorizontal, X } from 'lucide-react';
 import LocationPicker from './LocationPicker';
@@ -64,6 +65,7 @@ const cinemaAdvancedFieldsConfig = [
 
 export default function EventForm({ onSuccess, initialData, isAdmin = false }: { onSuccess: () => void, initialData?: any, isAdmin?: boolean }) {
   const { dbUserId } = useAuth();
+  const { profile } = useAppData();
   const { addToast } = useToast();
   const [importMode, setImportMode] = useState<'single' | 'batch'>('single');
   const [isForeignCurrency, setIsForeignCurrency] = useState(initialData?.currency && initialData.currency !== 'IRT' ? true : false);
@@ -1094,6 +1096,9 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             </select>
           )}
         </div>
+        {Number(formData.cost) > 0 && profile && profile.role !== 'ADMIN' && (profile as any).kycStatus !== 'VERIFIED' && (
+          <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">برای فروش بلیت پولی، ابتدا احراز هویت برگزارکننده را در پنل برگزارکننده کامل کنید.</p>
+        )}
       </div>
       </>)}
       <div className="pt-2">

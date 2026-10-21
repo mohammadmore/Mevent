@@ -13,6 +13,7 @@ import {
 import { saveUpload } from '../../lib/storage.ts';
 import { invalidateCachePattern } from '../../lib/sharedStore.ts';
 import { notify } from '../../lib/notifications.ts';
+import { assertCanSellPaid } from './kyc.ts';
 
 export function invalidateEventCaches() {
   invalidateCachePattern('events_list');
@@ -80,6 +81,7 @@ export function registerContentRoutes(app: Express) {
     if (!payload.title || !String(payload.title).trim()) {
       return res.status(400).json({ error: 'عنوان رویداد الزامی است' });
     }
+    if (!assertCanSellPaid(req, payload.cost, res)) return;
     // The organizer is the signed-in user; only admins may create events on behalf of someone else.
     let organizerId = req.dbUser!.id;
     if (isAdmin(req) && req.body.organizerId) {
@@ -118,6 +120,8 @@ export function registerContentRoutes(app: Express) {
     // An event hidden by moderation stays hidden until an admin restores it.
     if (event.status === 'HIDDEN' && !isAdmin(req) && req.body.status !== undefined) delete req.body.status;
     const updatedData = buildEventPayload(req.body, true);
+    // Turning a free event into a paid one (or raising the price) needs a verified organizer too.
+    if (updatedData.cost !== undefined && Number(updatedData.cost) > event.cost && !assertCanSellPaid(req, updatedData.cost, res)) return;
     if (isAdmin(req)) {
       if (req.body.organizerId !== undefined) {
         const organizerId = parseInt(req.body.organizerId, 10);

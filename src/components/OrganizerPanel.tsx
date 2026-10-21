@@ -6,6 +6,7 @@ import PlaceForm from './PlaceForm';
 import ChainForm from './ChainForm';
 import { useToast } from './Toast';
 import { CheckInModal } from './CheckInModal';
+import { KycCard } from './KycCard';
 import { confirmDialog } from '../lib/dialog';
 import { api } from '../lib/apiClient';
 
@@ -137,6 +138,8 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           <p className="text-sm text-gray-400 mt-1">مدیریت رویدادها و مشاهده آمار</p>
         </div>
       </div>
+
+      <KycCard />
 
       
       {createMode && (

@@ -184,6 +184,13 @@ async function initDatabaseSchemaAndIndexes() {
       created_at TIMESTAMP DEFAULT now()
     );`,
     "ALTER TABLE users ADD COLUMN IF NOT EXISTS sms_reminders BOOLEAN NOT NULL DEFAULT true;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_status TEXT NOT NULL DEFAULT 'NONE';",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_type TEXT;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_data JSONB;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_note TEXT;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_submitted_at TIMESTAMP;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_reviewed_at TIMESTAMP;",
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_reviewed_by_id INTEGER;",
     `CREATE TABLE IF NOT EXISTS sms_messages (
       id SERIAL PRIMARY KEY,
       user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
@@ -235,6 +242,7 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_otp_phone_created ON otp_codes (phone, created_at);',
     'CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);',
     'CREATE INDEX IF NOT EXISTS idx_sms_status_next ON sms_messages (status, next_attempt_at);',
+    'CREATE INDEX IF NOT EXISTS idx_users_kyc_status ON users (kyc_status);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

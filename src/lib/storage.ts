@@ -24,7 +24,14 @@ const PENDING_DIR = path.join(UPLOAD_DIR, '.pending');
 const LEGACY_UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
 const PREFIX = 'uploads/';
 const SAFE_NAME = /^[a-f0-9-]{36}\.(jpg|png|webp|gif)$/;
-const CONTENT_TYPES: Record<string, string> = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+// Private files (identity documents): "<userId>-<uuid>.<ext>", stored under private/ and served
+// only through an authorised route, never through /uploads.
+export const PRIVATE_NAME = /^\d+-[a-f0-9-]{36}\.(jpg|png|webp|pdf)$/;
+const CONTENT_TYPES: Record<string, string> = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', pdf: 'application/pdf' };
+const PRIVATE_DIR = path.join(UPLOAD_DIR, 'private');
+/** Storage key (relative to the uploads prefix) of a file; private files live under private/. */
+const keyOf = (name: string, isPrivate: boolean) => (isPrivate ? `private/${name}` : name);
+const validKey = (key: string) => SAFE_NAME.test(key) || (key.startsWith('private/') && PRIVATE_NAME.test(key.slice(8)));
 const DEP = 'storage';
 
 interface RemoteStore {
@@ -43,13 +50,13 @@ function s3Store(): RemoteStore {
     region: process.env.S3_REGION || 'us-east-1',
   });
   // Path-style (https://host/bucket/key) works with every S3-compatible service.
-  const url = (name: string) => `${endpoint}/${encodeURIComponent(bucketName)}/${PREFIX}${encodeURIComponent(name)}`;
+  const url = (key: string) => `${endpoint}/${encodeURIComponent(bucketName)}/${PREFIX}${key.split('/').map(encodeURIComponent).join('/')}`;
   return {
     async put(name, body, contentType) {
       const res = await client.fetch(url(name), {
         method: 'PUT',
         body,
-        headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=31536000, immutable' },
+        headers: { 'Content-Type': contentType, 'Cache-Control': name.startsWith('private/') ? 'private, no-store' : 'public, max-age=31536000, immutable' },
         signal: AbortSignal.timeout(20000),
       });
       if (!res.ok) throw new Error(`S3 PUT ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`);
@@ -89,6 +96,7 @@ function remote() {
 }
 
 fs.mkdirSync(PENDING_DIR, { recursive: true });
+fs.mkdirSync(PRIVATE_DIR, { recursive: true });
 
 if (storageMode === 's3') {
   registerDependency(DEP, 'فضای ذخیره‌سازی فایل (S3)', httpProbe(`${process.env.S3_ENDPOINT!.replace(/\/$/, '')}/${encodeURIComponent(process.env.S3_BUCKET!)}`), { onRecover: () => { setTimeout(() => syncPendingUploads().catch(() => {}), 0); } });
@@ -98,17 +106,26 @@ if (storageMode === 's3') {
   console.warn('No object storage configured (S3_* or UPLOAD_BUCKET): uploads stay on this server\'s disk.');
 }
 
-async function keepLocally(name: string, buffer: Buffer, queue: boolean) {
-  await fs.promises.writeFile(path.join(UPLOAD_DIR, name), buffer);
-  if (queue) await fs.promises.writeFile(path.join(PENDING_DIR, name), '');
+async function keepLocally(key: string, buffer: Buffer, queue: boolean) {
+  await fs.promises.writeFile(path.join(UPLOAD_DIR, key), buffer);
+  if (queue) await fs.promises.writeFile(path.join(PENDING_DIR, encodeURIComponent(key)), '');
 }
 
-export async function saveUpload(name: string, buffer: Buffer, contentType: string): Promise<void> {
-  if (storageMode === 'local') return keepLocally(name, buffer, false);
+export function saveUpload(name: string, buffer: Buffer, contentType: string): Promise<void> {
+  return saveKey(keyOf(name, false), buffer, contentType);
+}
+
+export function savePrivateFile(name: string, buffer: Buffer, contentType: string): Promise<void> {
+  if (!PRIVATE_NAME.test(name)) throw new Error('invalid private file name');
+  return saveKey(keyOf(name, true), buffer, contentType);
+}
+
+async function saveKey(key: string, buffer: Buffer, contentType: string): Promise<void> {
+  if (storageMode === 'local') return keepLocally(key, buffer, false);
   if (isUp(DEP)) {
     const started = Date.now();
     try {
-      await (await remote()).put(name, buffer, contentType);
+      await (await remote()).put(key, buffer, contentType);
       reportSuccess(DEP, Date.now() - started);
       return;
     } catch (err) {
@@ -116,21 +133,23 @@ export async function saveUpload(name: string, buffer: Buffer, contentType: stri
       console.warn('Upload to object storage failed; keeping the file locally until it can be copied:', (err as Error)?.message);
     }
   }
-  await keepLocally(name, buffer, true);
+  await keepLocally(key, buffer, true);
 }
 
 /** Copies files saved locally during an outage to the object storage. Runs as a background job. */
 export async function syncPendingUploads() {
   if (storageMode === 'local' || !isUp(DEP)) return;
-  const names = (await fs.promises.readdir(PENDING_DIR).catch(() => [] as string[])).filter(n => SAFE_NAME.test(n));
-  for (const name of names) {
+  const markers = await fs.promises.readdir(PENDING_DIR).catch(() => [] as string[]);
+  for (const marker of markers) {
+    const key = decodeURIComponent(marker);
+    if (!validKey(key)) continue;
     try {
-      const buffer = await fs.promises.readFile(path.join(UPLOAD_DIR, name));
-      await (await remote()).put(name, buffer, CONTENT_TYPES[name.split('.').pop()!]);
+      const buffer = await fs.promises.readFile(path.join(UPLOAD_DIR, key));
+      await (await remote()).put(key, buffer, CONTENT_TYPES[key.split('.').pop()!]);
       reportSuccess(DEP);
-      await fs.promises.unlink(path.join(PENDING_DIR, name));
+      await fs.promises.unlink(path.join(PENDING_DIR, marker));
     } catch (err: any) {
-      if (err?.code === 'ENOENT') { await fs.promises.unlink(path.join(PENDING_DIR, name)).catch(() => {}); continue; }
+      if (err?.code === 'ENOENT') { await fs.promises.unlink(path.join(PENDING_DIR, marker)).catch(() => {}); continue; }
       reportFailure(DEP, err);
       return;
     }
@@ -183,4 +202,30 @@ export async function sendUpload(name: string, res: Response): Promise<void> {
   }
   setHeaders();
   stream.on('error', () => { if (!res.headersSent) res.status(500).end(); else res.end(); }).pipe(res);
+}
+
+/** Streams a private file; the caller must have checked who may see it. */
+export async function sendPrivateFile(name: string, res: Response): Promise<void> {
+  if (!PRIVATE_NAME.test(name)) { res.status(404).end(); return; }
+  const key = keyOf(name, true);
+  const setHeaders = () => {
+    res.setHeader('Content-Type', CONTENT_TYPES[name.split('.').pop()!]);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox");
+  };
+  const localPath = path.join(UPLOAD_DIR, key);
+  if (fs.existsSync(localPath)) { setHeaders(); fs.createReadStream(localPath).pipe(res); return; }
+  if (storageMode === 'local') { res.status(404).end(); return; }
+  if (!isUp(DEP)) { res.setHeader('Retry-After', '60'); res.status(503).end(); return; }
+  try {
+    const stream = await (await remote()).get(key);
+    reportSuccess(DEP);
+    if (!stream) { res.status(404).end(); return; }
+    setHeaders();
+    stream.on('error', () => res.end()).pipe(res);
+  } catch (err) {
+    reportFailure(DEP, err);
+    res.status(503).end();
+  }
 }

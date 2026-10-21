@@ -27,6 +27,14 @@ export const users = pgTable('users', {
   // Organizer upgrade requests are reviewed by an admin: NONE | PENDING | APPROVED | REJECTED
   organizerStatus: text('organizer_status').default('NONE').notNull(),
   organizerRequestNote: text('organizer_request_note'),
+  // Identity verification, required to sell paid tickets: NONE | PENDING | VERIFIED | REJECTED
+  kycStatus: text('kyc_status').default('NONE').notNull(),
+  kycType: text('kyc_type'),
+  kycData: jsonb('kyc_data'),
+  kycNote: text('kyc_note'),
+  kycSubmittedAt: timestamp('kyc_submitted_at'),
+  kycReviewedAt: timestamp('kyc_reviewed_at'),
+  kycReviewedById: integer('kyc_reviewed_by_id'),
   /** Event reminder SMS (ticket and account SMS are always sent). */
   smsReminders: boolean('sms_reminders').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
