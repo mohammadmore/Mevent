@@ -7,6 +7,7 @@ import {
   Music, VolumeX, Sofa, Gamepad2, BookOpen, Briefcase, CreditCard, Mic, Film, Baby, Camera, Check, ImageIcon
 } from 'lucide-react';
 import LocationPicker from './LocationPicker';
+import { VibePicker } from './VibeChips';
 
 const DAYS_OF_WEEK = [
   { value: 6, label: 'شنبه' },
@@ -86,7 +87,8 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
     galleryUrls: [],
     type: 'CAFE',
     status: 'PUBLISHED',
-    features: []
+    features: [],
+    moods: [],
   });
   
   const [scheduleType, setScheduleType] = useState<'regular' | 'variable'>(
@@ -334,6 +336,8 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
           onChange={e => setFormData({...formData, description: e.target.value})}
         ></textarea>
       </div>
+
+      <VibePicker value={formData.moods || []} onChange={(moods) => setFormData({ ...formData, moods })} />
 
       <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
         <label className="block text-sm text-gray-400 mb-4 flex items-center gap-2 font-bold">

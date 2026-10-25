@@ -57,6 +57,12 @@ export interface Event {
   currency?: string;
   cost: number; // 0 for free
   tags: string[];
+  /** Mood/company tags the organizer chose (keys from lib/moods). */
+  moods?: string[];
+  /** The chosen tags plus inferred ones, as shown on cards. */
+  vibes?: string[];
+  /** Why the "for you" feed picked this event. */
+  reason?: string;
   hubIds?: number[];
   galleryUrls?: string[];
   imageUrl?: string;

@@ -73,6 +73,8 @@ export const events = pgTable('events', {
   cost: integer('cost').default(0).notNull(),
   capacity: integer('capacity').default(100).notNull(),
   tags: jsonb('tags').default('[]').notNull(),
+  /** Mood and company tags the organizer chose (keys from src/lib/moods.ts); the rest are inferred. */
+  moods: jsonb('moods').default('[]').notNull(),
   hubIds: jsonb('hub_ids').default('[]'),
   galleryUrls: jsonb('gallery_urls').default('[]'),
   hubId: integer('hub_id').references(() => hubs.id),
@@ -213,6 +215,8 @@ export const places = pgTable('places', {
   lat: doublePrecision('lat'),
   lng: doublePrecision('lng'),
   amenities: jsonb('amenities').default('[]'),
+  /** Mood and company tags chosen by whoever added the place; the rest are inferred. */
+  moods: jsonb('moods').default('[]').notNull(),
   imageUrl: text('image_url'),
   galleryUrls: jsonb('gallery_urls').default('[]'),
   advancedDetails: jsonb('advanced_details').default('{}'),

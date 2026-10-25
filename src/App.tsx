@@ -15,6 +15,8 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { LegalScreen, LEGAL_PATHS } from './screens/LegalScreen';
 import { SupportScreen } from './screens/SupportScreen';
+import { BoredScreen } from './screens/BoredScreen';
+import { FreeScreen } from './screens/FreeScreen';
 import { EventRoute, PlaceRoute, VibeRoute, ChainRoute, FlowRoute, OrganizerRoute, rememberEntity } from './screens/EntityRoutes';
 
 // Heavy, rarely used screens load on demand so the first visit stays fast on mobile.
@@ -36,7 +38,7 @@ const OVERLAY_ROUTES: Array<[string, (p: Record<string, string>) => React.ReactN
 ];
 
 // Screens anyone can open (e.g. from a shared link); the rest ask for sign-in first.
-const PUBLIC_PATHS = ['/', '/map', '/login', '/hubs', '/trip-planner', ...LEGAL_PATHS];
+const PUBLIC_PATHS = ['/', '/map', '/login', '/hubs', '/trip-planner', '/bored', '/free', ...LEGAL_PATHS];
 const isPublicPath = (path: string) =>
   PUBLIC_PATHS.includes(path) || OVERLAY_ROUTES.some(([p]) => matchPath(p, path)) ||
   !!matchPath('/trips/:id', path) || !!matchPath('/invite/:code', path) || !!matchPath('/hubs/:id', path);
@@ -235,6 +237,8 @@ function Shell() {
       case screenPath === '/notifications': return <NotificationsScreen />;
       case LEGAL_PATHS.includes(screenPath): return <LegalScreen path={screenPath} />;
       case screenPath === '/support': return <SupportScreen />;
+      case screenPath === '/bored': return <BoredScreen userLocation={userLocation} />;
+      case screenPath === '/free': return <FreeScreen userLocation={userLocation} />;
       case !!matchPath('/support/:id', screenPath): return <SupportScreen ticketId={Number(matchPath('/support/:id', screenPath)!.id)} />;
       case screenPath === '/create':
         return isOrganizer

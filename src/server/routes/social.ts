@@ -14,11 +14,12 @@ import { RSVP_POINTS } from './commerce.ts';
 import { seatsTaken } from '../seats.ts';
 import { convertWaitlist, nudgeWaitlist } from '../waitlist.ts';
 
-// SAVE and RSVP toggle; VIEW and SHARE are recorded (and rewarded) once per user and event.
+// SAVE, RSVP and NOT_INTERESTED ("not for me", which tunes the "for you" feed) toggle; VIEW and
+// SHARE are recorded (and rewarded) once per user and event.
 // Points are granted when an interaction is created and taken back when a toggle removes it,
 // so repeated clicks cannot farm points.
-const INTERACTION_POINTS: Record<string, number> = { RSVP: RSVP_POINTS, SAVE: 10, VIEW: 1, SHARE: 50 };
-const TOGGLE_TYPES = ['SAVE', 'RSVP'];
+const INTERACTION_POINTS: Record<string, number> = { RSVP: RSVP_POINTS, SAVE: 10, VIEW: 1, SHARE: 50, NOT_INTERESTED: 0 };
+const TOGGLE_TYPES = ['SAVE', 'RSVP', 'NOT_INTERESTED'];
 
 export function registerSocialRoutes(app: Express) {
   app.post('/api/interactions', requireAuth, asyncRoute(async (req: AuthRequest, res) => {
@@ -51,7 +52,7 @@ export function registerSocialRoutes(app: Express) {
         }
         await tx.delete(interactions).where(match);
         await changePoints(tx, userId, -points, `${type}_REMOVED`, { type: 'EVENT', id: parsedEventId });
-        return { status: 200, body: { success: true, action: type === 'SAVE' ? 'unsaved' : 'unrsvped', pointsAwarded: 0 }, freedSeat: type === 'RSVP' };
+        return { status: 200, body: { success: true, action: type === 'SAVE' ? 'unsaved' : type === 'RSVP' ? 'unrsvped' : 'removed', pointsAwarded: 0 }, freedSeat: type === 'RSVP' };
       }
 
       if (type === 'RSVP') {

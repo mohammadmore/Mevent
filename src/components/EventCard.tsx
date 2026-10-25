@@ -1,18 +1,20 @@
 import React from 'react';
-import { Calendar, MapPin, Bookmark, CreditCard, ExternalLink, CheckCircle, Users } from 'lucide-react';
+import { Calendar, MapPin, Bookmark, Heart, ExternalLink, CheckCircle, Users, Wallet, Sparkles, X } from 'lucide-react';
 import { Event } from '../types';
 import { getEventBackgroundIcon } from '../lib/icons';
-import { PriceWidget } from './PriceWidget';
+import { VibeChips } from './VibeChips';
 import { useAppData } from '../lib/appData';
-import { eventTimeLabel, formatDistance, haversineKm, pNum } from '../lib/format';
+import { eventTimeLabel, formatDistance, haversineKm, pNum, softPrice } from '../lib/format';
 import { GeneratedAvatar } from './Avatar';
 
 interface EventCardProps {
   event: Event;
   userLocation?: { lat: number; lng: number } | null;
+  /** Shows a "not for me" button (the "for you" feed learns from it). */
+  onDismiss?: (event: Event) => void;
 }
 
-export function EventCard({ event, userLocation }: EventCardProps) {
+export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
   const { isSaved, isGoing, toggleSave, attend, openEvent, recordView } = useAppData();
   const saved = isSaved(event.id);
   const going = isGoing(event.id);
@@ -53,8 +55,18 @@ export function EventCard({ event, userLocation }: EventCardProps) {
               {event.description && <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400 line-clamp-3">{event.description}</p>}
             </div>
           </div>
-          <PriceWidget cost={event.cost} className={`px-2.5 py-1 rounded-xl mr-2 shrink-0 ${going || saved ? 'bg-white text-[#FD6F2F] dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]' : 'bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'}`} />
+          {onDismiss && (
+            <button onClick={(e) => { e.stopPropagation(); onDismiss(event); }} aria-label="علاقه ندارم" title="علاقه ندارم"
+              className="p-1.5 -mt-1 -ml-1 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-200 shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
+
+        {event.reason && (
+          <p className="text-xs font-medium text-teal-700 dark:text-[#d9ff00] mb-3 flex items-start gap-1.5"><Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {event.reason}</p>
+        )}
+        <VibeChips vibes={event.vibes} className="mb-3" />
 
         <div className="flex flex-col gap-2 text-xs font-medium text-gray-600 dark:text-gray-400 mb-4">
           <div className="flex items-center gap-1.5">
@@ -66,6 +78,10 @@ export function EventCard({ event, userLocation }: EventCardProps) {
             <span dir="auto" className="truncate text-right">{event.location?.address || (event as any).address || event.city || 'مکان نامشخص'}</span>
             {formatDistance(distance) && <span className="font-bold text-teal-600 dark:text-[#d9ff00] shrink-0">• {formatDistance(distance)}</span>}
           </div>
+          <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-500 font-normal">
+            <Wallet className="w-4 h-4 shrink-0" />
+            <span>{softPrice(event.cost)}</span>
+          </div>
           {typeof event.seatsLeft === 'number' && event.seatsLeft <= 10 && (
             <div className="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-bold">
               <Users className="w-4 h-4" />
@@ -76,7 +92,7 @@ export function EventCard({ event, userLocation }: EventCardProps) {
 
         {tags.length > 0 && (
           <div className="flex gap-2 mb-4 flex-wrap">
-            {tags.slice(0, 4).map(tag => (
+            {tags.slice(0, 3).map(tag => (
               <span key={tag} className="text-xs bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-200 dark:border-white/10">{tag}</span>
             ))}
           </div>
@@ -99,8 +115,8 @@ export function EventCard({ event, userLocation }: EventCardProps) {
               onClick={(e) => { e.stopPropagation(); attend(event); }}
               className="flex items-center gap-2 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-sm"
             >
-              {event.ticketUrl ? <ExternalLink className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
-              {event.ticketUrl ? 'سایت رسمی' : going ? 'بلیت دارم' : 'خرید بلیت'}
+              {event.ticketUrl ? <ExternalLink className="w-4 h-4" /> : going ? <CheckCircle className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
+              {event.ticketUrl ? 'سایت رسمی' : going ? 'بلیت دارم' : 'می‌خوام برم'}
             </button>
           ) : (
             <button
@@ -109,7 +125,7 @@ export function EventCard({ event, userLocation }: EventCardProps) {
                 going ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00]' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black hover:bg-teal-700 dark:hover:bg-[#c6eb00]'
               }`}
             >
-              <CheckCircle className="w-4 h-4" /> {going ? 'می‌روم' : 'منم میام'}
+              <CheckCircle className="w-4 h-4" /> {going ? 'میام ✓' : 'منم میام'}
             </button>
           )}
         </div>

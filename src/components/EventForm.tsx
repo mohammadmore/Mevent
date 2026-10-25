@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { VibePicker } from './VibeChips';
 import { api } from '../lib/apiClient';
 import { useState, useRef, FormEvent, useEffect, useMemo } from 'react';
 import { MapPin, Calendar, Clock, CreditCard, Tag, FileText, Type, Image as ImageIcon, Upload, FileSpreadsheet, Info, Ticket, Trash2 } from 'lucide-react';
@@ -88,6 +89,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
   const [advancedFieldsConfig, setAdvancedFieldsConfig] = useState<any[]>(defaultAdvancedFieldsConfig);
   const [basicFieldsConfig, setBasicFieldsConfig] = useState<any[]>([{"name":"poster","label":"پوستر رویداد","enabled":true},{"name":"category","label":"دسته‌بندی","enabled":true},{"name":"address","label":"محل برگزاری / لینک","enabled":true},{"name":"cost","label":"هزینه ثبت‌نام","enabled":true},{"name":"capacity","label":"ظرفیت رویداد","enabled":true}]);
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
+  const [moods, setMoods] = useState<string[]>(initialData?.moods || []);
   const [tagSearch, setTagSearch] = useState("");
   const [showTagDropdown, setShowTagDropdown] = useState(false);
 
@@ -362,6 +364,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           galleryUrls: newGalleryUrls,
           hubId: formData.hubIds.length > 0 ? formData.hubIds[0] : null,
           tags: selectedTags,
+          moods,
           bgIcon: formData.bgIcon,
           location: {
             address: formData.address,
@@ -980,6 +983,8 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           </div>
         )}
       </div>
+
+      <VibePicker value={moods} onChange={setMoods} />
       
       
       <div>

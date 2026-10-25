@@ -2,6 +2,8 @@ import multer from 'multer';
 import { eq, and, inArray } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { users, events, chains } from '../db/schema.ts';
+import { cleanVibeTags, effectiveVibes, inferEventVibes, inferPlaceVibes } from '../lib/moods.ts';
+import { tehranParts } from '../lib/time.ts';
 
 // Shared helpers for the API routes: payload whitelisting, normalisation of rows
 // for the client, and small geo/text utilities.
@@ -60,8 +62,19 @@ export function parseJsonArray(value: unknown): any[] {
 }
 
 // Older rows stored arrays as JSON strings inside jsonb columns; always hand arrays to the client.
-export function normalizePlace<T extends Record<string, any>>(p: T): T {
-  return { ...p, galleryUrls: parseJsonArray(p.galleryUrls), amenities: parseJsonArray(p.amenities) };
+export function normalizePlace<T extends Record<string, any>>(p: T): T & { vibes: string[] } {
+  const amenities = parseJsonArray(p.amenities);
+  return { ...p, galleryUrls: parseJsonArray(p.galleryUrls), amenities, vibes: placeVibes({ ...p, amenities }) };
+}
+
+/** Mood/company tags of an event: the organizer's choice plus inferred ones. */
+export function eventVibes(e: { title?: string | null; description?: string | null; tags?: unknown; moods?: unknown; startTime?: Date | null; cost?: number }) {
+  const startHour = e.startTime ? tehranParts(new Date(e.startTime)).hour : null;
+  return effectiveVibes(e.moods, inferEventVibes({ ...e, tags: parseJsonArray(e.tags), startHour }));
+}
+
+export function placeVibes(p: { type?: string | null; name?: string | null; description?: string | null; amenities?: unknown; moods?: unknown }) {
+  return effectiveVibes(p.moods, inferPlaceVibes({ ...p, amenities: parseJsonArray(p.amenities) }));
 }
 
 export function normalizeTaggedItem<T extends Record<string, any>>(item: T): T {
@@ -119,6 +132,7 @@ export function buildPlacePayload(data: any, partial: boolean) {
   set('lat', data.lat === undefined && partial ? undefined : toNumberOrNull(data.lat));
   set('lng', data.lng === undefined && partial ? undefined : toNumberOrNull(data.lng));
   set('imageUrl', partial ? data.imageUrl : (data.imageUrl || ''));
+  if (data.moods !== undefined || !partial) payload.moods = cleanVibeTags(data.moods);
   if (data.galleryUrls !== undefined || !partial) payload.galleryUrls = parseJsonArray(data.galleryUrls);
   if (data.status !== undefined || !partial) {
     payload.status = CONTENT_STATUSES.includes(data.status) ? data.status : 'PUBLISHED';
@@ -145,6 +159,7 @@ export function buildEventPayload(body: any, partial: boolean) {
   if (body.cost !== undefined) payload.cost = Math.max(0, parseInt(body.cost, 10) || 0);
   if (body.capacity !== undefined) payload.capacity = Math.max(1, parseInt(body.capacity, 10) || 100);
   if (body.tags !== undefined) payload.tags = parseJsonArray(body.tags);
+  if (body.moods !== undefined) payload.moods = cleanVibeTags(body.moods);
   if (body.galleryUrls !== undefined) payload.galleryUrls = parseJsonArray(body.galleryUrls);
   if (body.hubIds !== undefined) payload.hubIds = toIdArray(body.hubIds);
   if (body.coOrganizerIds !== undefined) payload.coOrganizerIds = toIdArray(body.coOrganizerIds);
@@ -292,6 +307,8 @@ export async function formatEvents<T extends { organizerId: number; address: str
   return rows.map(e => ({
     ...e,
     tags: parseJsonArray((e as any).tags),
+    moods: cleanVibeTags((e as any).moods),
+    vibes: eventVibes(e as any),
     location: { address: e.address, lat: e.lat, lng: e.lng },
     organizer: orgMap.get(e.organizerId) || null,
   }));

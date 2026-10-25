@@ -152,7 +152,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     setRsvpEvents(prev => wasGoing ? prev.filter(e => e.id !== event.id) : [...prev, event]);
     try {
       await sendInteraction(event.id, 'RSVP');
-      showToast(wasGoing ? 'ثبت‌نام شما لغو شد.' : 'حضور شما ثبت شد. یادآوری قبل از شروع رویداد برایتان ارسال می‌شود.', wasGoing ? 'info' : 'success');
+      showToast(wasGoing ? 'باشه، ثبت‌نامت لغو شد.' : 'ایول! جات محفوظه. قبل از شروع یادت می‌ندازیم.', wasGoing ? 'info' : 'success');
       refreshProfile();
     } catch (err) {
       refreshLists();

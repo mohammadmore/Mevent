@@ -237,6 +237,8 @@ async function initDatabaseSchemaAndIndexes() {
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP;",
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS cancel_reason TEXT;",
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS postponed_from TIMESTAMP;",
+    "ALTER TABLE events ADD COLUMN IF NOT EXISTS moods JSONB NOT NULL DEFAULT '[]'::jsonb;",
+    "ALTER TABLE places ADD COLUMN IF NOT EXISTS moods JSONB NOT NULL DEFAULT '[]'::jsonb;",
     `CREATE TABLE IF NOT EXISTS refunds (
       id SERIAL PRIMARY KEY,
       order_id INTEGER NOT NULL REFERENCES orders(id),
@@ -343,6 +345,7 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_events_start_status ON events (start_time, status);',
     'CREATE INDEX IF NOT EXISTS idx_events_lat_lng ON events (lat, lng);',
     'CREATE INDEX IF NOT EXISTS idx_interactions_user_type ON interactions (user_id, type);',
+    'CREATE INDEX IF NOT EXISTS idx_interactions_event_type ON interactions (event_id, type);',
     'CREATE INDEX IF NOT EXISTS idx_tickets_event_id ON tickets (event_id);',
     'CREATE INDEX IF NOT EXISTS idx_users_uid ON users (uid);',
     'CREATE INDEX IF NOT EXISTS idx_events_city_status ON events (city, status);',

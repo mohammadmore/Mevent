@@ -71,3 +71,10 @@ export function timeAgo(value: string | Date | null | undefined) {
 export function formatToman(amount: number) {
   return `${pNum(amount.toLocaleString('en-US'))} تومان`;
 }
+
+/** Price as a quiet aside ("مجانی", "۶۰ هزار تومان"), for cards where the plan matters more than the cost. */
+export function softPrice(cost: number) {
+  if (!cost) return 'مجانی';
+  if (cost < 1_000_000) return `${pNum(Math.round(cost / 1000))} هزار تومان`;
+  return `${pNum(parseFloat((cost / 1_000_000).toFixed(1)))} میلیون تومان`;
+}

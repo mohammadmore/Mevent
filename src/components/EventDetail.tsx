@@ -6,7 +6,8 @@ import { api, showToast } from '../lib/apiClient';
 import { promptDialog } from '../lib/dialog';
 import { absoluteUrl } from '../lib/router';
 import { useAppData } from '../lib/appData';
-import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum } from '../lib/format';
+import { VibeChips } from './VibeChips';
+import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum, softPrice } from '../lib/format';
 import { tehranParts } from '../lib/time';
 
 export const REPORT_REASONS = ['اطلاعات نادرست یا گمراه‌کننده', 'کلاهبرداری یا فروش بلیت جعلی', 'محتوای نامناسب یا توهین‌آمیز', 'رویداد لغو شده است', 'تکراری یا اسپم'];
@@ -370,7 +371,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             {event.city}
           </div>
         )}
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#515739] dark:text-gray-100 mb-6 leading-tight">{event.title}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#515739] dark:text-gray-100 mb-3 leading-tight">{event.title}</h1>
+        <VibeChips vibes={event.vibes} max={4} className="mb-6" />
         {isCancelled && (
           <div role="status" className="mb-6 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 p-4 text-sm text-red-800 dark:text-red-300">
             <b>این رویداد لغو شده است.</b>{(event as any).cancelReason && <> دلیل: {(event as any).cancelReason}</>}
@@ -685,7 +687,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
         >
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
-          {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'خرید بلیت بیشتر' : 'خرید بلیت') : (isRsvp ? 'منم میرم (لغو)' : 'ثبت نام رایگان'))}
+          {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'یه بلیت دیگه می‌خوام' : 'می‌خوام برم') : (isRsvp ? 'میام ✓ (لغو)' : 'منم میام'))}
+          {!isCancelled && !event.ticketUrl && !soldOut && <span className="text-xs font-normal opacity-75">· {softPrice(event.cost)}</span>}
         </button>
         )}
         </div>

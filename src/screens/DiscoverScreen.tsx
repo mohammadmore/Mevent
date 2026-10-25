@@ -10,6 +10,7 @@ import { navigate, useLocation } from '../lib/router';
 import { tehranDayRange, tehranWeekendRange, addDays, startOfTehranDay } from '../lib/time';
 import { pNum } from '../lib/format';
 import { SiteFooter } from '../components/SiteFooter';
+import { ForYouRow, FreeRow, HomeGreeting } from '../components/HomeRows';
 
 export const CITIES = ['تهران', 'اصفهان', 'شیراز', 'مشهد', 'تبریز', 'کرج', 'رشت', 'یزد', 'کیش', 'قم', 'اهواز', 'کرمان'];
 const PAGE_SIZE = 12;
@@ -137,9 +138,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
   const filtersActive = price !== 'all' || date !== 'all';
   const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#d9ff00] text-white dark:text-black' : 'bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`;
 
-  return (
-    <div className="space-y-6">
-      {/* Search */}
+  const searchBox = (
       <div className="relative">
         <Search className="absolute right-3 top-3 w-5 h-5 text-gray-500" />
         <input
@@ -158,14 +157,17 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
         )}
       </div>
 
-      {q && (
-        <div className="flex gap-2" role="tablist">
-          {([['all', 'همه نتایج'], ['events', 'رویدادها'], ['places', 'پاتوق‌ها']] as const).map(([key, label]) => (
-            <button key={key} role="tab" aria-selected={type === key} onClick={() => setParam({ type: key })} className={`px-3 py-1 rounded-full text-xs ${type === key ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>{label}</button>
-          ))}
-        </div>
-      )}
+  );
 
+  return (
+    <div className="space-y-6">
+      {!q && (
+        <>
+          <HomeGreeting />
+          <ForYouRow city={city === 'all' ? undefined : city} userLocation={userLocation} />
+          <FreeRow city={city === 'all' ? undefined : city} userLocation={userLocation} />
+        </>
+      )}
       {!q && <DiscoveryHeader city={city === 'all' ? undefined : city} onFlowSelect={onOpenFlow} onVibeSelect={onOpenVibe} onChainSelect={onOpenChain} />}
 
       {!q && (
@@ -184,9 +186,17 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       )}
 
       <div className="flex flex-col gap-4">
+        {searchBox}
+        {q && (
+          <div className="flex gap-2" role="tablist">
+            {([['all', 'همه نتایج'], ['events', 'رویدادها'], ['places', 'پاتوق‌ها']] as const).map(([key, label]) => (
+              <button key={key} role="tab" aria-selected={type === key} onClick={() => setParam({ type: key })} className={`px-3 py-1 rounded-full text-xs ${type === key ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>{label}</button>
+            ))}
+          </div>
+        )}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 flex items-center gap-2">
-            {q ? `نتایج «${q}»` : 'پیشنهادهای ویژه شما'}
+            {q ? `نتایج «${q}»` : 'همه برنامه‌ها'}
             <button onClick={() => load(0)} aria-label="بروزرسانی" className={`p-1.5 rounded-full text-gray-600 dark:text-gray-400 ${loading ? 'animate-spin' : ''}`}>
               <RefreshCw className="w-4 h-4" />
             </button>
