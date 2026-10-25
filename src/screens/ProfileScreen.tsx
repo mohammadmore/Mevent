@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare, LifeBuoy } from 'lucide-react';
+import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare, LifeBuoy, Users } from 'lucide-react';
 import GamificationPanel from '../components/GamificationPanel';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { useAppData } from '../lib/appData';
@@ -146,6 +146,10 @@ export function ProfileScreen() {
         <button onClick={() => navigate('/tickets')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
           <span className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500"><Heart className="w-6 h-6" /></span>
           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">بلیت‌ها و ذخیره‌ها</span>
+        </button>
+        <button onClick={() => navigate('/friends')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
+          <span className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500"><Users className="w-6 h-6" /></span>
+          <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">دوستان و همراه‌ها</span>
         </button>
         {isOrganizer && (
           <button onClick={() => navigate('/organizer')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">

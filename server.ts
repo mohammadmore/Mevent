@@ -18,6 +18,7 @@ import { captureError, installMonitoring } from './src/lib/monitoring';
 import { registerOpsRoutes } from './src/server/routes/ops';
 import { registerSupportRoutes } from './src/server/routes/support';
 import { registerRecommendRoutes } from './src/server/routes/recommend';
+import { registerTogetherRoutes } from './src/server/routes/together';
 import { scheduledBackup } from './src/lib/backups';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
@@ -100,6 +101,7 @@ async function startServer() {
   registerOpsRoutes(app);
   registerSupportRoutes(app);
   registerRecommendRoutes(app);
+  registerTogetherRoutes(app);
 
   // Unknown API routes must not fall through to the SPA's index.html.
   app.use('/api', (req, res) => {

@@ -7,6 +7,7 @@ import { promptDialog } from '../lib/dialog';
 import { absoluteUrl } from '../lib/router';
 import { useAppData } from '../lib/appData';
 import { VibeChips } from './VibeChips';
+import { GoTogether } from './GoTogether';
 import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum, softPrice } from '../lib/format';
 import { tehranParts } from '../lib/time';
 
@@ -469,6 +470,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             )}
           </div>
         </div>
+
+        <GoTogether eventId={event.id} />
 
         {similarEvents.length > 0 && (
           <div className="mt-8 mb-8 bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-gray-100 dark:border-white/5">

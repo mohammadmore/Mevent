@@ -7,7 +7,7 @@ import { PhoneLogin } from './components/PhoneLogin';
 import { useAuth, rememberInviteCode } from './lib/AuthContext';
 import { AppDataProvider, useAppData, RETURN_TO_KEY } from './lib/appData';
 import { navigate, useLocation, matchPath, goBack } from './lib/router';
-import { showToast } from './lib/apiClient';
+import { api, showToast } from './lib/apiClient';
 import { pNum } from './lib/format';
 import { DiscoverScreen } from './screens/DiscoverScreen';
 import { TicketsScreen } from './screens/TicketsScreen';
@@ -17,6 +17,7 @@ import { LegalScreen, LEGAL_PATHS } from './screens/LegalScreen';
 import { SupportScreen } from './screens/SupportScreen';
 import { BoredScreen } from './screens/BoredScreen';
 import { FreeScreen } from './screens/FreeScreen';
+import { FriendsScreen, TogetherScreen } from './screens/FriendsScreen';
 import { EventRoute, PlaceRoute, VibeRoute, ChainRoute, FlowRoute, OrganizerRoute, rememberEntity } from './screens/EntityRoutes';
 
 // Heavy, rarely used screens load on demand so the first visit stays fast on mobile.
@@ -46,7 +47,7 @@ const isPublicPath = (path: string) =>
 function tabForPath(path: string) {
   if (path.startsWith('/hubs')) return 'hubs';
   if (path === '/create') return 'create';
-  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications', '/support'].includes(path) || path.startsWith('/support/')) return 'profile';
+  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications', '/support', '/friends'].includes(path) || path.startsWith('/support/') || path.startsWith('/together/')) return 'profile';
   return 'discover';
 }
 
@@ -155,7 +156,10 @@ function Shell() {
     if (!invite || loading) return;
     rememberInviteCode(invite.code);
     if (!dbUserId) showToast('به میونت خوش آمدید! با ورود، ۵۰ امتیاز هدیه می‌گیرید.', 'success');
-    navigate(dbUserId ? '/' : '/login', { replace: true });
+    // Already a member: a friend's link makes you friends.
+    else api<{ message: string }>('/api/friends/by-code', { body: { code: invite.code }, silent: true })
+      .then(r => showToast(r.message, 'success')).catch(() => {});
+    navigate(dbUserId ? '/friends' : '/login', { replace: true });
   }, [invite?.code, loading]);
 
   // Sign-in wall for private screens; after sign-in, return to where the visitor was.
@@ -239,6 +243,8 @@ function Shell() {
       case screenPath === '/support': return <SupportScreen />;
       case screenPath === '/bored': return <BoredScreen userLocation={userLocation} />;
       case screenPath === '/free': return <FreeScreen userLocation={userLocation} />;
+      case screenPath === '/friends': return <FriendsScreen />;
+      case !!matchPath('/together/:id', screenPath): return <TogetherScreen id={Number(matchPath('/together/:id', screenPath)!.id)} />;
       case !!matchPath('/support/:id', screenPath): return <SupportScreen ticketId={Number(matchPath('/support/:id', screenPath)!.id)} />;
       case screenPath === '/create':
         return isOrganizer

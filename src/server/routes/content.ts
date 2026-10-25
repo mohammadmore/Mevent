@@ -2,7 +2,7 @@ import { Express, Response } from 'express';
 import crypto from 'crypto';
 import { eq, and, inArray, sql, desc } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
-import { users, events, interactions, tickets, orders, places, chains, vibes, flows, hubs, reports } from '../../db/schema.ts';
+import { users, events, interactions, tickets, orders, places, chains, vibes, flows, hubs, reports, companionPosts } from '../../db/schema.ts';
 import { createEvent } from '../../db/events.ts';
 import { AuthRequest, requireAuth, requireRole, requireAdmin, isAdmin } from '../../middleware/auth.ts';
 import { asyncRoute, limiters } from '../infra.ts';
@@ -41,6 +41,7 @@ type ReportableType = keyof typeof REPORTABLE;
 const AUTO_HIDE_REPORTS = 5;
 
 async function ownerOf(type: ReportableType, id: number): Promise<number | null> {
+  if ((type as string) === 'USER') return id;
   if (type === 'EVENT') return (await db.select({ o: events.organizerId }).from(events).where(eq(events.id, id)))[0]?.o ?? null;
   if (type === 'CHAIN') return (await db.select({ o: chains.organizerId }).from(chains).where(eq(chains.id, id)))[0]?.o ?? null;
   if (type === 'HUB') return (await db.select({ o: hubs.ownerId }).from(hubs).where(eq(hubs.id, id)))[0]?.o ?? null;
@@ -49,6 +50,11 @@ async function ownerOf(type: ReportableType, id: number): Promise<number | null>
 }
 
 async function setTargetStatus(type: ReportableType, id: number, status: string) {
+  // A reported person: hiding takes their "looking for company" posts down.
+  if ((type as string) === 'USER') {
+    if (status === 'HIDDEN') await db.update(companionPosts).set({ status: 'CLOSED' }).where(eq(companionPosts.userId, id));
+    return;
+  }
   if (type === 'HUB') return; // hubs have no status column; admins delete them instead
   const table: any = REPORTABLE[type];
   await db.update(table).set({ status }).where(eq(table.id, id));
@@ -337,7 +343,7 @@ export function registerContentRoutes(app: Express) {
       if (ownerId) {
         notify(ownerId, {
           type: 'MODERATION',
-          title: 'محتوای شما به دلیل گزارش تخلف پنهان شد',
+          title: (type as string) === 'USER' ? 'درخواست‌های همراهی شما به دلیل گزارش تخلف بسته شد' : 'محتوای شما به دلیل گزارش تخلف پنهان شد',
           body: `دلیل: ${report.reason}. برای پیگیری با پشتیبانی تماس بگیرید.`,
           url: type === 'EVENT' ? eventUrl(report.targetId) : undefined,
         }).catch(() => {});

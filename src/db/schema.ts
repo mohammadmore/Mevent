@@ -37,6 +37,8 @@ export const users = pgTable('users', {
   kycReviewedById: integer('kyc_reviewed_by_id'),
   /** Event reminder SMS (ticket and account SMS are always sent). */
   smsReminders: boolean('sms_reminders').default(true).notNull(),
+  /** Friends can see which events this person is going to. */
+  shareAttendance: boolean('share_attendance').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -538,3 +540,53 @@ export const backups = pgTable('backups', {
   startedAt: timestamp('started_at').defaultNow().notNull(),
   finishedAt: timestamp('finished_at'),
 });
+
+// ---------------------------------------------------------------- "don't go alone"
+
+// Mutual friendship. One row per pair (requester asked, addressee answers). status: PENDING | ACCEPTED
+export const friendships = pgTable('friendships', {
+  id: serial('id').primaryKey(),
+  requesterId: integer('requester_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  addresseeId: integer('addressee_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  status: text('status').default('PENDING').notNull(),
+  respondedAt: timestamp('responded_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_friendships_addressee').on(t.addresseeId, t.status)]);
+
+/** blocker no longer sees blocked (and vice versa) in companions, requests and friend requests. */
+export const userBlocks = pgTable('user_blocks', {
+  blockerId: integer('blocker_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  blockedId: integer('blocked_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [uniqueIndex('uq_user_blocks').on(t.blockerId, t.blockedId)]);
+
+// "Looking for company" for one event. status: OPEN | CLOSED
+export const companionPosts = pgTable('companion_posts', {
+  id: serial('id').primaryKey(),
+  eventId: integer('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  note: text('note'),
+  status: text('status').default('OPEN').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [uniqueIndex('uq_companion_posts').on(t.eventId, t.userId)]);
+
+// "Let's go together" sent to a post. status: PENDING | ACCEPTED | DECLINED | CANCELLED
+export const companionRequests = pgTable('companion_requests', {
+  id: serial('id').primaryKey(),
+  postId: integer('post_id').references(() => companionPosts.id, { onDelete: 'cascade' }).notNull(),
+  fromUserId: integer('from_user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  message: text('message'),
+  status: text('status').default('PENDING').notNull(),
+  respondedAt: timestamp('responded_at'),
+  lastMessageAt: timestamp('last_message_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [uniqueIndex('uq_companion_requests').on(t.postId, t.fromUserId)]);
+
+/** Chat between two people once a request is accepted. */
+export const companionMessages = pgTable('companion_messages', {
+  id: serial('id').primaryKey(),
+  requestId: integer('request_id').references(() => companionRequests.id, { onDelete: 'cascade' }).notNull(),
+  authorId: integer('author_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  body: text('body').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => [index('idx_companion_messages_request').on(t.requestId, t.id)]);

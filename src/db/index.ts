@@ -311,6 +311,45 @@ async function initDatabaseSchemaAndIndexes() {
       body TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT now()
     );`,
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS share_attendance BOOLEAN NOT NULL DEFAULT true;",
+    `CREATE TABLE IF NOT EXISTS friendships (
+      id SERIAL PRIMARY KEY,
+      requester_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      addressee_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      responded_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS user_blocks (
+      blocker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      blocked_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS companion_posts (
+      id SERIAL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      note TEXT,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS companion_requests (
+      id SERIAL PRIMARY KEY,
+      post_id INTEGER NOT NULL REFERENCES companion_posts(id) ON DELETE CASCADE,
+      from_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      message TEXT,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      responded_at TIMESTAMP,
+      last_message_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
+    `CREATE TABLE IF NOT EXISTS companion_messages (
+      id SERIAL PRIMARY KEY,
+      request_id INTEGER NOT NULL REFERENCES companion_requests(id) ON DELETE CASCADE,
+      author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      body TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT now()
+    );`,
     `CREATE TABLE IF NOT EXISTS backups (
       id SERIAL PRIMARY KEY,
       kind TEXT NOT NULL,
@@ -373,6 +412,13 @@ async function initDatabaseSchemaAndIndexes() {
     'CREATE INDEX IF NOT EXISTS idx_support_status ON support_tickets (status, last_message_at);',
     'CREATE INDEX IF NOT EXISTS idx_support_user ON support_tickets (user_id);',
     'CREATE INDEX IF NOT EXISTS idx_support_messages_ticket ON support_messages (ticket_id);',
+    // One friendship row per pair, whichever side asked.
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_friendships_pair ON friendships (LEAST(requester_id, addressee_id), GREATEST(requester_id, addressee_id));',
+    'CREATE INDEX IF NOT EXISTS idx_friendships_addressee ON friendships (addressee_id, status);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_user_blocks ON user_blocks (blocker_id, blocked_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_companion_posts ON companion_posts (event_id, user_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS uq_companion_requests ON companion_requests (post_id, from_user_id);',
+    'CREATE INDEX IF NOT EXISTS idx_companion_messages_request ON companion_messages (request_id, id);',
     // One account per phone number.
     'CREATE UNIQUE INDEX IF NOT EXISTS uq_users_phone ON users (phone) WHERE phone IS NOT NULL;',
   ];

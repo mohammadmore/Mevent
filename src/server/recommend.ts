@@ -11,6 +11,7 @@ import { eventVibes, formatEvents, parseJsonArray, placeVibes } from './helpers.
 import { MAJOR_CITIES } from './queryParser.ts';
 import { openState } from './openHours.ts';
 import { seatsTaken } from './seats.ts';
+import { friendIds, namesOf, namesPhrase, plansOf } from './together.ts';
 
 // In-system recommendations, no external AI: a taste profile built from what someone viewed,
 // saved, attended or dismissed, the "I'm bored" picker (three picks for a mood, time, company
@@ -144,14 +145,14 @@ function cityCondition(column: any, city?: string): SQL | undefined {
 async function popularity(ids: number[]) {
   const map = new Map<number, number>();
   if (!ids.length) return map;
-  const rows = await db.select({ id: interactions.eventId, n: sql<number>`count(DISTINCT ${interactions.userId})::int` })
-    .from(interactions).where(and(inArray(interactions.eventId, ids), inArray(interactions.type, ['RSVP', 'SAVE'])))
-    .groupBy(interactions.eventId);
-  for (const r of rows) map.set(r.id, Number(r.n));
-  const sold = await db.select({ id: tickets.eventId, n: sql<number>`count(DISTINCT ${tickets.userId})::int` })
-    .from(tickets).where(and(inArray(tickets.eventId, ids), inArray(tickets.status, ['ACTIVE', 'USED'])))
-    .groupBy(tickets.eventId);
-  for (const r of sold) map.set(r.id, (map.get(r.id) || 0) + Number(r.n));
+  // Buying a ticket also records an RSVP, so each person counts once per event.
+  const list = sql.join(ids.map(i => sql`${i}`), sql`, `);
+  const result: any = await db.execute(sql`
+    SELECT event_id, count(DISTINCT user_id)::int AS n FROM (
+      SELECT event_id, user_id FROM interactions WHERE event_id IN (${list}) AND type IN ('RSVP', 'SAVE')
+      UNION ALL SELECT event_id, user_id FROM tickets WHERE event_id IN (${list}) AND status IN ('ACTIVE', 'USED')
+    ) people GROUP BY event_id`);
+  for (const r of result.rows || []) map.set(Number(r.event_id), Number(r.n));
   return map;
 }
 
@@ -212,6 +213,10 @@ export async function forYou(opts: { userId: number | null; city?: string; lat?:
     popularity(rows.map(e => e.id)),
     opts.userId ? peerPicks(opts.userId, taste.liked) : Promise.resolve(new Map()),
   ]);
+  const friends = opts.userId ? await friendIds(opts.userId) : [];
+  const plans = await plansOf(friends, rows.map(e => e.id));
+  const friendNames = await namesOf([...new Set([...plans.values()].flatMap(p => [...p.going, ...p.saved]))]);
+  const phrase = (ids: Set<number>) => namesPhrase([...ids].map(i => friendNames.get(i) || '').filter(Boolean));
 
   const scored = rows.map(event => {
     const vibeTags = eventVibes(event);
@@ -224,6 +229,17 @@ export async function forYou(opts: { userId: number | null; city?: string; lat?:
       const s = 2 * Math.log2(1 + peer.n);
       score += s;
       reasons.push({ score: s + 0.5, text: `کسایی که «${peer.via}» رو دوست داشتن، این رو هم انتخاب کردن` });
+    }
+    const plan = plans.get(event.id);
+    if (plan?.going.size) {
+      // Friends going is the strongest reason there is: you would not be going alone.
+      const s = 4 + 1.5 * Math.log2(plan.going.size);
+      score += s;
+      reasons.push({ score: s + 10, text: `${phrase(plan.going)} ${plan.going.size > 1 ? 'میان' : 'میاد'}` });
+    } else if (plan?.saved.size) {
+      const s = 1.5 + Math.log2(plan.saved.size);
+      score += s;
+      reasons.push({ score: s + 2, text: `${phrase(plan.saved)} هم ذخیره‌ش ${plan.saved.size > 1 ? 'کردن' : 'کرده'}` });
     }
     const n = pop.get(event.id) || 0;
     const popScore = 0.6 * Math.log2(1 + n);

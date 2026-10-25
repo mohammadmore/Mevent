@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.ts';
-import { users } from '../db/schema.ts';
+import { friendships, users } from '../db/schema.ts';
 import { changePoints, levelFor } from '../lib/points.ts';
 import { invalidateCachePattern } from '../lib/sharedStore.ts';
 import { notify } from '../lib/notifications.ts';
@@ -55,6 +55,8 @@ export async function createUserWithInvite(
         await tx.update(users).set({ referredById: inviter.id }).where(eq(users.id, user.id));
         await changePoints(tx, inviter.id, INVITER_POINTS, 'INVITE_ACCEPTED', { type: 'USER', id: user.id });
         await changePoints(tx, user.id, INVITEE_POINTS, 'INVITE_JOINED', { type: 'USER', id: inviter.id });
+        // Joining through a friend's link makes you friends.
+        await tx.insert(friendships).values({ requesterId: inviter.id, addresseeId: user.id, status: 'ACCEPTED', respondedAt: new Date() }).onConflictDoNothing();
         [user] = await tx.select().from(users).where(eq(users.id, user.id));
       } else {
         inviter = null;
