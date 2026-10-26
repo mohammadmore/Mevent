@@ -5,7 +5,7 @@ import { events, places, trips } from '../db/schema.ts';
 // Shared links (Telegram, WhatsApp, ...) read <meta> tags from the HTML, not from the SPA,
 // so pages for events, places and trips get their own title, description and image.
 
-const SITE_NAME = 'Mevent';
+const SITE_NAME = 'میونت';
 const DEFAULT_DESCRIPTION = 'کشف هوشمند رویدادها، پاتوق‌ها و برنامه‌های سفر';
 
 function escapeHtml(value: string) {

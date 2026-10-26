@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // Generated avatar for a seed (user id, title, ...). The generator is loaded on first use so it
-// stays out of the main bundle; a plain circle is shown for that moment.
+// stays out of the main bundle; a plain circle is shown until it arrives.
 
 let generator: Promise<typeof import('../lib/avatar')> | null = null;
 let ready: typeof import('../lib/avatar') | null = null;
@@ -13,7 +13,12 @@ export function GeneratedAvatar({ seed, className = '', alt = '', loading }: { s
   useEffect(() => {
     if (ready) { setSrc(ready.avatarDataUri(key)); return; }
     let alive = true;
-    generator ??= import('../lib/avatar');
+    // The generator is large; fetch it once the page is idle so it never competes with content.
+    generator ??= new Promise<void>(resolve => {
+      const w = window as any;
+      if (w.requestIdleCallback) w.requestIdleCallback(() => resolve(), { timeout: 2500 });
+      else setTimeout(resolve, 1200);
+    }).then(() => import('../lib/avatar'));
     generator.then(m => { ready = m; if (alive) setSrc(m.avatarDataUri(key)); });
     return () => { alive = false; };
   }, [key]);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { placeTypeLabel, hoursLabel } from '../lib/format';
 import { api, showToast } from '../lib/apiClient';
 import { ArrowRight, MapPin, Map, Clock, Calendar, CheckCircle, X, Navigation, Compass, Camera, Share2, Flag } from 'lucide-react';
 import { promptDialog } from '../lib/dialog';
@@ -90,7 +91,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         </div>
       ) : (
         <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
-          <button onClick={onBack} className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+          <button onClick={onBack} aria-label="بازگشت" className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
             <ArrowRight className="w-6 h-6" />
           </button>
           <span className="font-bold text-gray-800 dark:text-gray-100 truncate flex-1">{p.name}</span>
@@ -100,7 +101,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
 
       <div className={`p-6 max-w-3xl mx-auto space-y-8 relative z-20 ${p.imageUrl ? '-mt-20 pt-2' : ''}`}>
         <div>
-          <span className="inline-block bg-teal-100 text-teal-800 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00] px-3 py-1 rounded-full text-xs font-bold mb-4">{p.type}</span>
+          <span className="inline-block bg-teal-100 text-teal-800 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00] px-3 py-1 rounded-full text-xs font-bold mb-4">{placeTypeLabel(p.type)}</span>
                     {p.city && (
             <div className="flex items-center gap-1 mb-2 text-teal-600 dark:text-[#d9ff00] font-bold text-sm bg-teal-50 dark:bg-[#d9ff00]/10 w-fit px-3 py-1 rounded-full border border-teal-200 dark:border-[#d9ff00]/20">
               <MapPin className="w-4 h-4" />
@@ -136,7 +137,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             <Clock className="text-teal-600 dark:text-[#d9ff00] w-6 h-6 shrink-0" />
             <div>
               <p className="text-xs text-gray-500 mb-1">ساعات کاری</p>
-              <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{p.workingHours || 'ثبت نشده'}</p>
+              <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{hoursLabel(p.workingHours) || 'ثبت نشده'}</p>
             </div>
           </div>
         </div>
@@ -233,7 +234,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                   )}
                   <div className="p-3">
                     <h4 className="font-bold text-gray-800 dark:text-gray-100 text-sm truncate group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{np.name}</h4>
-                    <p className="text-xs text-gray-500 mt-1 truncate">{np.type}</p>
+                    <p className="text-xs text-gray-500 mt-1 truncate">{placeTypeLabel(np.type)}</p>
                   </div>
                 </div>
               ))}

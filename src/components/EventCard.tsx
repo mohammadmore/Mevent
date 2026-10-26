@@ -57,7 +57,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
           </div>
           {onDismiss && (
             <button onClick={(e) => { e.stopPropagation(); onDismiss(event); }} aria-label="علاقه ندارم" title="علاقه ندارم"
-              className="p-1.5 -mt-1 -ml-1 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-200 shrink-0">
+              className="p-2.5 -mt-2 -ml-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-200 shrink-0">
               <X className="w-4 h-4" />
             </button>
           )}

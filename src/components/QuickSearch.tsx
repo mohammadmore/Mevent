@@ -16,6 +16,7 @@ interface Filters {
   price: 'free' | 'paid' | null;
   keywords: string[];
   keywordsDropped: boolean;
+  correctedQuery?: string | null;
 }
 
 const EXAMPLES = ['کنسرت آخر هفته', 'رویدادهای رایگان امروز', 'تئاتر فردا در تهران', 'نمایشگاه این هفته اصفهان'];
@@ -34,21 +35,32 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const search = async (text = input) => {
+  const latest = useRef(0);
+  const search = async (text = input, typing = false) => {
     const q = text.trim();
-    if (!q || loading) return;
-    setInput(q);
+    if (!q) return;
+    if (!typing) setInput(q);
+    const id = ++latest.current;
     setLoading(true);
     setError(null);
     try {
       const res = await api<{ data: Event[]; filters: Filters }>(`/api/quick-search?q=${encodeURIComponent(q)}`, { silent: true });
+      if (id !== latest.current) return; // a newer search is on its way
       setResult({ q, events: res.data, filters: res.filters });
     } catch (err) {
+      if (id !== latest.current) return;
       setError(err instanceof ApiError && err.status === 429 ? 'چند ثانیه صبر کنید و دوباره جستجو کنید.' : 'جستجو انجام نشد. دوباره تلاش کنید.');
     } finally {
-      setLoading(false);
+      if (id === latest.current) setLoading(false);
     }
   };
+
+  // Results while typing (after a short pause), no need to press search.
+  useEffect(() => {
+    if (input.trim().length < 2) { setResult(null); return; }
+    const t = setTimeout(() => search(input, true), 450);
+    return () => clearTimeout(t);
+  }, [input]);
 
   const open = (e: Event) => { onClose(); navigate(`/events/${e.id}`); };
   const f = result?.filters;
@@ -97,12 +109,17 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
               {f.price && <span className={pill}><BadgePercent className="w-3 h-3" />{f.price === 'free' ? 'رایگان' : 'پولی'}</span>}
               {f.keywords.map(k => <span key={k} className={`${pill} ${f.keywordsDropped ? 'line-through opacity-60' : ''}`}><Tag className="w-3 h-3" />{k}</span>)}
             </div>
+            {f.correctedQuery && <p className="text-xs text-gray-600 dark:text-gray-400">نتیجه‌های «{f.correctedQuery}» رو نشونت دادیم.</p>}
             {f.keywordsDropped && <p className="text-xs text-amber-700 dark:text-amber-300">برای «{f.keywords.join(' ')}» چیزی پیدا نشد؛ بقیه رویدادهای همین شهر و زمان:</p>}
 
             {result.events.length === 0 ? (
               <div className="py-10 text-center text-gray-500 dark:text-gray-400 space-y-2">
                 <SearchX className="w-10 h-10 mx-auto opacity-60" />
-                <p>رویدادی پیدا نشد.</p>
+                <p>چیزی پیدا نشد.</p>
+                <div className="flex justify-center gap-2 pt-2">
+                  <button type="button" onClick={() => { onClose(); navigate('/bored'); }} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">یه چیزی پیشنهاد بده</button>
+                  <button type="button" onClick={() => { onClose(); navigate('/free'); }} className="px-3 py-2 rounded-xl bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-sm font-bold text-gray-800 dark:text-gray-200">بدون خرج</button>
+                </div>
               </div>
             ) : f.from ? (
               groupEventsByDay(result.events, f.from).map(g => (

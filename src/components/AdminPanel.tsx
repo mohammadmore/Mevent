@@ -1,3 +1,4 @@
+import { placeTypeLabel } from '../lib/format';
 import React, { useState, useEffect } from 'react';
 import {
   Shield, Users, Calendar, Activity, DollarSign, Edit, X, Settings, MapPin, Film, Wind,
@@ -642,7 +643,7 @@ export default function AdminPanel() {
           <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm" dir="rtl">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
+                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
                   <tr>
                     <th className="px-4 py-3">شناسه</th>
                     <th className="px-4 py-3">نام</th>
@@ -871,7 +872,7 @@ export default function AdminPanel() {
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
                 <button
                   onClick={() => setEditingEvent(null)}
-                  className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full"
+                  className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -889,7 +890,7 @@ export default function AdminPanel() {
               <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-right">
-                    <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
+                    <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
                       <tr>
                         <th className="px-4 py-3">شناسه</th>
                         <th className="px-4 py-3">عنوان</th>
@@ -933,7 +934,7 @@ export default function AdminPanel() {
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
                 <button
                   onClick={() => setEditingPlace(null)}
-                  className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full"
+                  className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -949,14 +950,14 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium">
+                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">نام</th><th className="px-4 py-3">نوع</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
                   {places.map(p => (
                     <tr key={p.id}>
                       <td className="px-4 py-3">{p.name}</td>
-                      <td className="px-4 py-3">{p.type}</td>
+                      <td className="px-4 py-3">{placeTypeLabel(p.type)}</td>
                       <td className="px-4 py-3 text-center">
                         <button onClick={() => setEditingPlace(p)} className="p-1.5 rounded-lg bg-teal-600/10 text-teal-600 mx-auto"><Edit className="w-4 h-4" /></button>
                       </td>
@@ -970,7 +971,7 @@ export default function AdminPanel() {
           <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingChain ? (
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingChain(null)} className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full">
+                <button onClick={() => setEditingChain(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش فستیوال: {editingChain.name}</h3>
@@ -978,7 +979,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium">
+                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">نام</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -998,7 +999,7 @@ export default function AdminPanel() {
           <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingVibe ? (
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingVibe(null)} className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full">
+                <button onClick={() => setEditingVibe(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش حال و هوا: {editingVibe.title}</h3>
@@ -1006,7 +1007,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium">
+                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">عنوان</th><th className="px-4 py-3">محدوده</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -1027,7 +1028,7 @@ export default function AdminPanel() {
           <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingFlow ? (
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingFlow(null)} className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full">
+                <button onClick={() => setEditingFlow(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش جریان: {editingFlow.title}</h3>
@@ -1035,7 +1036,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-300 font-medium">
+                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">عنوان</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">

@@ -47,17 +47,17 @@ export default function GamificationPanel() {
     <div className="space-y-6 mt-6">
       <div className="bg-gradient-to-br from-teal-600 to-purple-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex-1 text-center md:text-right">
+          <div className="flex-1 w-full min-w-0 text-center md:text-right">
             <h3 className="text-xl font-bold mb-2 flex items-center justify-center md:justify-start gap-2">
               <Gift className="w-6 h-6 text-yellow-300" /> دعوت از دوستان، دریافت امتیاز!
             </h3>
             <p className="text-white/85 text-sm leading-relaxed mb-4">
               با عضویت هر دوست ۱۰۰ امتیاز می‌گیرید و دوستتان هم ۵۰ امتیاز هدیه می‌گیرد. هر امتیاز {pNum(data?.redeem.pointValueToman ?? 10)} تومان تخفیف در خرید بلیت است (تا {pNum(Math.round((data?.redeem.maxShare ?? 0.5) * 100))}٪ مبلغ).
             </p>
-            <div className="flex items-center gap-2 bg-black/20 p-2 rounded-xl border border-white/10 max-w-sm mx-auto md:mx-0">
-              <span className="flex-1 text-left text-sm font-mono select-all overflow-hidden whitespace-nowrap text-ellipsis" dir="ltr">{inviteLink || '...'}</span>
-              <button onClick={() => { navigator.clipboard.writeText(inviteLink).then(() => showToast('لینک دعوت کپی شد.', 'success')).catch(() => {}); }} disabled={!inviteLink} aria-label="کپی لینک دعوت" className="bg-white text-teal-700 p-2 rounded-lg"><Copy className="w-4 h-4" /></button>
-              <button onClick={shareInvite} disabled={!inviteLink} aria-label="اشتراک‌گذاری لینک دعوت" className="bg-white text-teal-700 p-2 rounded-lg"><Share2 className="w-4 h-4" /></button>
+            <div className="flex items-center gap-2 bg-black/20 p-2 rounded-xl border border-white/10 w-full max-w-sm mx-auto md:mx-0 min-w-0">
+              <span className="flex-1 min-w-0 text-left text-sm font-mono select-all overflow-hidden whitespace-nowrap text-ellipsis" dir="ltr">{inviteLink || '...'}</span>
+              <button onClick={() => { navigator.clipboard.writeText(inviteLink).then(() => showToast('لینک دعوت کپی شد.', 'success')).catch(() => {}); }} disabled={!inviteLink} aria-label="کپی لینک دعوت" className="bg-white text-teal-700 p-2.5 rounded-lg shrink-0"><Copy className="w-4 h-4" /></button>
+              <button onClick={shareInvite} disabled={!inviteLink} aria-label="اشتراک‌گذاری لینک دعوت" className="bg-white text-teal-700 p-2.5 rounded-lg shrink-0"><Share2 className="w-4 h-4" /></button>
             </div>
           </div>
           <div className="w-full md:w-56 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center">

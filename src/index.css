@@ -46,14 +46,16 @@
 
 @layer base {
   :root {
-    /* Override primary brand colors (teal) to Orange from palette */
+    /* Override primary brand colors (teal) to Orange from palette. 500 is the bright brand
+       orange (decoration); 600 carries white button text and 700+ small text, deep enough
+       to stay readable (≥ 3.5:1 and ≥ 5:1 against white). */
     --color-teal-50: #FFEAD1;
     --color-teal-100: #FFEAD1;
     --color-teal-500: #FD6F2F;
-    --color-teal-600: #FD6F2F;
-    --color-teal-700: #FD6F2F;
-    --color-teal-800: #FD6F2F;
-    --color-teal-900: #FD6F2F;
+    --color-teal-600: #E4571B;
+    --color-teal-700: #C2410C;
+    --color-teal-800: #9A3412;
+    --color-teal-900: #7C2D12;
     
     /* We used blue for some things (like saved events), let's map them if needed */
     --color-blue-50: #DCE4B8;

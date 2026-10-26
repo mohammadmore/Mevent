@@ -1,7 +1,6 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Sun, Moon, MapPin, Sparkles, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
-import { HubsPanel } from './components/HubsPanel';
 import { CheckoutModal } from './components/CheckoutModal';
 import { PhoneLogin } from './components/PhoneLogin';
 import { useAuth, rememberInviteCode } from './lib/AuthContext';
@@ -10,17 +9,19 @@ import { navigate, useLocation, matchPath, goBack } from './lib/router';
 import { api, showToast } from './lib/apiClient';
 import { pNum } from './lib/format';
 import { DiscoverScreen } from './screens/DiscoverScreen';
-import { TicketsScreen } from './screens/TicketsScreen';
-import { ProfileScreen } from './screens/ProfileScreen';
-import { NotificationsScreen } from './screens/NotificationsScreen';
 import { LegalScreen, LEGAL_PATHS } from './screens/LegalScreen';
-import { SupportScreen } from './screens/SupportScreen';
-import { BoredScreen } from './screens/BoredScreen';
 import { FreeScreen } from './screens/FreeScreen';
-import { FriendsScreen, TogetherScreen } from './screens/FriendsScreen';
 import { EventRoute, PlaceRoute, VibeRoute, ChainRoute, FlowRoute, OrganizerRoute, rememberEntity } from './screens/EntityRoutes';
 
 // Heavy, rarely used screens load on demand so the first visit stays fast on mobile.
+const HubsPanel = lazy(() => import('./components/HubsPanel').then(m => ({ default: m.HubsPanel })));
+const TicketsScreen = lazy(() => import('./screens/TicketsScreen').then(m => ({ default: m.TicketsScreen })));
+const ProfileScreen = lazy(() => import('./screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
+const NotificationsScreen = lazy(() => import('./screens/NotificationsScreen').then(m => ({ default: m.NotificationsScreen })));
+const SupportScreen = lazy(() => import('./screens/SupportScreen').then(m => ({ default: m.SupportScreen })));
+const BoredScreen = lazy(() => import('./screens/BoredScreen').then(m => ({ default: m.BoredScreen })));
+const FriendsScreen = lazy(() => import('./screens/FriendsScreen').then(m => ({ default: m.FriendsScreen })));
+const TogetherScreen = lazy(() => import('./screens/FriendsScreen').then(m => ({ default: m.TogetherScreen })));
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const OrganizerPanel = lazy(() => import('./components/OrganizerPanel'));
 const CreatePanel = lazy(() => import('./components/CreatePanel'));
@@ -40,6 +41,10 @@ const OVERLAY_ROUTES: Array<[string, (p: Record<string, string>) => React.ReactN
 
 // Screens anyone can open (e.g. from a shared link); the rest ask for sign-in first.
 const PUBLIC_PATHS = ['/', '/map', '/login', '/hubs', '/trip-planner', '/bored', '/free', ...LEGAL_PATHS];
+// Screens that need an account. Anything else that is unknown gets "page not found", not a login wall.
+const PRIVATE_PATHS = ['/tickets', '/saved', '/profile', '/notifications', '/support', '/friends', '/organizer', '/admin', '/create', '/onboarding'];
+const isPrivatePath = (path: string) =>
+  PRIVATE_PATHS.includes(path) || !!matchPath('/support/:id', path) || !!matchPath('/together/:id', path);
 const isPublicPath = (path: string) =>
   PUBLIC_PATHS.includes(path) || OVERLAY_ROUTES.some(([p]) => matchPath(p, path)) ||
   !!matchPath('/trips/:id', path) || !!matchPath('/invite/:code', path) || !!matchPath('/hubs/:id', path);
@@ -47,11 +52,12 @@ const isPublicPath = (path: string) =>
 function tabForPath(path: string) {
   if (path.startsWith('/hubs')) return 'hubs';
   if (path === '/create') return 'create';
-  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications', '/support', '/friends'].includes(path) || path.startsWith('/support/') || path.startsWith('/together/')) return 'profile';
+  if (path === '/friends' || path.startsWith('/together/')) return 'friends';
+  if (['/profile', '/tickets', '/saved', '/organizer', '/admin', '/notifications', '/support'].includes(path) || path.startsWith('/support/')) return 'profile';
   return 'discover';
 }
 
-const TAB_PATHS: Record<string, string> = { discover: '/', hubs: '/hubs', create: '/create', profile: '/profile' };
+const TAB_PATHS: Record<string, string> = { discover: '/', hubs: '/hubs', create: '/create', friends: '/friends', profile: '/profile' };
 
 function Spinner() {
   return (
@@ -74,15 +80,16 @@ function useOnline() {
 }
 
 function LoginScreen() {
-  const { login, isLoggingIn, loginBlockedReason, config } = useAuth();
+  const { login, isLoggingIn, loginBlockedReason, config, prepareGoogle } = useAuth();
+  useEffect(() => { prepareGoogle(); }, [prepareGoogle]);
   return (
     <div className="flex flex-col items-center justify-center min-h-full text-center space-y-5 py-6">
       <div className="w-20 h-20 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-3xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00] rotate-12">
         <Sparkles className="w-10 h-10" />
       </div>
       <div>
-        <h1 className="text-3xl font-bold text-[#515739] dark:text-gray-100 mb-2">Mevent</h1>
-        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">کشف هوشمند رویدادها و ارتباط با افراد</p>
+        <h1 className="text-3xl font-bold text-[#515739] dark:text-gray-100 mb-2">میونت</h1>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">هر وقت حوصله‌ت سر رفت، یه برنامه‌ی خوب و یه همراه پیدا کن</p>
       </div>
 
       {config?.phone !== false && <PhoneLogin />}
@@ -114,7 +121,7 @@ function LoginScreen() {
         <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
         <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> میونت است.
       </p>
-      <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline">فعلاً رویدادها را ببینم</button>
+      <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline px-4 py-2.5">فعلاً برنامه‌ها رو ببینم</button>
     </div>
   );
 }
@@ -165,7 +172,7 @@ function Shell() {
   // Sign-in wall for private screens; after sign-in, return to where the visitor was.
   useEffect(() => {
     if (loading || invite) return;
-    if (!user && !isPublicPath(pathname)) {
+    if (!user && !isPublicPath(pathname) && isPrivatePath(pathname)) {
       try { sessionStorage.setItem(RETURN_TO_KEY, pathname + window.location.search); } catch {}
       navigate('/login', { replace: true });
     } else if (user && dbUserId && pathname === '/login') {
@@ -267,9 +274,14 @@ function Shell() {
         );
       default:
         return (
-          <div className="text-center py-20">
-            <h2 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">صفحه پیدا نشد</h2>
-            <button onClick={() => navigate('/')} className="text-teal-600 dark:text-[#d9ff00] font-bold text-sm">بازگشت به صفحه اصلی</button>
+          <div className="text-center py-16 px-4 max-w-sm mx-auto">
+            <p className="text-5xl mb-4" aria-hidden>🧭</p>
+            <h1 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">این صفحه رو پیدا نکردیم</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">شاید لینک اشتباه باشه یا صفحه برداشته شده. ولی می‌تونیم یه برنامه‌ی خوب پیدا کنیم:</p>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => navigate('/bored')} className="py-3 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold">حوصله‌م سر رفته، یه چیزی پیشنهاد بده</button>
+              <button onClick={() => navigate('/')} className="py-3 rounded-2xl bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200 font-bold text-sm">صفحه اصلی</button>
+            </div>
           </div>
         );
     }
@@ -294,22 +306,26 @@ function Shell() {
             </div>
           )}
           {!bare && (
-            <header className="pt-10 md:pt-6 pb-4 px-6 bg-white/90 dark:bg-[#18181b] border-b border-gray-200 dark:border-white/10 z-10 sticky top-0">
+            <header className="pt-10 md:pt-6 pb-3 px-4 sm:px-6 bg-white/90 dark:bg-[#18181b] border-b border-gray-200 dark:border-white/10 z-10 sticky top-0">
               <div className="flex justify-between items-center w-full">
                 <div>
-                  <button onClick={() => navigate('/')} className="text-2xl font-bold text-[#515739] dark:text-gray-100">Mevent</button>
+                  <button onClick={() => navigate('/')} className="text-2xl font-bold text-[#515739] dark:text-gray-100">میونت</button>
                   <button
                     onClick={requestLocation}
                     disabled={isLocating}
-                    className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1 flex items-center gap-1 hover:text-teal-600 dark:hover:text-[#d9ff00] disabled:opacity-50"
+                    aria-pressed={!!userLocation}
+                    className={`text-xs font-medium mt-1 -mr-2 px-2 min-h-[36px] rounded-full flex items-center gap-1 disabled:opacity-50 ${userLocation ? 'text-teal-700 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10' : 'text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#d9ff00]'}`}
                   >
-                    <MapPin className="w-3 h-3" />
-                    {isLocating ? 'در حال یافتن...' : userLocation ? 'اطراف من (لغو)' : 'نمایش رویدادهای نزدیک من'}
+                    <MapPin className="w-3.5 h-3.5" />
+                    {isLocating ? 'در حال پیدا کردن...' : userLocation ? 'اطراف من · لغو' : 'نزدیک من'}
                   </button>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <button onClick={() => navigate('/trip-planner')} className="flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
+                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
                     <Plane className="w-4 h-4" /> <span className="hidden sm:inline">برنامه سفر</span>
+                  </button>
+                  <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300">
+                    <Search className="w-5 h-5" />
                   </button>
                   <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? 'حالت روشن' : 'حالت تیره'} className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300">
                     {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -332,11 +348,6 @@ function Shell() {
           </main>
         </div>
 
-        {!bare && !showSearch && (
-          <button onClick={() => setShowSearch(true)} aria-label="جستجوی سریع" className="absolute bottom-24 left-4 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black p-3 rounded-full shadow-lg hover:scale-105 transition-transform z-30">
-            <Search className="w-6 h-6" />
-          </button>
-        )}
         {showSearch && (
           <div className="absolute inset-0 z-50 bg-white dark:bg-[#141417] flex flex-col">
             <Suspense fallback={<Spinner />}><QuickSearch onClose={() => setShowSearch(false)} /></Suspense>

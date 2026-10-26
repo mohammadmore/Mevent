@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare, LifeBuoy, Users } from 'lucide-react';
+import { Star, User, Heart, Activity, Shield, LogOut, Trash2, Settings, Clock, XCircle, Edit3, Smartphone, MonitorSmartphone, MessageSquare, LifeBuoy, Users, CalendarCheck } from 'lucide-react';
 import GamificationPanel from '../components/GamificationPanel';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { useAppData } from '../lib/appData';
@@ -12,7 +12,7 @@ import { normalizeIranMobile, maskMobile } from '../lib/phone';
 import { SiteFooter } from '../components/SiteFooter';
 
 export function ProfileScreen() {
-  const { profile, setProfile, refreshProfile } = useAppData();
+  const { profile, setProfile, refreshProfile, rsvpEvents } = useAppData();
   const { logout } = useAuth();
   const [editing, setEditing] = useState(false);
   if (!profile) return <div className="h-40 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />;
@@ -100,10 +100,12 @@ export function ProfileScreen() {
         <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#d9ff00] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100">{profile.name}</h2>
+          {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]">{profile.role === 'ADMIN' ? 'مدیر میونت' : 'برگزارکننده'}</span>}
           <p className="text-gray-600 dark:text-gray-400">
-            {[profile.phone ? maskMobile(profile.phone) : null, profile.email, profile.city].filter(Boolean).join(' • ')}
+            {[profile.phone ? <bdi key="p" dir="ltr">{maskMobile(profile.phone)}</bdi> : null, profile.email ? <bdi key="e" dir="ltr">{profile.email}</bdi> : null, profile.city]
+              .filter(Boolean).flatMap((part, i) => (i ? [' • ', part] : [part]))}
           </p>
-          <button onClick={() => setEditing(true)} className="mt-2 text-sm text-teal-600 dark:text-[#d9ff00] hover:underline inline-flex items-center gap-1"><Edit3 className="w-4 h-4" /> ویرایش پروفایل</button>
+          <button onClick={() => setEditing(true)} className="mt-1 px-3 py-2 text-sm text-teal-600 dark:text-[#d9ff00] hover:underline inline-flex items-center gap-1"><Edit3 className="w-4 h-4" /> ویرایش پروفایل</button>
         </div>
       </div>
 
@@ -113,32 +115,12 @@ export function ProfileScreen() {
           <span className="text-2xl font-bold text-orange-600">{pNum(profile.points)}</span>
           <span className="text-sm text-orange-700 dark:text-orange-300">امتیاز • {profile.level?.name}</span>
         </div>
-        <div className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-blue-100 dark:border-blue-500/20">
-          <User className="w-8 h-8 text-blue-500 mb-2" />
-          <span className="text-sm font-bold text-blue-600 dark:text-blue-300">{profile.role === 'ADMIN' ? 'مدیر سیستم' : profile.role === 'ORGANIZER' ? 'برگزارکننده' : 'کاربر عادی'}</span>
-          <span className="text-sm text-blue-700 dark:text-blue-300">نوع حساب</span>
-        </div>
+        <button onClick={() => navigate('/tickets')} className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-blue-100 dark:border-blue-500/20">
+          <CalendarCheck className="w-8 h-8 text-blue-500 mb-2" />
+          <span className="text-2xl font-bold text-blue-600 dark:text-blue-300">{pNum(rsvpEvents.length)}</span>
+          <span className="text-sm text-blue-700 dark:text-blue-300">برنامه که می‌ری</span>
+        </button>
       </div>
-
-      {profile.role === 'USER' && (
-        <div className="bg-teal-600/10 dark:bg-[#d9ff00]/10 border border-teal-600/20 dark:border-[#d9ff00]/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-[#515739] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حساب برگزارکننده</h3>
-            {profile.organizerStatus === 'PENDING' ? (
-              <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1"><Clock className="w-4 h-4" /> درخواست شما در حال بررسی است. نتیجه از طریق اعلان‌ها اطلاع داده می‌شود.</p>
-            ) : profile.organizerStatus === 'REJECTED' ? (
-              <p className="text-sm text-red-600 flex items-center gap-1"><XCircle className="w-4 h-4" /> درخواست قبلی تأیید نشد. می‌توانید با توضیحات کامل‌تر دوباره درخواست دهید.</p>
-            ) : (
-              <p className="text-sm text-teal-700 dark:text-[#d9ff00]">با حساب برگزارکننده می‌توانید رویداد ثبت کنید و بلیت بفروشید. درخواست‌ها توسط مدیر بررسی می‌شوند.</p>
-            )}
-          </div>
-          {profile.organizerStatus !== 'PENDING' && (
-            <button onClick={requestOrganizer} className="whitespace-nowrap px-6 py-2.5 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black rounded-xl font-bold w-full md:w-auto">
-              {profile.organizerStatus === 'REJECTED' ? 'درخواست دوباره' : 'ثبت درخواست'}
-            </button>
-          )}
-        </div>
-      )}
 
       <GamificationPanel />
 
@@ -168,6 +150,26 @@ export function ProfileScreen() {
           <span className="font-bold text-gray-600 dark:text-gray-400 group-hover:text-red-500 text-sm">خروج از حساب</span>
         </button>
       </div>
+
+      {profile.role === 'USER' && (
+        <div className="bg-teal-600/10 dark:bg-[#d9ff00]/10 border border-teal-600/20 dark:border-[#d9ff00]/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-bold text-[#515739] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> خودت برنامه برگزار می‌کنی؟</h3>
+            {profile.organizerStatus === 'PENDING' ? (
+              <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1"><Clock className="w-4 h-4" /> درخواست شما در حال بررسی است. نتیجه از طریق اعلان‌ها اطلاع داده می‌شود.</p>
+            ) : profile.organizerStatus === 'REJECTED' ? (
+              <p className="text-sm text-red-600 flex items-center gap-1"><XCircle className="w-4 h-4" /> درخواست قبلی تأیید نشد. می‌توانید با توضیحات کامل‌تر دوباره درخواست دهید.</p>
+            ) : (
+              <p className="text-sm text-teal-700 dark:text-[#d9ff00]">با حساب برگزارکننده می‌تونی برنامه‌هات رو ثبت کنی و بلیت بفروشی. درخواستت رو تیم میونت بررسی می‌کنه.</p>
+            )}
+          </div>
+          {profile.organizerStatus !== 'PENDING' && (
+            <button onClick={requestOrganizer} className="whitespace-nowrap px-6 py-2.5 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black rounded-xl font-bold w-full md:w-auto">
+              {profile.organizerStatus === 'REJECTED' ? 'درخواست دوباره' : 'ثبت درخواست'}
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
         <h3 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>

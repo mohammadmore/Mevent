@@ -134,7 +134,7 @@ export function TicketsScreen() {
           <div className="flex flex-col items-center justify-center py-10">
             <CreditCard className="w-14 h-14 text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-600 dark:text-gray-400 font-medium">بلیت فعالی ندارید.</p>
-            <button onClick={() => navigate('/')} className="mt-3 text-sm font-bold text-teal-600 dark:text-[#d9ff00]">کشف رویدادها</button>
+            <button onClick={() => navigate('/')} className="mt-3 px-4 py-2.5 rounded-xl text-sm font-bold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10">یه برنامه پیدا کن</button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -158,8 +158,8 @@ export function TicketsScreen() {
                     );
                     return (
                       <div className="mt-3 flex gap-4">
-                        {row.canTransfer && <button onClick={() => transfer(row)} className="text-xs font-bold text-teal-700 dark:text-[#d9ff00] hover:underline">انتقال به دیگری</button>}
-                        {row.canCancel && <button onClick={() => cancel(row)} className="text-xs font-bold text-red-600 hover:underline">لغو بلیت</button>}
+                        {row.canTransfer && <button onClick={() => transfer(row)} className="text-xs font-bold text-teal-700 dark:text-[#d9ff00] px-3 py-2.5 -my-1.5 rounded-xl bg-teal-600/10 dark:bg-[#d9ff00]/10">انتقال به دیگری</button>}
+                        {row.canCancel && <button onClick={() => cancel(row)} className="text-xs font-bold text-red-600 px-3 py-2.5 -my-1.5 rounded-xl bg-red-50 dark:bg-red-500/10">لغو بلیت</button>}
                       </div>
                     );
                   })()}

@@ -13,6 +13,7 @@ import {
 import { getFromCache, setToCache } from '../../lib/sharedStore.ts';
 import { seatsTaken } from '../seats.ts';
 import { waitlistStatus } from '../waitlist.ts';
+import { correctQuery } from '../spelling.ts';
 
 function parseDate(value: unknown): Date | undefined {
   if (typeof value !== 'string' || !value) return undefined;
@@ -71,11 +72,22 @@ export function registerDiscoveryRoutes(app: Express) {
     const city = typeof req.query.city === 'string' && req.query.city ? req.query.city : undefined;
     if (!q) return res.json({ events: [], places: [], hasMoreEvents: false, hasMorePlaces: false });
 
-    const [eventResult, placeResult] = await Promise.all([
-      type !== 'places' ? queryEvents({ ...eventQueryFromRequest(req), q, limit, offset }) : Promise.resolve({ items: [], hasMore: false }),
-      type !== 'events' ? searchPlaces({ q, city, limit, offset }) : Promise.resolve({ items: [], hasMore: false }),
+    const run = (text: string) => Promise.all([
+      type !== 'places' ? queryEvents({ ...eventQueryFromRequest(req), q: text, limit, offset }) : Promise.resolve({ items: [], hasMore: false }),
+      type !== 'events' ? searchPlaces({ q: text, city, limit, offset }) : Promise.resolve({ items: [], hasMore: false }),
     ]);
+    let [eventResult, placeResult] = await run(q);
+    // Nothing found: maybe a typo. Search again with the closest real words and say so.
+    let correctedQuery: string | null = null;
+    if (offset === 0 && !eventResult.items.length && !placeResult.items.length) {
+      const fixed = await correctQuery(q);
+      if (fixed) {
+        const retry = await run(fixed);
+        if (retry[0].items.length || retry[1].items.length) { [eventResult, placeResult] = retry; correctedQuery = fixed; }
+      }
+    }
     res.json({
+      correctedQuery,
       events: await formatEvents(eventResult.items),
       places: placeResult.items.map(normalizePlace),
       hasMoreEvents: eventResult.hasMore,

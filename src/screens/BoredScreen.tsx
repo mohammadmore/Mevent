@@ -79,7 +79,7 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
     return (
       <div className={card}>
         <div className="flex items-center justify-between mb-6">
-          <button onClick={() => (step === 0 ? navigate('/') : history.back())} className="text-sm text-gray-500 flex items-center gap-1"><ArrowRight className="w-4 h-4" /> {step === 0 ? 'خانه' : 'قبلی'}</button>
+          <button onClick={() => (step === 0 ? navigate('/') : history.back())} className="text-sm text-gray-500 flex items-center gap-1 py-2.5 -my-2"><ArrowRight className="w-4 h-4" /> {step === 0 ? 'خانه' : 'قبلی'}</button>
           <div className="flex gap-1.5" aria-label={`سؤال ${step + 1} از ${STEPS.length}`}>
             {STEPS.map((_, i) => <span key={i} className={`h-1.5 rounded-full transition-all ${i <= step ? 'w-6 bg-teal-600 dark:bg-[#d9ff00]' : 'w-3 bg-gray-200 dark:bg-white/10'}`} />)}
           </div>
@@ -102,8 +102,8 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
   return (
     <div className={card}>
       <div className="flex items-center justify-between mb-2">
-        <button onClick={() => navigate('/')} className="text-sm text-gray-500 flex items-center gap-1"><ArrowRight className="w-4 h-4" /> خانه</button>
-        <button onClick={restart} className="text-sm text-gray-500 flex items-center gap-1"><RotateCcw className="w-4 h-4" /> از اول</button>
+        <button onClick={() => navigate('/')} className="text-sm text-gray-500 flex items-center gap-1 py-2.5 -my-2"><ArrowRight className="w-4 h-4" /> خانه</button>
+        <button onClick={restart} className="text-sm text-gray-500 flex items-center gap-1 py-2.5 -my-2"><RotateCcw className="w-4 h-4" /> از اول</button>
       </div>
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">اینا رو امتحان کن</h1>
       <p className="text-sm text-gray-500 mb-5">

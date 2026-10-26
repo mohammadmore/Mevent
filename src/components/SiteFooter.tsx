@@ -27,7 +27,7 @@ export function SiteFooter() {
     <footer className="mt-10 pt-6 pb-4 border-t border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400 space-y-3">
       <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="صفحات قانونی">
         {LEGAL_LINKS.map(([path, label]) => (
-          <a key={path} href={path} onClick={(e) => { e.preventDefault(); navigate(path); }} className="hover:text-teal-600 dark:hover:text-[#d9ff00]">{label}</a>
+          <a key={path} href={path} onClick={(e) => { e.preventDefault(); navigate(path); }} className="inline-block py-2 hover:text-teal-600 dark:hover:text-[#d9ff00]">{label}</a>
         ))}
       </nav>
       <div className="flex items-end justify-between gap-4">

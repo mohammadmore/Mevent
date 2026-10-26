@@ -57,21 +57,22 @@ function RowHeader({ title, subtitle, Icon, more }: { title: string; subtitle?: 
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><Icon className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> {title}</h2>
         {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
       </div>
-      {more && <button onClick={more} className="text-xs font-bold text-teal-600 dark:text-[#d9ff00] flex items-center">همه <ChevronLeft className="w-4 h-4" /></button>}
+      {more && <button onClick={more} className="text-xs font-bold text-teal-600 dark:text-[#d9ff00] flex items-center px-2 py-2.5 -my-2">همه <ChevronLeft className="w-4 h-4" /></button>}
     </div>
   );
 }
 
 export function ForYouRow({ city, userLocation }: { city?: string; userLocation: Loc }) {
-  const { profile } = useAppData();
+  const { profile, profileLoaded } = useAppData();
   const [data, setData] = useState<{ personalized: boolean; data: Event[] } | null>(null);
   useEffect(() => {
+    if (!profileLoaded) return; // wait until we know who is asking: one request, not two
     const ctrl = new AbortController();
     const p = locationQuery(userLocation ? undefined : city, userLocation);
     p.set('limit', '12');
     api<{ personalized: boolean; data: Event[] }>(`/api/for-you?${p}`, { silent: true, signal: ctrl.signal }).then(setData).catch(() => {});
     return () => ctrl.abort();
-  }, [city, userLocation?.lat, userLocation?.lng, profile?.id]);
+  }, [city, userLocation?.lat, userLocation?.lng, profile?.id, profileLoaded]);
 
   const dismiss = (event: Event) => {
     setData(d => d && { ...d, data: d.data.filter(e => e.id !== event.id) });

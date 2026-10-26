@@ -389,8 +389,8 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
   return (
     <div className="text-right" dir="rtl">
       {!initialData && (
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">ایجاد رویداد جدید</h2>
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">ایجاد رویداد جدید</h2>
           <div className="flex bg-gray-100 dark:bg-[#18181b]/50 p-1 rounded-full border border-gray-200 dark:border-white/5">
             <button 
               type="button"
@@ -454,7 +454,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
               {excelFile ? (
                 <>
                   <FileSpreadsheet className="w-10 h-10 text-green-500 mb-3" />
-                  <div className="text-sm text-gray-100 font-bold mb-1">{excelFile.name}</div>
+                  <div className="text-sm text-gray-900 dark:text-gray-100 font-bold mb-1">{excelFile.name}</div>
                   <div className="text-xs text-gray-600 dark:text-gray-400">{(excelFile.size / 1024).toFixed(1)} KB</div>
                 </>
               ) : (
@@ -481,7 +481,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
 
           {batchResults && (
             <div className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-xl p-4 text-sm">
-              <h4 className="font-bold text-gray-100 mb-2">نتیجه ورود گروهی:</h4>
+              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">نتیجه ورود گروهی:</h4>
               <div className="flex gap-4">
                 <span className="text-gray-700 dark:text-gray-300">تعداد کل: <strong>{batchResults.total}</strong></span>
                 <span className="text-green-600">موفق: <strong>{batchResults.success}</strong></span>

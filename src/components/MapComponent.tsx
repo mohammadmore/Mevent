@@ -1,3 +1,4 @@
+import { placeTypeLabel } from '../lib/format';
 import { MapContainer, Marker, Popup } from 'react-leaflet';
 import { SmartTileLayer, MapUnavailableNotice } from '../lib/mapTiles';
 import { api } from '../lib/apiClient';
@@ -56,7 +57,7 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
               <Marker key={event.id} position={[event.location.lat, event.location.lng]}>
                 <Popup>
                   <div className="text-right" dir="rtl">
-                    <h3 className="font-bold text-gray-100 text-sm mb-1">{event.title}</h3>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{event.title}</h3>
                     <p className="text-xs text-gray-400 leading-relaxed">{event.location.address}</p>
                     <div className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] mt-2">
                       <PriceWidget cost={event.cost} />
@@ -78,7 +79,7 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
                 <Popup>
                   <div className="text-right" dir="rtl">
                     <h3 className="font-bold text-gray-800 text-sm mb-1">پاتوق: {place.name}</h3>
-                    <p className="text-xs text-gray-600">{place.type}</p>
+                    <p className="text-xs text-gray-600">{placeTypeLabel(place.type)}</p>
                     <p className="text-xs text-gray-500 leading-relaxed">{place.address}</p>
                     {onPlaceSelect && <button className="mt-2 text-xs bg-teal-600 text-white px-2 py-1 rounded w-full" onClick={() => onPlaceSelect(place)}>جزئیات</button>}
                   </div>

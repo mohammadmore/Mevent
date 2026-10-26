@@ -1,26 +1,7 @@
 import React from 'react';
+import { softPrice } from '../lib/format';
 
-interface PriceWidgetProps {
-  cost: number;
-  className?: string;
-}
-
-export function PriceWidget({ cost, className = "", showLabel = true }: PriceWidgetProps & { showLabel?: boolean }) {
-  if (cost === 0) {
-    return <span className={className}>رایگان</span>;
-  }
-
-  let numStr = '';
-  if (cost < 1000000) {
-    numStr = `${Math.floor(cost / 1000)}T`;
-  } else {
-    numStr = `${parseFloat((cost / 1000000).toFixed(1))}M`;
-  }
-
-  return (
-    <div className={`inline-flex flex-col items-center justify-center leading-tight ${className}`}>
-      {showLabel && <span className="text-[10px] opacity-80 font-normal">قیمت:</span>}
-      <span className="font-bold text-sm" dir="ltr">{numStr}</span>
-    </div>
-  );
+/** Price as people say it ("مجانی", "۱۸۰ هزار تومان"), the same everywhere in the app. */
+export function PriceWidget({ cost, className = '' }: { cost: number; className?: string; showLabel?: boolean }) {
+  return <span className={className}>{softPrice(cost)}</span>;
 }

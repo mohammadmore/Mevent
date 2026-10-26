@@ -1,4 +1,5 @@
 import { Express } from 'express';
+import { correctQuery } from '../spelling.ts';
 import { isNotNull } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { events } from '../../db/schema.ts';
@@ -60,6 +61,15 @@ export function registerPlannerRoutes(app: Express) {
     const parsed = parseQuery(q, await knownCities());
     const base = { city: parsed.city, from: parsed.from, to: parsed.to, price: parsed.price, limit: 30, offset: 0 };
     let { items } = await queryEvents({ ...base, q: parsed.keywords.join(' ') || undefined });
+    // A typo in the keywords ("کنسرتت"): try the closest real words before giving up on them.
+    let correctedQuery: string | null = null;
+    if (!items.length && parsed.keywords.length) {
+      const fixed = await correctQuery(parsed.keywords.join(' '));
+      if (fixed) {
+        const retry = (await queryEvents({ ...base, q: fixed })).items;
+        if (retry.length) { items = retry; correctedQuery = fixed; }
+      }
+    }
     // Nothing matches the keywords: show what else is on in the same city/time instead of nothing.
     let keywordsDropped = false;
     if (!items.length && parsed.keywords.length && (parsed.city || parsed.from || parsed.price)) {
@@ -76,6 +86,7 @@ export function registerPlannerRoutes(app: Express) {
         price: parsed.price || null,
         keywords: parsed.keywords,
         keywordsDropped,
+        correctedQuery,
       },
     });
   }));

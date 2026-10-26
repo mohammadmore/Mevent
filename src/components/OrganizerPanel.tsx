@@ -135,11 +135,11 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
               )}
             </div>
           </div>
-          <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
             داشبورد برگزارکننده
           </h2>
-          <p className="text-sm text-gray-400 mt-1">مدیریت رویدادها و مشاهده آمار</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">مدیریت رویدادها و مشاهده آمار</p>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
         <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
           <button 
             onClick={() => setCreateMode(null)}
-            className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full"
+            className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
@@ -167,7 +167,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
         <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
           <button 
             onClick={() => setEditingEvent(null)}
-            className="absolute top-4 left-4 p-2 bg-white/5 text-gray-300 hover:bg-white/10 rounded-full"
+            className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
@@ -183,13 +183,13 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
       ) : events.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-gray-100 dark:bg-[#1f1f23] rounded-2xl border border-dashed border-gray-300 dark:border-white/20">
           <Calendar className="w-12 h-12 text-gray-300 mb-4" />
-          <p className="text-gray-400 font-medium">شما هنوز رویدادی ایجاد نکرده‌اید.</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">شما هنوز رویدادی ایجاد نکرده‌اید.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Events List */}
           <div className="lg:col-span-1 space-y-4">
-            <h3 className="font-bold text-gray-100 mb-3">رویدادهای من</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">رویدادهای من</h3>
             <div className="space-y-3">
               {(events || []).map((event) => (
                 <div 
@@ -198,8 +198,8 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                   className={`relative overflow-hidden p-4 rounded-xl border cursor-pointer transition-all ${selectedEventId === event.id ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 shadow-sm' : 'border-gray-300 dark:border-white/20 bg-white/90 dark:bg-[#18181b] hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:shadow-sm'}`}
                 >
                   <div className="relative z-10">
-                  <h4 className="font-bold text-gray-100 text-sm mb-1">{event.title}</h4>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3">
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{event.title}</h4>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mb-3">
                     <Calendar className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
                     {new Date(event.startTime).toLocaleDateString('fa-IR')}
                   </div>
@@ -210,21 +210,21 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                     <div className="flex gap-1">
                       <button 
                         onClick={(e) => { e.stopPropagation(); setEditingEvent(event); }}
-                        className="p-1.5 rounded-lg bg-white/5 text-gray-300 hover:bg-white/10" title="ویرایش"
+                        aria-label="ویرایش" className="p-2.5 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10" title="ویرایش"
                       >
-                        <Edit className="w-3.5 h-3.5" />
+                        <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); toggleStatus(event.id, event.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED'); }}
-                        className={`p-1.5 rounded-lg ${event.status === 'PUBLISHED' ? 'bg-green-500/20 text-green-500' : 'bg-white/10 text-gray-700 dark:text-gray-300'}`} title="تغییر وضعیت (انتشار/پیش‌نویس)"
+                        aria-label={event.status === 'PUBLISHED' ? 'منتشر شده؛ برای پیش‌نویس کردن بزنید' : 'پیش‌نویس؛ برای انتشار بزنید'} className={`p-2.5 rounded-lg ${event.status === 'PUBLISHED' ? 'bg-green-500/20 text-green-600' : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`} title="تغییر وضعیت (انتشار/پیش‌نویس)"
                       >
-                        <Power className="w-3.5 h-3.5" />
+                        <Power className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); deleteEvent(event.id); }}
-                        className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100" title="حذف"
+                        aria-label="حذف" className="p-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 hover:bg-red-100" title="حذف"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -238,7 +238,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           <div className="lg:col-span-2">
             {selectedEventId ? (
               <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl border border-gray-300 dark:border-white/20 p-6 shadow-sm">
-                <h3 className="font-bold text-gray-100 mb-6 flex items-center gap-2">
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                   آمار رویداد
                 </h3>
@@ -291,7 +291,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-white/10 pt-6">
-                      <h4 className="font-bold text-gray-100 mb-4 flex items-center gap-2">
+                      <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                         <Users className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                         مدیریت شرکت‌کنندگان
                       </h4>
@@ -323,13 +323,13 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-400 text-center py-4">خطا در دریافت آمار.</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">خطا در دریافت آمار.</p>
                 )}
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center bg-gray-100 dark:bg-[#1f1f23] rounded-2xl border border-dashed border-gray-300 dark:border-white/20 py-20">
                 <BarChart3 className="w-12 h-12 text-gray-300 mb-4" />
-                <p className="text-gray-400 font-medium">یک رویداد را برای مشاهده آمار انتخاب کنید.</p>
+                <p className="text-gray-500 dark:text-gray-400 font-medium">یک رویداد را برای مشاهده آمار انتخاب کنید.</p>
               </div>
             )}
           </div>

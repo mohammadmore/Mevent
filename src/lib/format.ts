@@ -1,4 +1,5 @@
 import { APP_TIME_ZONE } from './time';
+import { PLACE_TYPE_LABELS } from './moods';
 
 // Display helpers. Dates are always shown in Iran time (Asia/Tehran), regardless of the
 // device's time zone, so an event's time reads the same for every visitor.
@@ -77,4 +78,14 @@ export function softPrice(cost: number) {
   if (!cost) return 'مجانی';
   if (cost < 1_000_000) return `${pNum(Math.round(cost / 1000))} هزار تومان`;
   return `${pNum(parseFloat((cost / 1_000_000).toFixed(1)))} میلیون تومان`;
+}
+
+/** "CAFE" → "کافه" (unknown types stay as they are). */
+export function placeTypeLabel(type: string | null | undefined) {
+  return (type && PLACE_TYPE_LABELS[type]) || type || '';
+}
+
+/** Opening hours text ("08:00 تا 23:00") with Persian digits. */
+export function hoursLabel(hours: string | null | undefined) {
+  return hours ? pNum(hours) : '';
 }

@@ -25,6 +25,8 @@ interface AuthContextType {
   verifyCode: (phone: string, code: string) => Promise<{ created: boolean }>;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  /** Starts loading Google sign-in (called when the login screen opens) so the button reacts at once. */
+  prepareGoogle: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -38,6 +40,7 @@ const AuthContext = createContext<AuthContextType>({
   verifyCode: async () => { throw new Error('not ready'); },
   login: async () => {},
   logout: async () => {},
+  prepareGoogle: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -70,6 +73,46 @@ function inAppBrowserName(): string | null {
 
 type FirebaseModule = typeof import('./firebase');
 
+// Who was signed in last time on this device. Used only when the server cannot be reached
+// (offline, flaky mobile data), so a signed-in person is not shown as a stranger; cleared on logout.
+const LAST_USER_KEY = 'mevent_last_user';
+const REDIRECT_KEY = 'mevent_google_redirect';
+/**
+ * Whether a Google sign-in is stored on this device. Firebase keeps it in IndexedDB; the
+ * database also exists (empty) once the login page was opened, so look inside it.
+ */
+async function mayHaveGoogleSession(): Promise<boolean> {
+  try {
+    if (Object.keys(localStorage).some(k => k.startsWith('firebase:authUser:'))) return true;
+    const idb = indexedDB as IDBFactory & { databases?: () => Promise<{ name?: string }[]> };
+    if (idb.databases && !(await idb.databases()).some(d => d.name === 'firebaseLocalStorageDb')) return false;
+    return await new Promise<boolean>(resolve => {
+      const req = indexedDB.open('firebaseLocalStorageDb');
+      req.onupgradeneeded = () => { req.transaction?.abort(); resolve(false); }; // did not exist
+      req.onerror = () => resolve(false);
+      req.onsuccess = () => {
+        const db = req.result;
+        try {
+          if (!db.objectStoreNames.contains('firebaseLocalStorage')) { db.close(); return resolve(false); }
+          const count = db.transaction('firebaseLocalStorage', 'readonly').objectStore('firebaseLocalStorage').count();
+          count.onsuccess = () => { db.close(); resolve(count.result > 0); };
+          count.onerror = () => { db.close(); resolve(true); };
+        } catch { db.close(); resolve(true); }
+      };
+    });
+  } catch { return true; }
+}
+const hasPendingRedirect = () => { try { return sessionStorage.getItem(REDIRECT_KEY) === '1'; } catch { return false; } };
+type LastUser = { id: number; provider: 'phone' | 'google' };
+const rememberUser = (u: LastUser) => { try { localStorage.setItem(LAST_USER_KEY, JSON.stringify(u)); } catch {} };
+const forgetUser = () => { try { localStorage.removeItem(LAST_USER_KEY); } catch {} };
+function lastUser(): LastUser | null {
+  try {
+    const u = JSON.parse(localStorage.getItem(LAST_USER_KEY) || 'null');
+    return u && Number.isInteger(u.id) ? u : null;
+  } catch { return null; }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SignedInUser | null>(null);
   const [dbUserId, setDbUserId] = useState<number | null>(null);
@@ -90,50 +133,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (data.created && data.data.referredById) showToast('به میونت خوش آمدید! امتیاز هدیه دعوت به حساب شما اضافه شد.', 'success');
     setUser({ provider: 'google' });
     setDbUserId(data.data.id);
+    rememberUser({ id: data.data.id, provider: 'google' });
   }, []);
 
-  useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-    let cancelled = false;
-    (async () => {
-      const [serverCfg, me] = await Promise.all([
-        api<{ data: AuthConfig }>('/api/auth/config', { silent: true }).then(d => d.data).catch(() => ({ phone: true, google: false, codeLength: 6, resendSeconds: 60 })),
-        api<{ data: any; via: string | null }>('/api/auth/me', { silent: true }).catch(() => ({ data: null, via: null })),
-      ]);
-      if (cancelled) return;
-      // Google sign-in also needs Google reachable from this browser; otherwise hide it (phone login stays).
-      const cfg = serverCfg.google && !(me.data && me.via === 'session') && !(await browserReachesGoogle())
-        ? { ...serverCfg, google: false }
-        : serverCfg;
-      if (cancelled) return;
-      setConfig(cfg);
-
-      // A phone session (cookie) takes precedence; Google is only consulted without one.
-      if (me.data && me.via === 'session') {
-        setUser({ provider: 'phone' });
-        setDbUserId(me.data.id);
-        setLoading(false);
-        return;
-      }
-      if (!cfg.google) {
-        setLoading(false);
-        return;
-      }
-
+  // Loads Firebase once and follows the Google sign-in state. Returns null when Google is unreachable.
+  const firebaseUnsubscribe = useRef<(() => void) | null>(null);
+  const firebaseLoading = useRef<Promise<FirebaseModule | null> | null>(null);
+  const startFirebase = useCallback(() => {
+    firebaseLoading.current ??= (async () => {
       try {
         const fb = await import('./firebase');
-        if (cancelled) return;
         firebase.current = fb;
-        fb.getRedirectResult(fb.auth).catch((err) => console.warn('Redirect sign-in failed:', err?.code));
-        unsubscribe = fb.onAuthStateChanged(fb.auth, async (firebaseUser) => {
-          setLoading(true);
+        fb.getRedirectResult(fb.auth).catch((err) => console.warn('Redirect sign-in failed:', err?.code))
+          .finally(() => { try { sessionStorage.removeItem(REDIRECT_KEY); } catch {} });
+        firebaseUnsubscribe.current = fb.onAuthStateChanged(fb.auth, async (firebaseUser) => {
           if (!firebaseUser) {
+            // Nobody signed in with Google; a phone session (if any) is left alone.
+            if (lastUser()?.provider === 'google') forgetUser();
             setAuthTokenGetter(null);
-            setUser(null);
-            setDbUserId(null);
+            setUser(u => (u?.provider === 'google' ? null : u));
+            setDbUserId(id => (lastUser() ? id : null));
             setLoading(false);
             return;
           }
+          setLoading(true);
           setAuthTokenGetter(() => firebaseUser.getIdToken());
           try {
             await syncGoogleUser(firebaseUser);
@@ -148,13 +171,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setLoading(false);
           }
         });
+        return fb;
       } catch (err) {
         // Google services unreachable: phone login still works.
         console.warn('Google sign-in unavailable:', err);
         setLoading(false);
+        firebaseLoading.current = null;
+        return null;
       }
     })();
-    return () => { cancelled = true; unsubscribe?.(); };
+    return firebaseLoading.current;
+  }, [syncGoogleUser]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [serverCfg, me] = await Promise.all([
+        api<{ data: AuthConfig }>('/api/auth/config', { silent: true }).then(d => d.data).catch(() => ({ phone: true, google: false, codeLength: 6, resendSeconds: 60 })),
+        api<{ data: any; via: string | null }>('/api/auth/me', { silent: true })
+          .catch((err) => ({ data: null, via: null, unreachable: err?.status === 0 })),
+      ]);
+      if (cancelled) return;
+      // No connection: carry on as the person who was signed in here last time.
+      const offlineUser = (me as any).unreachable ? lastUser() : null;
+      if (offlineUser) {
+        setConfig(serverCfg);
+        setUser({ provider: offlineUser.provider });
+        setDbUserId(offlineUser.id);
+        setLoading(false);
+        return;
+      }
+      // Google sign-in also needs Google reachable from this browser; otherwise hide it (phone login stays).
+      const cfg = serverCfg.google && !(me.data && me.via === 'session') && !(await browserReachesGoogle())
+        ? { ...serverCfg, google: false }
+        : serverCfg;
+      if (cancelled) return;
+      setConfig(cfg);
+
+      // A phone session (cookie) takes precedence; Google is only consulted without one.
+      if (me.data && me.via === 'session') {
+        setUser({ provider: 'phone' });
+        setDbUserId(me.data.id);
+        rememberUser({ id: me.data.id, provider: 'phone' });
+        setLoading(false);
+        return;
+      }
+      if (!cfg.google) {
+        forgetUser(); // the server says nobody is signed in
+        setLoading(false);
+        return;
+      }
+      // Firebase is only needed to restore a Google sign-in or to sign in with Google, so a
+      // visitor who has never used Google login does not download it.
+      const wantsGoogle = lastUser()?.provider === 'google' || window.location.pathname === '/login' || hasPendingRedirect()
+        || (!lastUser() && await mayHaveGoogleSession());
+      if (!wantsGoogle) {
+        forgetUser();
+        setLoading(false);
+        return;
+      }
+
+      await startFirebase();
+    })();
+    return () => { cancelled = true; firebaseUnsubscribe.current?.(); };
   }, [syncGoogleUser]);
 
   const requestCode = useCallback(async (phone: string) => {
@@ -168,6 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (res.created && res.data.referredById) showToast('به میونت خوش آمدید! امتیاز هدیه دعوت به حساب شما اضافه شد.', 'success');
     setUser({ provider: 'phone' });
     setDbUserId(res.data.id);
+    rememberUser({ id: res.data.id, provider: 'phone' });
     return { created: Boolean(res.created) };
   }, []);
 
@@ -177,7 +257,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       showToast(loginBlockedReason, 'warning');
       return;
     }
-    const fb = firebase.current;
+    const fb = firebase.current || await startFirebase();
     if (!fb) {
       showToast('ورود با گوگل در حال حاضر در دسترس نیست. با شماره موبایل وارد شوید.', 'warning');
       return;
@@ -188,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error: any) {
       // Popup blocked or unsupported (some mobile browsers): fall back to a full-page redirect.
       if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment', 'auth/cancelled-popup-request'].includes(error?.code)) {
+        try { sessionStorage.setItem(REDIRECT_KEY, '1'); } catch {}
         await fb.signInWithRedirect(fb.auth, fb.googleProvider);
         return;
       }
@@ -198,10 +279,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoggingIn(false);
     }
-  }, [isLoggingIn, loginBlockedReason]);
+  }, [isLoggingIn, loginBlockedReason, startFirebase]);
+
+  const prepareGoogle = useCallback(() => {
+    if (config?.google && !loginBlockedReason) startFirebase();
+  }, [config?.google, loginBlockedReason, startFirebase]);
 
   const logout = useCallback(async () => {
     clearCachedUserData();
+    forgetUser();
     await api('/api/auth/logout', { body: {}, silent: true }).catch(() => {});
     const fb = firebase.current;
     if (fb) await fb.signOut(fb.auth).catch(() => {});
@@ -211,7 +297,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, dbUserId, loading, config, isLoggingIn, loginBlockedReason, requestCode, verifyCode, login, logout }}>
+    <AuthContext.Provider value={{ user, dbUserId, loading, config, isLoggingIn, loginBlockedReason, requestCode, verifyCode, login, logout, prepareGoogle }}>
       {children}
     </AuthContext.Provider>
   );

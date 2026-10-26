@@ -8,7 +8,7 @@ import { absoluteUrl } from '../lib/router';
 import { useAppData } from '../lib/appData';
 import { VibeChips } from './VibeChips';
 import { GoTogether } from './GoTogether';
-import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum, softPrice } from '../lib/format';
+import { formatDateParts, formatEventDate, fuzzyTimeLabel, pNum, softPrice, placeTypeLabel, hoursLabel } from '../lib/format';
 import { tehranParts } from '../lib/time';
 
 export const REPORT_REASONS = ['اطلاعات نادرست یا گمراه‌کننده', 'کلاهبرداری یا فروش بلیت جعلی', 'محتوای نامناسب یا توهین‌آمیز', 'رویداد لغو شده است', 'تکراری یا اسپم'];
@@ -179,9 +179,10 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                 }
             }
             
-            if (isOpenAfter && isOpenBefore) return "بعدش بریم";
-            if (isOpenAfter) return "بعدش بریم";
-            if (isOpenBefore) return "قبلش بریم";
+            // Open both before and after: no badge (it would sit on every place and say nothing).
+            if (isOpenAfter && isOpenBefore) return '';
+            if (isOpenAfter) return 'بعدش بریم';
+            if (isOpenBefore) return 'قبلش بریم';
             return null;
           };
 
@@ -245,7 +246,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
 
   return (
     <>
-    <div ref={containerRef} className="fixed inset-0 bg-gradient-to-br from-teal-50/95 via-white to-cyan-50/95 dark:from-[#18181b] dark:via-[#18181b] dark:to-[#18181b] z-[100] overflow-y-auto flex flex-col animate-in slide-in-from-bottom-full duration-300" dir="rtl">
+    <div ref={containerRef} className="fixed inset-0 bg-gradient-to-b from-teal-50 via-white to-white dark:from-[#18181b] dark:via-[#18181b] dark:to-[#18181b] z-[100] overflow-y-auto flex flex-col animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {/* Header Image & Actions */}
       {event.imageUrl ? (
         <div className="relative h-72 sm:h-96 bg-white dark:bg-[#18181b] flex-shrink-0 overflow-hidden">
@@ -265,6 +266,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/60 via-black/20 to-transparent z-10">
             <button 
               onClick={onBack}
+              aria-label="بازگشت"
               className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10"
             >
               <ArrowRight className="w-5 h-5" />
@@ -287,6 +289,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               </button>
               <button 
                 onClick={onToggleSave}
+                aria-label={isSaved ? 'حذف از ذخیره‌ها' : 'ذخیره'}
                 className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10"
               >
                 <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
@@ -298,9 +301,10 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#18181b] dark:via-[#18181b]/80 dark:to-transparent pointer-events-none z-10" />
         </div>
       ) : (
-        <div className="flex justify-between items-center p-4 sticky top-0 z-50">
+        <div className="flex justify-between items-center px-4 py-3 sticky top-0 z-50 bg-white/85 dark:bg-[#18181b]/85 backdrop-blur-md border-b border-gray-100 dark:border-white/5">
           <button 
             onClick={onBack}
+            aria-label="بازگشت"
             className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
           >
             <ArrowRight className="w-5 h-5" />
@@ -322,6 +326,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </button>
             <button 
               onClick={onToggleSave}
+                aria-label={isSaved ? 'حذف از ذخیره‌ها' : 'ذخیره'}
               className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
             >
               <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
@@ -407,7 +412,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                 {((event.location?.lat && event.location?.lng) || ((event as any).lat && (event as any).lng)) && (
                   <button 
                     onClick={() => setIsMapModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 text-teal-700 dark:text-[#d9ff00] px-2.5 py-1 rounded-lg transition-colors text-xs font-bold shrink-0 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 text-teal-700 dark:text-[#d9ff00] px-3 py-2.5 -my-1 rounded-lg transition-colors text-xs font-bold shrink-0 cursor-pointer"
                     title="مشاهده روی نقشه"
                   >
                     <Map className="w-3.5 h-3.5" />
@@ -474,91 +479,61 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         <GoTogether eventId={event.id} />
 
         {similarEvents.length > 0 && (
-          <div className="mt-8 mb-8 bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-gray-100 dark:border-white/5">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <section className="mt-8 mb-8" aria-label="اینا هم شاید خوشت بیاد">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
-              رویدادهای مشابه پیشنهادی
+              اینا هم شاید خوشت بیاد
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {similarEvents.map(simEvent => (
-                <div 
+                <button
                   key={simEvent.id}
-                  className="bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden cursor-pointer hover:border-teal-500/50 transition-colors group flex"
-                  onClick={(e) => {
-                    // Quick hack to load the event using a custom event
-                    // We don't have navigate here, but we can trigger a state change in App.tsx if we use a global event.
-                    // Or we just dispatch a custom event that App.tsx can listen to.
-                    const customEvent = new CustomEvent('navToEvent', { detail: simEvent });
-                    window.dispatchEvent(customEvent);
-                  }}
+                  className="text-right bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors group"
+                  onClick={() => window.dispatchEvent(new CustomEvent('navToEvent', { detail: simEvent }))}
                 >
-                  <div className="w-1/3 min-h-[100px] relative">
-                     {simEvent.imageUrl ? (
-                        <img src={simEvent.imageUrl} alt={simEvent.title} className="w-full h-full object-cover" />
-                     ) : (
-                        getEventBackgroundIcon(simEvent.bgIcon, simEvent.tags || [], false)
-                     )}
-                  </div>
-                  <div className="p-3 w-2/3 flex flex-col justify-center">
-                    <h4 className="font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{simEvent.title}</h4>
-                    <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-500 dark:text-gray-400">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span className="truncate">{fuzzyTimeLabel(simEvent.fuzzyTime) || (simEvent.startTime ? formatDetailDate(simEvent.startTime).datePart : "زمان نامشخص")}</span>
-                    </div>
-                  </div>
-                </div>
+                  <span className="w-16 h-16 rounded-xl overflow-hidden shrink-0 relative bg-gray-100 dark:bg-white/5">
+                    {simEvent.imageUrl
+                      ? <img src={simEvent.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+                      : <span className="absolute inset-0 flex items-center justify-center"><Calendar className="w-6 h-6 text-gray-300 dark:text-gray-600" /></span>}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{simEvent.title}</span>
+                    <span className="block mt-1 text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {fuzzyTimeLabel(simEvent.fuzzyTime) || (simEvent.startTime ? formatDetailDate(simEvent.startTime).datePart : 'زمان نامشخص')} · {softPrice(simEvent.cost)}
+                    </span>
+                  </span>
+                </button>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {nearbyPlaces.length > 0 && (
-          <div className="mt-8 mb-8 bg-orange-50 dark:bg-white/5 p-6 rounded-3xl border border-orange-100 dark:border-white/5">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <section className="mt-8 mb-8" aria-label="قبل یا بعدش کجا بریم؟">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-orange-500 dark:text-[#d9ff00]" />
-              پاتوق‌های نزدیک (پیشنهادی)
+              قبل یا بعدش کجا بریم؟
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {nearbyPlaces.map(place => (
-                <div 
+                <button
                   key={place.id}
-                  className="bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden group relative cursor-pointer hover:border-teal-500/50 transition-colors"
-                  onClick={() => {
-                    const customEvent = new CustomEvent('navToPlace', { detail: place });
-                    window.dispatchEvent(customEvent);
-                  }}
+                  className="text-right bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors"
+                  onClick={() => window.dispatchEvent(new CustomEvent('navToPlace', { detail: place }))}
                 >
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className={`text-xs font-bold px-2.5 py-1.5 rounded-full text-white shadow-lg backdrop-blur-sm border border-white/20 ${place.timingTag === 'بعدش بریم' ? 'bg-orange-500/90 dark:bg-[#d9ff00]/90 dark:text-[#18181b]' : 'bg-teal-500/90 dark:bg-[#a855f7]/90 dark:text-white'}`}>
-                      {place.timingTag}
+                  {place.imageUrl && <img src={place.imageUrl} alt="" loading="lazy" className="w-16 h-16 rounded-xl object-cover shrink-0" />}
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-gray-800 dark:text-gray-100 truncate">{place.name}</span>
+                      {place.timingTag && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-[#d9ff00]/15 dark:text-[#d9ff00] shrink-0">{place.timingTag}</span>}
                     </span>
-                  </div>
-                  <div className="h-32 relative">
-                    {place.imageUrl ? (
-                      <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover brightness-95" />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-                        <MapPin className="w-8 h-8 text-gray-300 dark:text-gray-600" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-gray-800 dark:text-gray-100 mb-1">{place.name}</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">{place.type} • {place.address}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>{place.workingHours || 'ساعت کاری نامشخص'}</span>
-                      </div>
-                      <div className="flex items-center gap-1 font-medium text-orange-500 dark:text-[#d9ff00]">
-                        <span>{place.distance != null ? `${pNum(Math.round(place.distance * 10) / 10)} کیلومتر` : place.city}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    <span className="block text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{placeTypeLabel(place.type)}{place.distance != null ? ` · ${pNum(Math.round(place.distance * 10) / 10)} کیلومتر` : ''}</span>
+                    <span className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 mt-0.5"><Clock className="w-3.5 h-3.5" /> {hoursLabel(place.workingHours) || 'ساعت کاری نامشخص'}</span>
+                  </span>
+                </button>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {event.advancedDetails && (event.advancedDetails as any).cinemas && (event.advancedDetails as any).cinemas.length > 0 && (
@@ -690,7 +665,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
         >
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
-          {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : !dbUserId ? 'ورود و ثبت‌نام' : (event.cost > 0 ? (isRsvp ? 'یه بلیت دیگه می‌خوام' : 'می‌خوام برم') : (isRsvp ? 'میام ✓ (لغو)' : 'منم میام'))}
+          {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : (event.cost > 0 ? (isRsvp ? 'یه بلیت دیگه می‌خوام' : 'می‌خوام برم') : (isRsvp ? 'میام ✓ (لغو)' : 'منم میام'))}
           {!isCancelled && !event.ticketUrl && !soldOut && <span className="text-xs font-normal opacity-75">· {softPrice(event.cost)}</span>}
         </button>
         )}

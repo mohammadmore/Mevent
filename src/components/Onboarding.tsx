@@ -50,8 +50,8 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
         <div className="flex items-center justify-center w-16 h-16 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full mb-6 mx-auto text-teal-600 dark:text-[#d9ff00]">
           <Sparkles className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-100 mb-2 text-center">علایق خود را انتخاب کنید</h1>
-        <p className="text-gray-400 mb-8 leading-relaxed text-center text-sm">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 text-center">علایق خود را انتخاب کنید</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed text-center text-sm">
           برای اینکه رویدادهای مناسب شما اول نمایش داده شوند، چند مورد از علایق خود را انتخاب کنید.
         </p>
 
@@ -65,7 +65,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
                   isSelected 
                     ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-teal-600 dark:border-[#d9ff00] shadow-md shadow-teal-600/20 dark:shadow-[#d9ff00]/20' 
-                    : 'bg-white/90 dark:bg-[#18181b] text-gray-700 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:border-teal-600/5 dark:border-[#d9ff00]/50 hover:bg-teal-600/10 dark:bg-[#d9ff00]/10'
+                    : 'bg-white dark:bg-[#18181b] text-gray-700 dark:text-gray-200 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:bg-teal-600/10 dark:hover:bg-[#d9ff00]/10'
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -82,7 +82,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
         <button
           onClick={handleSave}
           disabled={loading || selectedTags.length === 0}
-          className="w-full bg-white/90 dark:bg-[#18181b] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-100 dark:bg-[#1f1f23] transition-colors shadow-lg disabled:opacity-50"
+          className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-lg disabled:opacity-50"
         >
           {loading ? 'در حال ذخیره...' : 'ذخیره و شروع کشف رویدادها'}
         </button>

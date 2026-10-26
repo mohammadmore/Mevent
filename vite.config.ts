@@ -30,11 +30,15 @@ export default defineConfig(() => {
       rollupOptions: {
         output: {
           // Large libraries get their own long-cached chunks; maps and charts load only when used.
-          manualChunks: {
-            firebase: ['firebase/app', 'firebase/auth'],
-            motion: ['motion/react'],
-            leaflet: ['leaflet', 'react-leaflet', 'react-leaflet-cluster'],
-            datepicker: ['react-multi-date-picker'],
+          // React gets its own chunk: grouped by package list, it ended up inside the motion and
+          // map chunks, which made every first visit download the map library.
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'react';
+            if (/node_modules\/(firebase|@firebase)\//.test(id)) return 'firebase';
+            if (/node_modules\/(leaflet|react-leaflet|@react-leaflet|react-leaflet-cluster|leaflet\.markercluster)\//.test(id)) return 'leaflet';
+            if (/node_modules\/(motion|framer-motion|motion-dom|motion-utils)\//.test(id)) return 'motion';
+            if (/node_modules\/(react-multi-date-picker|react-date-object)\//.test(id)) return 'datepicker';
           },
         },
       },

@@ -60,7 +60,7 @@ export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: b
     <section className="bg-white/90 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-white/10 p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><TicketPercent className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> کدهای تخفیف</h3>
-        <button onClick={() => setOpen(!open)} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00] flex items-center gap-1">{open ? <><X className="w-4 h-4" /> بستن</> : <><Plus className="w-4 h-4" /> کد جدید</>}</button>
+        <button onClick={() => setOpen(!open)} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00] flex items-center gap-1 px-2 py-2.5 -my-2">{open ? <><X className="w-4 h-4" /> بستن</> : <><Plus className="w-4 h-4" /> کد جدید</>}</button>
       </div>
 
       {open && (

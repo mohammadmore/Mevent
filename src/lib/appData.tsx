@@ -40,8 +40,11 @@ interface AppData {
   closeCheckout: () => void;
   unreadCount: number;
   refreshUnread: () => void;
-  /** Sends anonymous visitors to the login screen and remembers where they were. */
-  requireLogin: () => boolean;
+  /**
+   * Sends anonymous visitors to the login screen and remembers where they were. With `then`,
+   * the action they tapped (save, attend) is carried out once they are back, signed in.
+   */
+  requireLogin: (then?: PendingAction) => boolean;
   /** Event objects already loaded somewhere, so detail pages open instantly. */
   cacheEvent: (event: Event) => void;
   getCachedEvent: (id: number) => Event | undefined;
@@ -57,6 +60,8 @@ export function useAppData() {
 }
 
 export const RETURN_TO_KEY = 'mevent_return_to';
+const PENDING_KEY = 'mevent_pending_action';
+export type PendingAction = { type: 'SAVE' | 'ATTEND'; eventId: number };
 
 export function AppDataProvider({ children }: { children: React.ReactNode }) {
   const { dbUserId, user } = useAuth();
@@ -66,6 +71,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
   const [rsvpEvents, setRsvpEvents] = useState<Event[]>([]);
   const [checkoutEvent, setCheckoutEvent] = useState<Event | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [listsLoaded, setListsLoaded] = useState(false);
   const eventCache = useRef(new Map<number, Event>());
   const viewed = useRef(new Set<number>());
 
@@ -84,8 +90,10 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
 
   const refreshLists = useCallback(() => {
     if (!dbUserId) return;
-    api<{ data: Event[] }>(`/api/users/${dbUserId}/saved`, { silent: true }).then(d => setSavedEvents(d.data || [])).catch(() => {});
-    api<{ data: Event[] }>(`/api/users/${dbUserId}/rsvped`, { silent: true }).then(d => setRsvpEvents(d.data || [])).catch(() => {});
+    Promise.all([
+      api<{ data: Event[] }>(`/api/users/${dbUserId}/saved`, { silent: true }).then(d => setSavedEvents(d.data || [])).catch(() => {}),
+      api<{ data: Event[] }>(`/api/users/${dbUserId}/rsvped`, { silent: true }).then(d => setRsvpEvents(d.data || [])).catch(() => {}),
+    ]).then(() => setListsLoaded(true));
   }, [dbUserId]);
 
   const refreshUnread = useCallback(() => {
@@ -100,6 +108,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       setSavedEvents([]);
       setRsvpEvents([]);
       setUnreadCount(0);
+      setListsLoaded(false);
       return;
     }
     setProfileLoaded(false);
@@ -118,10 +127,13 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     return () => { clearInterval(timer); window.removeEventListener('focus', onFocus); };
   }, [dbUserId, refreshUnread, refreshProfile]);
 
-  const requireLogin = useCallback(() => {
+  const requireLogin = useCallback((then?: PendingAction) => {
     if (dbUserId) return true;
-    try { sessionStorage.setItem(RETURN_TO_KEY, window.location.pathname + window.location.search); } catch {}
-    showToast('برای این کار ابتدا وارد حساب کاربری شوید.', 'info');
+    try {
+      sessionStorage.setItem(RETURN_TO_KEY, window.location.pathname + window.location.search);
+      if (then) sessionStorage.setItem(PENDING_KEY, JSON.stringify(then));
+    } catch {}
+    showToast(then ? 'اول وارد شو؛ بعدش همین کار رو برات انجام می‌دیم.' : 'برای این کار اول وارد حساب کاربری شو.', 'info');
     navigate('/login');
     return false;
   }, [dbUserId]);
@@ -135,7 +147,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
   const sendInteraction = (eventId: number, type: string) => api<any>('/api/interactions', { body: { eventId, type } });
 
   const toggleSave = useCallback(async (event: Event) => {
-    if (!requireLogin()) return;
+    if (!requireLogin({ type: 'SAVE', eventId: event.id })) return;
     const wasSaved = savedEvents.some(e => e.id === event.id);
     // Optimistic update, rolled back if the server rejects it.
     setSavedEvents(prev => wasSaved ? prev.filter(e => e.id !== event.id) : [...prev, event]);
@@ -147,7 +159,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
   }, [savedEvents, requireLogin, refreshLists]);
 
   const toggleRsvp = useCallback(async (event: Event) => {
-    if (!requireLogin()) return;
+    if (!requireLogin({ type: 'ATTEND', eventId: event.id })) return;
     const wasGoing = rsvpEvents.some(e => e.id === event.id);
     setRsvpEvents(prev => wasGoing ? prev.filter(e => e.id !== event.id) : [...prev, event]);
     try {
@@ -171,7 +183,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       window.open(event.ticketUrl, '_blank', 'noopener');
       return;
     }
-    if (!requireLogin()) return;
+    if (!requireLogin({ type: 'ATTEND', eventId: event.id })) return;
     if (event.cost > 0) setCheckoutEvent(event);
     else toggleRsvp(event);
   }, [requireLogin, toggleRsvp]);
@@ -180,6 +192,21 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     eventCache.current.set(event.id, event);
     navigate(`/events/${event.id}`);
   }, []);
+
+  // Back from signing in: finish what they tapped before (once, and never undo it).
+  useEffect(() => {
+    if (!dbUserId || !listsLoaded) return;
+    let pending: PendingAction | null = null;
+    try { pending = JSON.parse(sessionStorage.getItem(PENDING_KEY) || 'null'); sessionStorage.removeItem(PENDING_KEY); } catch {}
+    if (!pending || !Number.isInteger(pending.eventId)) return;
+    const { type, eventId } = pending;
+    // Only on the page it was tapped on; somewhere else it would come as a surprise.
+    if (window.location.pathname !== `/events/${eventId}`) return;
+    api<{ data: Event }>(`/api/events/${eventId}`, { silent: true }).then(({ data: event }) => {
+      if (type === 'SAVE' && !savedEvents.some(e => e.id === eventId)) toggleSave(event);
+      if (type === 'ATTEND' && !rsvpEvents.some(e => e.id === eventId) && event.status === 'PUBLISHED') attend(event);
+    }).catch(() => {});
+  }, [dbUserId, listsLoaded]);
 
   const value = useMemo<AppData>(() => ({
     profile, profileLoaded, refreshProfile, setProfile,

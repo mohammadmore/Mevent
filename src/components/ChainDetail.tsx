@@ -31,14 +31,14 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
         <div className="relative h-48 sm:h-64 bg-teal-50 dark:bg-white/5 flex-shrink-0">
           <img loading="lazy" src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
           <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
-            <button onClick={onBack} className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10">
+            <button onClick={onBack} aria-label="بازگشت" className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10">
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         </div>
       ) : (
         <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
-          <button onClick={onBack} className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+          <button onClick={onBack} aria-label="بازگشت" className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
             <ArrowRight className="w-6 h-6" />
           </button>
           <span className="font-bold text-gray-800 dark:text-gray-100 truncate">{c.name}</span>

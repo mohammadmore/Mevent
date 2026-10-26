@@ -163,10 +163,10 @@ export function LegalScreen({ path }: { path: string }) {
   if (!page) return null;
   return (
     <article className="max-w-2xl mx-auto w-full bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
-      <button onClick={() => goBack('/')} className="text-sm text-gray-500 flex items-center gap-1 mb-3"><ArrowRight className="w-4 h-4" /> بازگشت</button>
+      <button onClick={() => goBack('/')} className="text-sm text-gray-500 flex items-center gap-1 mb-3 py-2.5 -my-2"><ArrowRight className="w-4 h-4" /> بازگشت</button>
       <h1 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-4">{page.title}</h1>
       {info ? page.body(info) : <div className="py-10 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-teal-600/20 border-t-teal-600 animate-spin" /></div>}
-      <nav className="mt-8 pt-4 border-t border-gray-100 dark:border-white/10 flex flex-wrap gap-x-4 gap-y-2 text-xs" aria-label="صفحات قانونی">
+      <nav className="mt-8 pt-2 border-t border-gray-100 dark:border-white/10 flex flex-wrap gap-x-4 text-xs [&>a]:py-2.5" aria-label="صفحات قانونی">
         {LEGAL_LINKS.filter(([p]) => p !== path).map(([p, label]) => <A key={p} to={p}>{label}</A>)}
       </nav>
       {info && <div className="mt-4 flex justify-center"><EnamadSeal id={info.enamadId} code={info.enamadCode} /></div>}

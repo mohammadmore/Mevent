@@ -77,26 +77,26 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm text-gray-400 mb-1">نام زنجیره (فستیوال/دوره)</label>
+        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">نام زنجیره (فستیوال/دوره)</label>
         <input 
           type="text" 
-          className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white" 
+          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
           value={formData.name} 
           onChange={e => setFormData({...formData, name: e.target.value})} 
         />
       </div>
       <div>
-        <label className="block text-sm text-gray-400 mb-1">توضیحات کلی</label>
+        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">توضیحات کلی</label>
         <textarea 
-          className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white h-24"
+          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white h-24"
           value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         ></textarea>
       </div>
       
       <div>
-        <label className="block text-sm text-gray-400 mb-2">انتخاب رویدادهای زیرمجموعه</label>
-        <div className="bg-white/5 border border-white/10 rounded-xl max-h-64 overflow-y-auto p-2 space-y-2">
+        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">انتخاب رویدادهای زیرمجموعه</label>
+        <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl max-h-64 overflow-y-auto p-2 space-y-2">
           {events.length === 0 ? (
             <p className="text-gray-500 text-center py-4">رویدادی یافت نشد</p>
           ) : (
@@ -107,12 +107,12 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
                 className={`p-3 rounded-lg flex items-center justify-between cursor-pointer border transition-colors ${
                   selectedEventIds.includes(ev.id) 
                     ? 'border-teal-500 bg-teal-500/10' 
-                    : 'border-transparent hover:bg-white/5'
+                    : 'border-transparent hover:bg-gray-100 dark:hover:bg-white/5'
                 }`}
               >
                 <div>
-                  <h4 className="text-white text-sm font-bold">{ev.title}</h4>
-                  <p className="text-xs text-gray-400">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
+                  <h4 className="text-gray-900 dark:text-white text-sm font-bold">{ev.title}</h4>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
                 </div>
                 {selectedEventIds.includes(ev.id) && <Check className="w-4 h-4 text-teal-400" />}
               </div>

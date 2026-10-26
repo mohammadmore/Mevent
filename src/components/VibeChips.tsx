@@ -24,7 +24,7 @@ export function VibePicker({ value, onChange }: { value: string[]; onChange: (v:
   const toggle = (k: string) => onChange(value.includes(k) ? value.filter(x => x !== k) : [...value, k]);
   const chip = (k: string, emoji: string, label: string) => (
     <button key={k} type="button" aria-pressed={value.includes(k)} onClick={() => toggle(k)}
-      className={`px-3 py-1.5 rounded-full text-xs border ${value.includes(k) ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-transparent font-bold' : 'bg-white dark:bg-black/20 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}>
+      className={`px-3 py-2.5 rounded-full text-xs border ${value.includes(k) ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-transparent font-bold' : 'bg-white dark:bg-black/20 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}>
       <span aria-hidden>{emoji}</span> {label}
     </button>
   );

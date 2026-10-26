@@ -29,7 +29,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
             <p className="text-white/80">{flow.description}</p>
           </div>
           <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
-            <button onClick={onBack} className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10">
+            <button onClick={onBack} aria-label="بازگشت" className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/10">
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -37,7 +37,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
       ) : (
         <div className="p-4 flex flex-col justify-end h-40 bg-gradient-to-br from-teal-500 to-cyan-600 relative">
            <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center">
-            <button onClick={onBack} className="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/40 transition-colors">
+            <button onClick={onBack} aria-label="بازگشت" className="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/40 transition-colors">
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
