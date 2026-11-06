@@ -29,9 +29,9 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
     <article
       className={`group break-inside-avoid rounded-2xl border-2 transition-all duration-300 relative overflow-hidden cursor-pointer mb-4 ${
  going
- ? 'bg-[#FFEAD1] dark:bg-[#d9ff00]/10 border-[#FD6F2F] dark:border-[#d9ff00]/50 dark:shadow-[0_0_15px_rgba(217,255,0,0.15)]'
+ ? 'bg-violet-50/85 dark:bg-[#d9ff00]/10 border-violet-400 dark:border-[#d9ff00]/50 dark:shadow-[0_0_15px_rgba(217,255,0,0.15)]'
  : saved
- ? 'bg-[#DCE4B8] dark:bg-blue-500/10 border-[#747E4D] dark:border-blue-500/50'
+ ? 'bg-sky-50/85 dark:bg-blue-500/10 border-sky-400 dark:border-blue-500/50'
  : 'glass border-gray-300 dark:border-white/20'
  }`}
       onClick={open}
@@ -104,8 +104,8 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
             aria-pressed={saved}
             className={`flex items-center gap-2 border px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm ${
  saved
- ? 'bg-[#747E4D] dark:bg-[#18181b] text-white dark:text-gray-300 border-[#747E4D] dark:border-white/10'
- : 'glass text-[#747E4D] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1f1f23]'
+ ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] dark:bg-none dark:bg-[#18181b] text-white dark:text-gray-300 border-transparent dark:border-white/10'
+ : 'glass text-violet-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1f1f23]'
  }`}
           >
             <Bookmark className={`w-4 h-4 ${saved ? 'fill-white dark:fill-blue-500 dark:text-blue-500' : ''}`} /> {saved ? 'ذخیره شده' : 'ذخیره'}

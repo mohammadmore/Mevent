@@ -734,7 +734,7 @@ export const defaultBackgroundIcons = [
 export const getEventBackgroundIcon = (bgIcon?: string, tags?: string[], isColored?: boolean) => {
   if (bgIcon === 'none') return null;
 
-  const colorClass = isColored ? 'text-white opacity-100 dark:text-gray-200 dark:opacity-20' : 'text-[#FD6F2F] opacity-30 dark:text-gray-200 dark:opacity-20';
+  const colorClass = isColored ? 'text-white opacity-100 dark:text-gray-200 dark:opacity-20' : 'text-violet-400 opacity-30 dark:text-gray-200 dark:opacity-20';
   const className = `absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-48 -rotate-12 pointer-events-none z-[5] ${colorClass}`;
   
   if (bgIcon && availableIcons[bgIcon]) {

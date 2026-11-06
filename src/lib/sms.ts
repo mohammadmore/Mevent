@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { toLocalMobile } from './phone.ts';
 import { registerDependency, httpProbe, isUp, reportFailure, reportSuccess } from './dependencies.ts';
 
@@ -7,7 +9,9 @@ import { registerDependency, httpProbe, isUp, reportFailure, reportSuccess } fro
 //
 //   SMS_PROVIDER=kavenegar   KAVENEGAR_API_KEY, KAVENEGAR_OTP_TEMPLATE, KAVENEGAR_TEMPLATE_<KIND>
 //   SMS_PROVIDER=smsir       SMSIR_API_KEY, SMSIR_OTP_TEMPLATE_ID, SMSIR_TEMPLATE_<KIND> (template ids)
-//   SMS_PROVIDER=console     development only: messages are printed to the server log
+//   SMS_PROVIDER=console     no SMS: messages are printed to the server log. In production (e.g. before
+//                            the SMS account is ready) login codes are also written to login-codes.txt
+//                            in the app folder, so the site owner can sign in from the hosting file manager.
 //
 // When both providers have keys, the other one is used automatically whenever the chosen one is
 // unreachable or refuses (e.g. out of credit). A message kind without a template is skipped.
@@ -97,10 +101,19 @@ async function withFailover(candidates: RealProvider[], send: (p: RealProvider) 
 
 // ---------------- login codes ----------------
 
+/** Where login codes go while SMS_PROVIDER=console in production (outside the public web root). */
+export const LOGIN_CODES_FILE = path.join(process.cwd(), 'login-codes.txt');
+
 /** Sends a login/verification code through the first provider that works. */
 export async function sendVerificationCode(phone: string, code: string) {
   if (smsProvider === 'console') {
     console.log(`[sms:console] verification code for ${toLocalMobile(phone)}: ${code}`);
+    if (process.env.NODE_ENV === 'production') {
+      const when = new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' });
+      await fs.promises.appendFile(LOGIN_CODES_FILE, `${when}  ${toLocalMobile(phone)}  code: ${code}\n`).catch((err) => {
+        console.error('Could not write login-codes.txt:', err?.message || err);
+      });
+    }
     return;
   }
   const candidates = chain.filter(p => p === 'kavenegar' ? process.env.KAVENEGAR_OTP_TEMPLATE : process.env.SMSIR_OTP_TEMPLATE_ID);

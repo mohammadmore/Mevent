@@ -303,7 +303,7 @@ function Shell() {
                   </button>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-teal-600 to-[#515739] dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
+                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-[#2563EB] to-[#7C3AED] dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
                     <Plane className="w-4 h-4" /> <span className="hidden sm:inline">برنامه سفر</span>
                   </button>
                   <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">

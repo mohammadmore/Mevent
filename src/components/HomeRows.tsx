@@ -29,7 +29,7 @@ export function HomeGreeting() {
   return (
     <section className="rounded-3xl p-5 sm:p-6 glass bg-gradient-to-br from-pink-50/60 via-violet-50/40 to-sky-50/50 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 border">
       <p className="text-sm text-gray-600 dark:text-gray-400">{greeting()}{name ? `، ${name}` : ''} 👋</p>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">امروز حوصله‌ت چی می‌خواد؟</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">امروز دلت چی می‌خواد!؟</h1>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 -mx-1 px-1 pb-1">
         {Object.entries(MOODS).map(([key, m]) => (
           <button key={key} onClick={() => navigate(`/bored?mood=${key}`)}

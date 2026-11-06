@@ -46,16 +46,16 @@
 
 @layer base {
   :root {
-    /* Override primary brand colors (teal) to Orange from palette. 500 is the bright brand
-       orange (decoration); 600 carries white button text and 700+ small text, deep enough
-       to stay readable (≥ 3.5:1 and ≥ 5:1 against white). */
-    --color-teal-50: #FFEAD1;
-    --color-teal-100: #FFEAD1;
-    --color-teal-500: #FD6F2F;
-    --color-teal-600: #E4571B;
-    --color-teal-700: #C2410C;
-    --color-teal-800: #9A3412;
-    --color-teal-900: #7C2D12;
+    /* The primary accent ("teal" in class names) is violet in the light theme. 600 carries
+       white text and 700+ small text; both stay well above 4.5:1 against white. Solid
+       buttons get a deep blue-to-violet gradient (see the end of this file). */
+    --color-teal-50: #EEF2FF;
+    --color-teal-100: #E0E7FF;
+    --color-teal-500: #7C3AED;
+    --color-teal-600: #6D28D9;
+    --color-teal-700: #5B21B6;
+    --color-teal-800: #4C1D95;
+    --color-teal-900: #3B0764;
     
     /* We used blue for some things (like saved events), let's map them if needed */
     --color-blue-50: #DCE4B8;
@@ -203,4 +203,14 @@
 }
 @media (prefers-reduced-transparency: reduce) {
   .glass, .glass-soft { background-color: var(--glass-strong-bg); }
+}
+
+/* Light theme: primary buttons and badges are a deep blue-to-violet gradient (white text stays
+   above 5:1 on both ends). The dark theme keeps its own accent. */
+html:not(.dark) .bg-teal-600,
+html:not(.dark) .bg-teal-500 {
+  background-image: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+}
+html:not(.dark) .hover\:bg-teal-700:hover {
+  background-image: linear-gradient(135deg, #1D4ED8 0%, #6D28D9 100%);
 }
