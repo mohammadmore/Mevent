@@ -12,14 +12,17 @@ function preloadFont(): Plugin {
       order: 'post',
       handler(_html, ctx) {
         const font = Object.keys(ctx.bundle || {}).find(f => /Vazirmatn-Variable-.*\.woff2$/.test(f));
-        return font ? [{ tag: 'link', attrs: { rel: 'preload', href: `/${font}`, as: 'font', type: 'font/woff2', crossorigin: '' }, injectTo: 'head' }] : [];
+        return font ? [{ tag: 'link', attrs: { rel: 'preload', href: `./${font}`, as: 'font', type: 'font/woff2', crossorigin: '' }, injectTo: 'head' }] : [];
       },
     },
   };
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ command }) => {
   return {
+    // Relative URLs in the built files; the server turns them into absolute ones under its
+    // BASE_PATH (see src/server/basePath.ts), so one build works at the root or under /mevent.
+    base: command === 'build' ? './' : '/',
     plugins: [react(), tailwindcss(), preloadFont()],
     resolve: {
       alias: {

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { BASE_PATH } from './basePath.ts';
 import { Request, Response } from 'express';
 import { and, eq, gt, lt, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
@@ -31,7 +32,7 @@ function cookieOptions(req: Request, maxAgeMs: number) {
     httpOnly: true,
     secure: req.secure || process.env.NODE_ENV === 'production',
     sameSite: 'lax' as const,
-    path: '/',
+    path: BASE_PATH || '/',
     maxAge: maxAgeMs,
   };
 }
@@ -59,7 +60,7 @@ export async function userFromSession(req: Request, res: Response) {
     .where(and(eq(sessions.tokenHash, hashToken(token)), gt(sessions.expiresAt, new Date())))
     .limit(1);
   if (!row) {
-    res.clearCookie(SESSION_COOKIE, { path: '/' });
+    res.clearCookie(SESSION_COOKIE, { path: BASE_PATH || '/' });
     return null;
   }
   const now = Date.now();
@@ -76,7 +77,7 @@ export async function userFromSession(req: Request, res: Response) {
 export async function destroySession(req: Request, res: Response) {
   const token = readCookie(req, SESSION_COOKIE);
   if (token) await db.delete(sessions).where(eq(sessions.tokenHash, hashToken(token)));
-  res.clearCookie(SESSION_COOKIE, { path: '/' });
+  res.clearCookie(SESSION_COOKIE, { path: BASE_PATH || '/' });
 }
 
 export async function destroyAllSessions(userId: number, exceptSessionId?: number) {

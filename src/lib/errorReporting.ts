@@ -1,3 +1,4 @@
+import { stripBase } from './basePath';
 // Sends uncaught browser errors to the server's error list (at most a few per page load).
 
 const MAX_REPORTS = 5;
@@ -10,7 +11,7 @@ function report(message: string, stack?: string) {
   if (!message || IGNORE.test(message) || IGNORE.test(stack || '') || sent >= MAX_REPORTS || seen.has(message)) return;
   seen.add(message);
   sent++;
-  const body = JSON.stringify({ message: message.slice(0, 1000), stack: stack?.slice(0, 4000), url: location.pathname });
+  const body = JSON.stringify({ message: message.slice(0, 1000), stack: stack?.slice(0, 4000), url: stripBase(location.pathname) });
   // keepalive lets the report leave even if the page is closing.
   fetch('/api/client-errors', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
 }

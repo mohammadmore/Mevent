@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { currentPath, withBase } from './basePath';
 
 // A minimal History-API router: every screen has its own URL, so refresh, the browser's
 // back button and shared links all land on the right page.
@@ -15,12 +16,12 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-const snapshot = () => window.location.pathname + window.location.search;
+const snapshot = () => currentPath();
 
 export function navigate(to: string, opts: { replace?: boolean } = {}) {
   if (to === snapshot()) return;
   const depth = (window.history.state?.depth ?? 0) + (opts.replace ? 0 : 1);
-  window.history[opts.replace ? 'replaceState' : 'pushState']({ inApp: true, depth }, '', to);
+  window.history[opts.replace ? 'replaceState' : 'pushState']({ inApp: true, depth }, '', withBase(to));
   notify();
 }
 
@@ -50,5 +51,5 @@ export function matchPath(pattern: string, pathname: string): Record<string, str
 }
 
 export function absoluteUrl(path: string) {
-  return window.location.origin + path;
+  return window.location.origin + withBase(path);
 }

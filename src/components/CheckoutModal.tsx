@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { withBase } from '../lib/basePath';
 import { X, Users, CreditCard, Star, AlertTriangle, ShieldCheck, TicketPercent } from 'lucide-react';
 import { useAppData } from '../lib/appData';
 import { api, ApiError, showToast } from '../lib/apiClient';
@@ -173,7 +174,7 @@ export function CheckoutModal() {
         </button>
         <p className="text-[11px] text-gray-500 mt-3 flex items-center justify-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5" /> لغو بلیت تا ۲ ساعت پیش از شروع رویداد امکان‌پذیر است؛
-          <a href="/refund-policy" onClick={(e) => { e.preventDefault(); closeCheckout(); navigate('/refund-policy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">شرایط بازپرداخت</a>
+          <a href={withBase('/refund-policy')} onClick={(e) => { e.preventDefault(); closeCheckout(); navigate('/refund-policy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">شرایط بازپرداخت</a>
         </p>
       </div>
     </div>

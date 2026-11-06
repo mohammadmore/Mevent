@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { BASE_PATH } from './basePath.ts';
 import crypto from 'crypto';
 import { hitRateLimit, getFromCache, setToCache } from '../lib/sharedStore.ts';
 
@@ -135,7 +136,10 @@ export function parsePaging(query: any, defaultLimit = 20, maxLimit = 50) {
   return { limit, offset };
 }
 
+/** Public address of the site including its base path, e.g. https://host/mevent (no trailing slash). */
 export function publicBaseUrl(req: Request) {
-  if (process.env.APP_URL && /^https?:\/\//.test(process.env.APP_URL)) return process.env.APP_URL.replace(/\/$/, '');
-  return `${req.protocol}://${req.get('host')}`;
+  const configured = process.env.APP_URL && /^https?:\/\//.test(process.env.APP_URL) ? process.env.APP_URL.replace(/\/$/, '') : null;
+  const origin = configured ?? `${req.protocol}://${req.get('host')}`;
+  // APP_URL may or may not already end with the base path.
+  return BASE_PATH && !origin.endsWith(BASE_PATH) ? origin + BASE_PATH : origin;
 }

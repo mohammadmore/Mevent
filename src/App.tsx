@@ -1,4 +1,5 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { withBase } from './lib/basePath';
 import { Sun, Moon, MapPin, Sparkles, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -118,8 +119,8 @@ function LoginScreen() {
       )}
       <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
         ورود یا ثبت‌نام به معنای پذیرش{' '}
-        <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
-        <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> میونت است.
+        <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
+        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> میونت است.
       </p>
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline px-4 py-2.5">فعلاً برنامه‌ها رو ببینم</button>
     </div>

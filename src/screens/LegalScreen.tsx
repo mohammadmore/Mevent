@@ -1,4 +1,5 @@
 import React from 'react';
+import { withBase } from '../lib/basePath';
 import { ArrowRight, Mail, Phone, MapPin, Clock, LifeBuoy } from 'lucide-react';
 import { useSiteInfo, SiteInfo } from '../lib/siteInfo';
 import { navigate, goBack } from '../lib/router';
@@ -17,7 +18,7 @@ const L = ({ items }: { items: React.ReactNode[] }) => (
   <ul className="list-disc pr-5 space-y-1.5 text-sm leading-7 text-gray-700 dark:text-gray-300">{items.map((x, i) => <li key={i}>{x}</li>)}</ul>
 );
 const A = ({ to, children }: { to: string; children: React.ReactNode }) => (
-  <a href={to} onClick={(e) => { e.preventDefault(); navigate(to); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">{children}</a>
+  <a href={withBase(to)} onClick={(e) => { e.preventDefault(); navigate(to); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">{children}</a>
 );
 
 function owner(info: SiteInfo) {

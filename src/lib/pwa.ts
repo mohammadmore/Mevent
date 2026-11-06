@@ -1,11 +1,12 @@
 import { api } from './apiClient';
+import { withBase } from './basePath';
 
 // Service worker registration and Web Push subscription.
 
 export function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || !import.meta.env.PROD) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed:', err));
+    navigator.serviceWorker.register(withBase('/sw.js'), { scope: withBase('/') }).catch(err => console.warn('SW registration failed:', err));
   });
 }
 

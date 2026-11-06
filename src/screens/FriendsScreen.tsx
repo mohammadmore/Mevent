@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Copy, MessageCircle, Share2, UserMinus, UserPlus, Users, X } from 'lucide-react';
 import { api, showToast } from '../lib/apiClient';
-import { navigate } from '../lib/router';
+import { navigate, absoluteUrl } from '../lib/router';
 import { confirmDialog, promptDialog } from '../lib/dialog';
 import { pNum, timeAgo } from '../lib/format';
 import { GeneratedAvatar } from '../components/Avatar';
@@ -28,7 +28,7 @@ export function FriendsScreen() {
   };
   useEffect(load, []);
 
-  const link = data?.inviteCode ? `${window.location.origin}/invite/${data.inviteCode}` : '';
+  const link = data?.inviteCode ? absoluteUrl(`/invite/${data.inviteCode}`) : '';
   const share = async () => {
     const text = 'بیا توی میونت دوست شیم تا ببینیم کجاها می‌ریم و با هم بریم:';
     if (navigator.share) { navigator.share({ title: 'میونت', text, url: link }).catch(() => {}); return; }

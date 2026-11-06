@@ -1,4 +1,5 @@
 import { Express } from 'express';
+import { withBase } from '../basePath.ts';
 import crypto from 'crypto';
 import { eq, and, inArray, sql, desc, lt } from 'drizzle-orm';
 import { db, DbTransaction } from '../../db/index.ts';
@@ -255,24 +256,24 @@ export function registerCommerceRoutes(app: Express) {
     const authority = String(req.query.Authority || '');
     const ok = String(req.query.Status || '') === 'OK';
     const [order] = authority ? await db.select().from(orders).where(eq(orders.authority, authority)).limit(1) : [];
-    if (!order) return res.redirect('/tickets?payment=unknown');
-    if (order.status === 'PAID') return res.redirect(`/tickets?payment=success&order=${order.id}`);
+    if (!order) return res.redirect(withBase('/tickets?payment=unknown'));
+    if (order.status === 'PAID') return res.redirect(withBase(`/tickets?payment=success&order=${order.id}`));
     if (!ok || order.status !== 'PENDING') {
       await db.transaction(tx => failOrder(tx, order.id, 'FAILED'));
       nudgeWaitlist(order.eventId);
-      return res.redirect(`/tickets?payment=failed&order=${order.id}`);
+      return res.redirect(withBase(`/tickets?payment=failed&order=${order.id}`));
     }
     const [event] = await db.select().from(events).where(eq(events.id, order.eventId));
     const verification = await verifyPayment({ amountRial: toRial(order.amount, event?.currency), authority });
     if (!verification.ok) {
       await db.transaction(tx => failOrder(tx, order.id, 'FAILED'));
       nudgeWaitlist(order.eventId);
-      return res.redirect(`/tickets?payment=failed&order=${order.id}`);
+      return res.redirect(withBase(`/tickets?payment=failed&order=${order.id}`));
     }
     await db.transaction(tx => completeOrder(tx, order.id, verification.refId));
     notifyOrderPaid(order, event?.title || 'رویداد').catch(() => {});
     invalidateCachePattern('admin_stats');
-    res.redirect(`/tickets?payment=success&order=${order.id}`);
+    res.redirect(withBase(`/tickets?payment=success&order=${order.id}`));
   }));
 
   app.get('/api/orders/:id', requireAuth, asyncRoute(async (req: AuthRequest, res) => {

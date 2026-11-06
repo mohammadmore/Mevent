@@ -9,7 +9,7 @@ import { createServer as createViteServer } from 'vite';
 
 import { dbReady } from './src/db/index';
 import { authenticate } from './src/middleware/auth';
-import { metricsMiddleware, validateInput, limiters, asyncRoute } from './src/server/infra';
+import { metricsMiddleware, validateInput, limiters, asyncRoute, publicBaseUrl } from './src/server/infra';
 import { sendUpload, syncPendingUploads } from './src/lib/storage';
 import { startBackgroundJobs } from './src/lib/notifications';
 import { startDependencyProbes } from './src/lib/dependencies';
@@ -19,6 +19,7 @@ import { registerOpsRoutes } from './src/server/routes/ops';
 import { registerSupportRoutes } from './src/server/routes/support';
 import { registerRecommendRoutes } from './src/server/routes/recommend';
 import { registerTogetherRoutes } from './src/server/routes/together';
+import { BASE_PATH, installBasePathPayloads, installBasePathPrefix, prepareIndexHtml } from './src/server/basePath';
 import { scheduledBackup } from './src/lib/backups';
 import { pruneSharedStore } from './src/lib/sharedStore';
 import { injectPageMeta } from './src/server/seo';
@@ -48,6 +49,9 @@ async function startServer() {
   const trustProxy = process.env.TRUST_PROXY ?? '1';
   app.set('trust proxy', /^\d+$/.test(trustProxy) ? parseInt(trustProxy, 10) : trustProxy === 'true' ? true : trustProxy);
 
+  // First of all: a base path (BASE_PATH=/mevent) is removed from incoming URLs.
+  installBasePathPrefix(app);
+
   app.use(helmet({
     // The SPA loads map tiles, remote images and Firebase scripts from many origins.
     contentSecurityPolicy: false,
@@ -67,6 +71,7 @@ async function startServer() {
   app.use(morgan('combined', { skip: (req) => req.path.startsWith('/api/health') || req.path.startsWith('/@vite') }));
   app.use(metricsMiddleware);
   app.use(express.json({ limit: '1mb' }));
+  installBasePathPayloads(app);
 
   // Uploaded images (local disk in development, Cloud Storage when UPLOAD_BUCKET is set).
   app.get('/uploads/:name', asyncRoute(async (req, res) => sendUpload(req.params.name, res)));
@@ -121,6 +126,7 @@ async function startServer() {
   // The SPA: every non-API path (e.g. /events/12) serves index.html with per-page <meta> tags,
   // so deep links work on refresh and shared links get a proper preview.
   if (!isProduction) {
+    if (BASE_PATH) console.warn('BASE_PATH is only supported by the production build; the dev server serves the app at the root.');
     const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'custom' });
     app.use(vite.middlewares);
     app.use('*', asyncRoute(async (req, res) => {
@@ -138,11 +144,10 @@ async function startServer() {
         if (filePath.endsWith('sw.js') || filePath.endsWith('.webmanifest')) res.setHeader('Cache-Control', 'no-cache');
       },
     }));
-    const template = fs.readFileSync(path.join(distPath, 'index.html'), 'utf-8');
+    const template = prepareIndexHtml(fs.readFileSync(path.join(distPath, 'index.html'), 'utf-8'));
     app.get('*', asyncRoute(async (req, res) => {
-      const origin = process.env.APP_URL?.startsWith('http') ? process.env.APP_URL.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
       res.setHeader('Cache-Control', 'no-cache');
-      res.type('html').send(await injectPageMeta(template, req.path, origin));
+      res.type('html').send(await injectPageMeta(template, req.path, publicBaseUrl(req)));
     }));
   }
 

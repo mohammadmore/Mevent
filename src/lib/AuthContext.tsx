@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
+import { stripBase } from './basePath';
 import { clearCachedUserData } from './pwa';
 import { browserReachesGoogle } from './reachability';
 import { api, showToast } from './apiClient';
@@ -223,7 +224,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       // Firebase is only needed to restore a Google sign-in or to sign in with Google, so a
       // visitor who has never used Google login does not download it.
-      const wantsGoogle = lastUser()?.provider === 'google' || window.location.pathname === '/login' || hasPendingRedirect()
+      const wantsGoogle = lastUser()?.provider === 'google' || stripBase(window.location.pathname) === '/login' || hasPendingRedirect()
         || (!lastUser() && await mayHaveGoogleSession());
       if (!wantsGoogle) {
         forgetUser();

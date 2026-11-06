@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { currentPath, stripBase } from './basePath';
 import { Event } from '../types';
 import { useAuth } from './AuthContext';
 import { api, ApiError, showToast } from './apiClient';
@@ -130,7 +131,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
   const requireLogin = useCallback((then?: PendingAction) => {
     if (dbUserId) return true;
     try {
-      sessionStorage.setItem(RETURN_TO_KEY, window.location.pathname + window.location.search);
+      sessionStorage.setItem(RETURN_TO_KEY, currentPath());
       if (then) sessionStorage.setItem(PENDING_KEY, JSON.stringify(then));
     } catch {}
     showToast(then ? 'اول وارد شو؛ بعدش همین کار رو برات انجام می‌دیم.' : 'برای این کار اول وارد حساب کاربری شو.', 'info');
@@ -201,7 +202,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     if (!pending || !Number.isInteger(pending.eventId)) return;
     const { type, eventId } = pending;
     // Only on the page it was tapped on; somewhere else it would come as a surprise.
-    if (window.location.pathname !== `/events/${eventId}`) return;
+    if (stripBase(window.location.pathname) !== `/events/${eventId}`) return;
     api<{ data: Event }>(`/api/events/${eventId}`, { silent: true }).then(({ data: event }) => {
       if (type === 'SAVE' && !savedEvents.some(e => e.id === eventId)) toggleSave(event);
       if (type === 'ATTEND' && !rsvpEvents.some(e => e.id === eventId) && event.status === 'PUBLISHED') attend(event);

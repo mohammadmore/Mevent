@@ -1,8 +1,11 @@
 /**
  * Phone-login sessions travel in an httpOnly cookie, which the browser sends with every
  * same-origin request on its own. For Google sign-in, the Firebase ID token is attached to
- * same-origin `/api` requests here, so existing `fetch('/api/...')` calls need no changes.
+ * same-origin `/api` requests here, so existing `fetch('/api/...')` calls need no changes. The
+ * same wrapper adds the app's base path (see basePath.ts) to app-relative URLs.
  */
+
+import { stripBase, withBase } from './basePath';
 
 type TokenGetter = () => Promise<string | null>;
 let getToken: TokenGetter | null = null;
@@ -16,10 +19,12 @@ export function installAuthFetch() {
   const originalFetch = window.fetch.bind(window);
 
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    // App-relative URLs ("/api/events") get the base path, so no call site has to care about it.
+    if (typeof input === 'string') input = withBase(input);
     if (input instanceof Request || !getToken) return originalFetch(input, init);
 
     const url = new URL(String(input), window.location.origin);
-    const isApiCall = url.origin === window.location.origin && url.pathname.startsWith('/api/');
+    const isApiCall = url.origin === window.location.origin && stripBase(url.pathname).startsWith('/api/');
     if (!isApiCall) return originalFetch(input, init);
 
     const headers = new Headers(init?.headers);
