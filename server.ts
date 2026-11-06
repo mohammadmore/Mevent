@@ -5,7 +5,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
 
 import { dbReady } from './src/db/index';
 import { authenticate } from './src/middleware/auth';
@@ -127,6 +126,8 @@ async function startServer() {
   // so deep links work on refresh and shared links get a proper preview.
   if (!isProduction) {
     if (BASE_PATH) console.warn('BASE_PATH is only supported by the production build; the dev server serves the app at the root.');
+    // Loaded only here: the production server never needs Vite (or its build tools) installed.
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'custom' });
     app.use(vite.middlewares);
     app.use('*', asyncRoute(async (req, res) => {
