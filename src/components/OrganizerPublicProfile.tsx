@@ -104,7 +104,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
             <div className="flex-1 md:mt-14">
               <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {organizer?.name || 'برگزارکننده میونت'}
+                  {organizer?.name || 'برگزارکننده می‌ونت'}
                 </h2>
                 {organizer?.organizerType === 'CORPORATE' && (
                   <span className="inline-block px-2 py-0.5 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-md">

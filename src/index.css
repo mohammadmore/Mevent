@@ -103,18 +103,19 @@
    background costs frames, and over a soft gradient the blur is barely visible anyway.
    --------------------------------------------------------------------------------------------- */
 :root {
-  --liquid-base: linear-gradient(160deg, #FFF8F0 0%, #FFEAD1 55%, #EEF2DA 100%);
-  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(253, 111, 47, 0.30), transparent 70%),
-              radial-gradient(40% 36% at 78% 70%, rgba(220, 228, 184, 0.95), transparent 70%);
-  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(255, 178, 122, 0.38), transparent 70%),
-              radial-gradient(42% 38% at 26% 78%, rgba(81, 87, 57, 0.12), transparent 70%);
+  /* Light: pink, blue and purple. */
+  --liquid-base: linear-gradient(160deg, #FDF2FA 0%, #F5F3FF 50%, #EEF4FF 100%);
+  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(244, 114, 182, 0.34), transparent 70%),
+              radial-gradient(40% 36% at 78% 70%, rgba(96, 165, 250, 0.32), transparent 70%);
+  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(167, 139, 250, 0.36), transparent 70%),
+              radial-gradient(42% 38% at 26% 78%, rgba(192, 132, 252, 0.22), transparent 70%);
   --glass-bg: rgba(255, 255, 255, 0.52);
   --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.12));
   --glass-border: rgba(255, 255, 255, 0.75);
-  --glass-shadow: 0 4px 18px rgba(81, 87, 57, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --glass-strong-bg: rgba(255, 250, 245, 0.74);
+  --glass-shadow: 0 4px 18px rgba(91, 33, 182, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-strong-bg: rgba(253, 250, 255, 0.74);
   --glass-soft-bg: rgba(255, 255, 255, 0.46);
-  --glass-soft-border: rgba(81, 87, 57, 0.10);
+  --glass-soft-border: rgba(91, 33, 182, 0.10);
 }
 .dark {
   --liquid-base: linear-gradient(160deg, #0f0f11 0%, #141417 60%, #101012 100%);
@@ -134,7 +135,7 @@
 @layer components {
   .liquid-bg {
     background: var(--liquid-base);
-    background-color: #FFF4E8;
+    background-color: #F7F3FF;
     isolation: isolate;
   }
   .dark .liquid-bg, .dark.liquid-bg { background-color: #121215; }
@@ -194,7 +195,7 @@
 
 /* Without a blur, glass needs more body to keep text readable. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-strong { background-color: rgba(255, 250, 245, 0.95); }
+  .glass-strong { background-color: rgba(253, 250, 255, 0.95); }
   .dark .glass-strong { background-color: rgba(22, 22, 26, 0.95); }
 }
 @media (prefers-reduced-motion: reduce) {

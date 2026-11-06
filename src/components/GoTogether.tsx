@@ -61,8 +61,8 @@ function InviteFriends({ eventId, onClose }: { eventId: number; onClose: () => v
         </div>
         {friends === null ? <div className="h-20 glass-soft rounded-xl animate-pulse" /> : friends.length === 0 ? (
           <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3">
-            <p>هنوز دوستی توی میونت نداری.</p>
-            <button onClick={() => navigate('/friends')} className={primary}><UserPlus className="w-4 h-4" /> دعوت دوستان به میونت</button>
+            <p>هنوز دوستی توی می‌ونت نداری.</p>
+            <button onClick={() => navigate('/friends')} className={primary}><UserPlus className="w-4 h-4" /> دعوت دوستان به می‌ونت</button>
           </div>
         ) : (
           <>

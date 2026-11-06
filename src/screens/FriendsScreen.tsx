@@ -30,8 +30,8 @@ export function FriendsScreen() {
 
   const link = data?.inviteCode ? absoluteUrl(`/invite/${data.inviteCode}`) : '';
   const share = async () => {
-    const text = 'بیا توی میونت دوست شیم تا ببینیم کجاها می‌ریم و با هم بریم:';
-    if (navigator.share) { navigator.share({ title: 'میونت', text, url: link }).catch(() => {}); return; }
+    const text = 'بیا توی می‌ونت دوست شیم تا ببینیم کجاها می‌ریم و با هم بریم:';
+    if (navigator.share) { navigator.share({ title: 'می‌ونت', text, url: link }).catch(() => {}); return; }
     try { await navigator.clipboard.writeText(`${text} ${link}`); showToast('لینک کپی شد؛ برای دوستات بفرست.', 'success'); } catch { showToast(link, 'info'); }
   };
   const request = async (e: React.FormEvent) => {
@@ -171,7 +171,7 @@ export function TogetherScreen({ id }: { id: number }) {
       return load();
     }
     if (kind === 'block') {
-      if (!await confirmDialog({ title: `مسدود کردن «${data.other.name}»`, message: 'دیگه همدیگه رو توی میونت نمی‌بینید و این گفتگو بسته می‌شه.', confirmText: 'مسدود کن', danger: true })) return;
+      if (!await confirmDialog({ title: `مسدود کردن «${data.other.name}»`, message: 'دیگه همدیگه رو توی می‌ونت نمی‌بینید و این گفتگو بسته می‌شه.', confirmText: 'مسدود کن', danger: true })) return;
       const res = await api<{ message: string }>(`/api/users/${data.other.id}/block`, { body: {} }).catch(() => null);
       if (res) showToast(res.message, 'success');
       return load();

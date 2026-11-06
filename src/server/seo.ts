@@ -5,7 +5,7 @@ import { events, places, trips } from '../db/schema.ts';
 // Shared links (Telegram, WhatsApp, ...) read <meta> tags from the HTML, not from the SPA,
 // so pages for events, places and trips get their own title, description and image.
 
-const SITE_NAME = 'میونت';
+const SITE_NAME = 'می‌ونت';
 const DEFAULT_DESCRIPTION = 'کشف هوشمند رویدادها، پاتوق‌ها و برنامه‌های سفر';
 
 function escapeHtml(value: string) {
@@ -15,11 +15,11 @@ function escapeHtml(value: string) {
 interface PageMeta { title: string; description: string; image?: string | null }
 
 const STATIC_PAGES: Record<string, PageMeta> = {
-  '/terms': { title: 'قوانین و مقررات', description: 'شرایط استفاده از میونت، خرید بلیت و ثبت رویداد' },
+  '/terms': { title: 'قوانین و مقررات', description: 'شرایط استفاده از می‌ونت، خرید بلیت و ثبت رویداد' },
   '/privacy': { title: 'حریم خصوصی', description: 'چه اطلاعاتی از شما نگه می‌داریم و چطور از آن استفاده می‌کنیم' },
   '/refund-policy': { title: 'لغو و بازپرداخت', description: 'شرایط لغو بلیت و بازگشت وجه' },
-  '/about': { title: 'درباره ما', description: 'میونت؛ کشف رویدادها، پاتوق‌ها و برنامه سفر' },
-  '/contact': { title: 'تماس با ما', description: 'راه‌های ارتباط با پشتیبانی میونت' },
+  '/about': { title: 'درباره ما', description: 'می‌ونت؛ کشف رویدادها، پاتوق‌ها و برنامه سفر' },
+  '/contact': { title: 'تماس با ما', description: 'راه‌های ارتباط با پشتیبانی می‌ونت' },
 };
 
 async function metaFor(pathname: string): Promise<PageMeta | null> {
@@ -53,7 +53,7 @@ export async function injectPageMeta(html: string, pathname: string, origin: str
   } catch {
     meta = null;
   }
-  const title = meta ? `${meta.title} | ${SITE_NAME}` : SITE_NAME;
+  const title = meta ? `${meta.title} | ${SITE_NAME}` : `${SITE_NAME} (Mevent)`;
   const description = (meta?.description || DEFAULT_DESCRIPTION).replace(/\s+/g, ' ').slice(0, 200);
   const image = meta?.image ? (meta.image.startsWith('http') ? meta.image : origin + meta.image) : `${origin}/icons/icon-512.png`;
   const tags = [

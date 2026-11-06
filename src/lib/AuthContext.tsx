@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const inviteCode = peekInviteCode();
     const res = await api<any>('/api/auth/otp/verify', { body: { phone, code, inviteCode } });
     if (inviteCode) forgetInviteCode();
-    if (res.created && res.data.referredById) showToast('به میونت خوش آمدید! امتیاز هدیه دعوت به حساب شما اضافه شد.', 'success');
+    if (res.created && res.data.referredById) showToast('به می‌ونت خوش آمدید! امتیاز هدیه دعوت به حساب شما اضافه شد.', 'success');
     setUser({ provider: 'phone' });
     setDbUserId(res.data.id);
     rememberUser({ id: res.data.id });

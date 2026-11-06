@@ -24,7 +24,7 @@ export interface SiteInfo {
 }
 
 export const SITE_INFO_DEFAULTS: SiteInfo = {
-  brandName: 'میونت',
+  brandName: 'می‌ونت',
   legalName: '',
   nationalId: '',
   address: '',
@@ -71,6 +71,8 @@ export async function getSiteInfo(): Promise<SiteInfo> {
   if (cached) return cached;
   const [row] = await db.select().from(settings).where(eq(settings.key, 'site_info'));
   const info = { ...SITE_INFO_DEFAULTS, ...((row?.value as any) || {}) };
+  // The brand was spelled «میونت» before; a saved copy of that default follows the new spelling.
+  if (info.brandName === 'میونت') info.brandName = SITE_INFO_DEFAULTS.brandName;
   await setToCache('site_info', info, 60_000);
   return info;
 }

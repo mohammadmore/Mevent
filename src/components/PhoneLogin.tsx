@@ -82,7 +82,7 @@ export function PhoneLogin() {
       const { created } = await verifyCode(phone, value);
       if (created) {
         // Optional: a real name instead of the masked number shown by default.
-        const name = await promptDialog({ title: 'به میونت خوش آمدید!', message: 'نام شما چیست؟ (برای برگزارکنندگان و دوستانتان نمایش داده می‌شود)', placeholder: 'نام و نام خانوادگی', confirmText: 'ذخیره', cancelText: 'بعداً' });
+        const name = await promptDialog({ title: 'به می‌ونت خوش آمدید!', message: 'نام شما چیست؟ (برای برگزارکنندگان و دوستانتان نمایش داده می‌شود)', placeholder: 'نام و نام خانوادگی', confirmText: 'ذخیره', cancelText: 'بعداً' });
         if (name) {
           const me = await api<any>('/api/auth/me', { silent: true }).catch(() => null);
           if (me?.data?.id) {

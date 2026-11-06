@@ -309,7 +309,7 @@ export function registerContentRoutes(app: Express) {
       invalidateEventCaches();
     }
     notifyAdmins('گزارش تخلف جدید', `${reason} (${targetType} #${targetId})`);
-    res.status(201).json({ success: true, message: 'گزارش شما ثبت شد. ممنون که به سالم ماندن میونت کمک می‌کنید.' });
+    res.status(201).json({ success: true, message: 'گزارش شما ثبت شد. ممنون که به سالم ماندن می‌ونت کمک می‌کنید.' });
   }));
 
   app.get('/api/admin/reports', requireAdmin, asyncRoute(async (req, res) => {

@@ -49,7 +49,7 @@ export function TicketsScreen() {
   const transfer = async (row: TicketRow) => {
     const phone = await promptDialog({
       title: 'انتقال بلیت',
-      message: `بلیت «${row.events.title}» برای چه شماره‌ای فرستاده شود؟ گیرنده با همین شماره وارد میونت می‌شود و بلیت را می‌پذیرد؛ کد ورود عوض می‌شود. بلیت منتقل‌شده قابل لغو و بازپرداخت نیست.`,
+      message: `بلیت «${row.events.title}» برای چه شماره‌ای فرستاده شود؟ گیرنده با همین شماره وارد می‌ونت می‌شود و بلیت را می‌پذیرد؛ کد ورود عوض می‌شود. بلیت منتقل‌شده قابل لغو و بازپرداخت نیست.`,
       placeholder: '09123456789',
       confirmText: 'ارسال بلیت',
     });

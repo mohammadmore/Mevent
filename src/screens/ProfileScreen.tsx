@@ -100,7 +100,7 @@ export function ProfileScreen() {
         <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#d9ff00] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100">{profile.name}</h2>
-          {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]">{profile.role === 'ADMIN' ? 'مدیر میونت' : 'برگزارکننده'}</span>}
+          {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]">{profile.role === 'ADMIN' ? 'مدیر می‌ونت' : 'برگزارکننده'}</span>}
           <p className="text-gray-600 dark:text-gray-400">
             {[profile.phone ? <bdi key="p" dir="ltr">{maskMobile(profile.phone)}</bdi> : null, profile.email ? <bdi key="e" dir="ltr">{profile.email}</bdi> : null, profile.city]
               .filter(Boolean).flatMap((part, i) => (i ? [' • ', part] : [part]))}
@@ -160,7 +160,7 @@ export function ProfileScreen() {
             ) : profile.organizerStatus === 'REJECTED' ? (
               <p className="text-sm text-red-600 flex items-center gap-1"><XCircle className="w-4 h-4" /> درخواست قبلی تأیید نشد. می‌توانید با توضیحات کامل‌تر دوباره درخواست دهید.</p>
             ) : (
-              <p className="text-sm text-teal-700 dark:text-[#d9ff00]">با حساب برگزارکننده می‌تونی برنامه‌هات رو ثبت کنی و بلیت بفروشی. درخواستت رو تیم میونت بررسی می‌کنه.</p>
+              <p className="text-sm text-teal-700 dark:text-[#d9ff00]">با حساب برگزارکننده می‌تونی برنامه‌هات رو ثبت کنی و بلیت بفروشی. درخواستت رو تیم می‌ونت بررسی می‌کنه.</p>
             )}
           </div>
           {profile.organizerStatus !== 'PENDING' && (

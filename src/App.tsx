@@ -1,4 +1,5 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import Brand from './components/Brand';
 import { withBase } from './lib/basePath';
 import { Sun, Moon, MapPin, Sparkles, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
@@ -88,7 +89,7 @@ function LoginScreen() {
         <Sparkles className="w-10 h-10" />
       </div>
       <div>
-        <h1 className="text-3xl font-bold text-[#515739] dark:text-gray-100 mb-2">میونت</h1>
+        <h1 className="mb-2"><Brand size="lg" /></h1>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">هر وقت حوصله‌ت سر رفت، یه برنامه‌ی خوب و یه همراه پیدا کن</p>
       </div>
 
@@ -100,7 +101,7 @@ function LoginScreen() {
       <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
         ورود یا ثبت‌نام به معنای پذیرش{' '}
         <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
-        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> میونت است.
+        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> می‌ونت است.
       </p>
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline px-4 py-2.5">فعلاً برنامه‌ها رو ببینم</button>
     </div>
@@ -143,7 +144,7 @@ function Shell() {
   useEffect(() => {
     if (!invite || loading) return;
     rememberInviteCode(invite.code);
-    if (!dbUserId) showToast('به میونت خوش آمدید! با ورود، ۵۰ امتیاز هدیه می‌گیرید.', 'success');
+    if (!dbUserId) showToast('به می‌ونت خوش آمدید! با ورود، ۵۰ امتیاز هدیه می‌گیرید.', 'success');
     // Already a member: a friend's link makes you friends.
     else api<{ message: string }>('/api/friends/by-code', { body: { code: invite.code }, silent: true })
       .then(r => showToast(r.message, 'success')).catch(() => {});
@@ -290,7 +291,7 @@ function Shell() {
             <header className="pt-10 md:pt-6 pb-3 px-4 sm:px-6 glass-strong border-b z-10 sticky top-0">
               <div className="flex justify-between items-center w-full">
                 <div>
-                  <button onClick={() => navigate('/')} className="text-2xl font-bold text-[#515739] dark:text-gray-100">میونت</button>
+                  <button onClick={() => navigate('/')} aria-label="می‌ونت، صفحه اصلی"><Brand /></button>
                   <button
                     onClick={requestLocation}
                     disabled={isLocating}

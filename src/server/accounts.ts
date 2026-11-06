@@ -69,7 +69,7 @@ export async function createUserWithInvite(
     invalidateCachePattern('leaderboard');
     notify(result.inviter.id, {
       type: 'INVITE',
-      title: 'دوستتان به میونت پیوست',
+      title: 'دوستتان به می‌ونت پیوست',
       body: `${result.user.name} با لینک دعوت شما عضو شد و ${INVITER_POINTS.toLocaleString('fa-IR')} امتیاز گرفتید.`,
       url: '/profile',
     }).catch(() => {});

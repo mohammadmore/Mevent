@@ -33,7 +33,7 @@ export function SiteFooter() {
       </nav>
       <div className="flex items-end justify-between gap-4">
         <p className="leading-relaxed">
-          © {info?.legalName || info?.brandName || 'میونت'}
+          © {info?.legalName || info?.brandName || 'می‌ونت'}
           {info?.phone && <> · تلفن پشتیبانی: <span dir="ltr">{info.phone}</span></>}
         </p>
         {info && <EnamadSeal id={info.enamadId} code={info.enamadCode} />}

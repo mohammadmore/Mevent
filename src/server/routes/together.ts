@@ -84,7 +84,7 @@ export function registerTogetherRoutes(app: Express) {
     const phone = normalizeIranMobile(req.body?.phone);
     if (!phone) return res.status(400).json({ error: 'شماره موبایل معتبر نیست.' });
     if (phone === me.phone) return res.status(400).json({ error: 'این شماره خودته!' });
-    const done = { message: 'اگه این شماره توی میونت حساب داشته باشه، درخواست دوستی براش فرستاده شد.' };
+    const done = { message: 'اگه این شماره توی می‌ونت حساب داشته باشه، درخواست دوستی براش فرستاده شد.' };
     const [target] = await db.select().from(users).where(eq(users.phone, phone));
     if (!target || target.id === me.id || await isBlocked(me.id, target.id)) return res.json(done);
     const existing = await friendshipBetween(me.id, target.id);
@@ -165,7 +165,7 @@ export function registerTogetherRoutes(app: Express) {
         WHERE r.post_id = p.id AND r.status IN ('PENDING', 'ACCEPTED')
           AND ((r.from_user_id = ${me} AND p.user_id = ${other}) OR (r.from_user_id = ${other} AND p.user_id = ${me}))`);
     });
-    res.json({ success: true, message: 'مسدود شد. دیگه همدیگه رو توی میونت نمی‌بینید.' });
+    res.json({ success: true, message: 'مسدود شد. دیگه همدیگه رو توی می‌ونت نمی‌بینید.' });
   }));
 
   app.delete('/api/users/:userId/block', requireAuth, asyncRoute(async (req: AuthRequest, res) => {
@@ -183,7 +183,7 @@ export function registerTogetherRoutes(app: Express) {
     if (!exists) return res.status(404).json({ error: 'کاربر یافت نشد.' });
     await db.insert(reports).values({ reporterId: me, targetType: 'USER', targetId: other, reason, details: text(req.body?.details, 1000) || null })
       .onConflictDoUpdate({ target: [reports.reporterId, reports.targetType, reports.targetId], set: { reason, status: 'OPEN', createdAt: new Date() } });
-    res.json({ success: true, message: 'گزارشت رسید. تیم میونت بررسیش می‌کنه.' });
+    res.json({ success: true, message: 'گزارشت رسید. تیم می‌ونت بررسیش می‌کنه.' });
   }));
 
   // ---------------------------------------------------------------- an event, together

@@ -34,9 +34,9 @@ export default function GamificationPanel() {
 
   const shareInvite = async () => {
     if (!inviteLink) return;
-    const text = 'با این لینک عضو میونت شو و ۵۰ امتیاز هدیه بگیر!';
+    const text = 'با این لینک عضو می‌ونت شو و ۵۰ امتیاز هدیه بگیر!';
     if (navigator.share) {
-      navigator.share({ title: 'دعوت به میونت', text, url: inviteLink }).catch(() => {});
+      navigator.share({ title: 'دعوت به می‌ونت', text, url: inviteLink }).catch(() => {});
     } else {
       await navigator.clipboard.writeText(inviteLink).catch(() => {});
       showToast('لینک دعوت کپی شد. با عضویت هر دوست ۱۰۰ امتیاز می‌گیرید.', 'success');
@@ -90,7 +90,7 @@ export default function GamificationPanel() {
       )}
 
       <div className="glass rounded-3xl p-6 border shadow-sm">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> برترین‌های میونت</h3>
+        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> برترین‌های می‌ونت</h3>
         {leaderboard === null ? (
           <div className="flex justify-center py-10"><div className="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" /></div>
         ) : (
