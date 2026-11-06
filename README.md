@@ -1,6 +1,6 @@
 # Mevent
 
-کشف رویدادها، پاتوق‌ها و برنامه‌ریزی سفر — Express + React (Vite) + PostgreSQL (Drizzle) + ورود پیامکی (کاوه‌نگار / sms.ir) و در صورت نیاز Firebase Auth.
+کشف رویدادها، پاتوق‌ها و برنامه‌ریزی سفر — Express + React (Vite) + PostgreSQL (Drizzle) + ورود پیامکی (کاوه‌نگار / sms.ir). هیچ وابستگی‌ای به Firebase یا سرویس‌های گوگل ندارد؛ همه‌چیز روی هاست خودتان اجرا می‌شود.
 
 ## راه‌اندازی
 
@@ -19,7 +19,8 @@ npm run dev            # http://localhost:3000
 برای هاست‌هایی مثل سی‌پنل که فقط پوشه‌ی آماده را آپلود می‌کنند: `npm run release` پوشه‌ی `release/` را می‌سازد
 (برنامه‌ی build‌شده، یک `package.json` فقط با پکیج‌هایی که سرور هنگام اجرا لازم دارد، قفل نسخه‌ها، و
 `mevent-tables.sql` برای ساخت جدول‌های اولیه با phpPgAdmin). نصب این بسته حدود ۱۱۰ مگابایت است، نه ۴۲۰.
-build را بدون متغیر `VITE_FIREBASE_AUTH_EMULATOR` بگیرید (آن فقط برای تست محلی است).
+فایل شروع برنامه روی هاست `app.js` است (پیش‌فرض سی‌پنل): نسخه‌ی Node را بررسی می‌کند و اگر کمتر از ۲۰٫۱۸
+باشد پیام روشنی در لاگ می‌نویسد. نسخه‌ی پیشنهادی Node.js ۲۲ است.
 
 ## ساختار سرور
 
@@ -30,7 +31,7 @@ build را بدون متغیر `VITE_FIREBASE_AUTH_EMULATOR` بگیرید (آن 
 | `src/server/routes/auth.ts` | ورود با کد پیامکی، اتصال شماره به حساب، خروج از همه دستگاه‌ها |
 | `src/server/session.ts` | نشست‌های سمت سرور (کوکی httpOnly، تمدید خودکار) |
 | `src/lib/sms.ts` | ارسال کد با کاوه‌نگار یا sms.ir |
-| `src/middleware/auth.ts` | احراز هویت (نشست یا توکن Firebase) و سطح دسترسی |
+| `src/middleware/auth.ts` | احراز هویت (نشست سمت سرور) و سطح دسترسی |
 | `src/lib/payments.ts` | درگاه زرین‌پال |
 | `src/lib/sharedStore.ts` | کش و rate limit مشترک بین چند instance (Postgres) |
 | `src/lib/notifications.ts` | اعلان‌های درون‌برنامه، Web Push و یادآوری رویدادها |
@@ -45,7 +46,6 @@ build را بدون متغیر `VITE_FIREBASE_AUTH_EMULATOR` بگیرید (آن 
 
 - `SMS_PROVIDER` و کلید/الگوی همان سرویس، و `OTP_SECRET` — بدون آن‌ها ورود پیامکی در production غیرفعال است.
   متن الگو باید فقط یک توکن (کد) داشته باشد. اگر خط آخر آن `@دامنه-شما #کد` باشد، کروم اندروید کد را خودش پر می‌کند.
-- `AUTH_GOOGLE_ENABLED=false` — اگر سرور به گوگل دسترسی ندارد (میزبانی داخل ایران)، ورود با گوگل را خاموش کنید.
 - `ZARINPAL_MERCHANT_ID` — بدون آن، فروش بلیت پولی در production غیرفعال است.
 - `S3_*` — فضای ذخیره‌سازی فایل (مثلاً ابرآروان). بدون آن عکس‌ها روی دیسک همان سرور می‌مانند.
 - `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` — برای اعلان روی گوشی (یادآوری رویدادها).
@@ -77,7 +77,6 @@ build را بدون متغیر `VITE_FIREBASE_AUTH_EMULATOR` بگیرید (آن 
 | ذخیره عکس | فضای S3 | دیسک همان سرور؛ بعد از وصل شدن، خودکار منتقل می‌شود |
 | کاشی نقشه | سرورهای `MAP_TILE_URLS` و Map.ir | CARTO، سپس OpenStreetMap، در آخر آدرس متنی و لینک نشان/بلد |
 | درگاه پرداخت | زرین‌پال | پیام فوری «درگاه در دسترس نیست» بدون نگه‌داشتن صندلی |
-| ورود با گوگل | Firebase | دکمه گوگل پنهان می‌شود (در سرور یا مرورگری که به گوگل دسترسی ندارد) |
 | اعلان مرورگر | سرویس push مرورگر | فقط اعلان داخل برنامه |
 
 سرور وضعیت هر سرویس را در پس‌زمینه بررسی می‌کند و درخواست کاربر هرگز منتظر سرویسِ قطع نمی‌ماند. وضعیت
@@ -103,7 +102,6 @@ build را بدون متغیر `VITE_FIREBASE_AUTH_EMULATOR` بگیرید (آن 
 
 ```sql
 UPDATE users SET role = 'ADMIN', organizer_status = 'APPROVED' WHERE phone = '+989123456789';
--- یا برای حساب گوگل: WHERE email = 'you@example.com'
 ```
 
 شماره‌ها همیشه به شکل `+989XXXXXXXXX` ذخیره می‌شوند.
@@ -113,12 +111,9 @@ UPDATE users SET role = 'ADMIN', organizer_status = 'APPROVED' WHERE phone = '+9
 بیرون از production، `SMS_PROVIDER` به‌طور پیش‌فرض `console` است: کد در لاگ سرور چاپ می‌شود و
 صفحه ورود هم آن را نشان می‌دهد.
 
-## تست محلی با Firebase Auth Emulator
+## ورود در تست‌های خودکار
 
-```bash
-firebase emulators:start --only auth --project useful-scanner-9j4jh
-FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 VITE_FIREBASE_AUTH_EMULATOR=http://127.0.0.1:9099 npm run dev
-```
-
-با `VITE_FIREBASE_AUTH_EMULATOR` تابع `window.__meventTestSignIn(email, password)` برای تست‌های خودکار در
-دسترس است؛ build عادی آن را ندارد.
+فقط وقتی متغیر `TEST_LOGIN_SECRET` (حداقل ۲۴ نویسه) تنظیم شده باشد، مسیر `POST /api/auth/test-login` با
+`{ "email": "..." }` و سرآیند `X-Test-Login` برابر همان مقدار، یک حساب آزمایشی می‌سازد (یا همان قبلی را
+برمی‌گرداند) و نشست را باز می‌کند؛ پاسخ شامل `token` (مقدار کوکی `mevent_session`) است. روی سایت واقعی
+این متغیر را هرگز تنظیم نکنید؛ بدون آن، این مسیر وجود ندارد.

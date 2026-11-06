@@ -9,9 +9,7 @@ import { registerDependency, httpProbe, isUp, reportFailure, reportSuccess } fro
 //
 //   S3_ENDPOINT + S3_BUCKET + S3_ACCESS_KEY + S3_SECRET_KEY
 //       any S3-compatible object storage (ArvanCloud, MinIO, ...). Recommended in production.
-//   UPLOAD_BUCKET
-//       Google Cloud Storage bucket (older deployments).
-//   neither
+//   otherwise
 //       the local disk (development, or a single server with a persistent volume).
 //
 // Plan B: when the object storage cannot be reached, the file is kept on the local disk and
@@ -76,31 +74,12 @@ function s3Store(): RemoteStore {
   };
 }
 
-async function gcsStore(): Promise<RemoteStore> {
-  const { getStorage } = await import('firebase-admin/storage');
-  await import('./firebase-admin.ts');
-  const bucket = getStorage().bucket(process.env.UPLOAD_BUCKET!);
-  return {
-    async put(name, body, contentType) {
-      await bucket.file(PREFIX + name).save(body, { contentType, resumable: false, metadata: { cacheControl: 'public, max-age=31536000, immutable' } });
-    },
-    async get(name) {
-      const file = bucket.file(PREFIX + name);
-      const [exists] = await file.exists();
-      return exists ? file.createReadStream() : null;
-    },
-    async delete(name) {
-      await bucket.file(PREFIX + name).delete({ ignoreNotFound: true });
-    },
-  };
-}
-
 const hasS3 = Boolean(process.env.S3_ENDPOINT && process.env.S3_BUCKET && process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY);
-export const storageMode: 's3' | 'bucket' | 'local' = hasS3 ? 's3' : process.env.UPLOAD_BUCKET ? 'bucket' : 'local';
+export const storageMode: 's3' | 'local' = hasS3 ? 's3' : 'local';
 
 let remotePromise: Promise<RemoteStore> | null = null;
 function remote() {
-  remotePromise ??= storageMode === 's3' ? Promise.resolve(s3Store()) : gcsStore();
+  remotePromise ??= Promise.resolve(s3Store());
   return remotePromise;
 }
 
@@ -109,10 +88,8 @@ fs.mkdirSync(PRIVATE_DIR, { recursive: true });
 
 if (storageMode === 's3') {
   registerDependency(DEP, 'فضای ذخیره‌سازی فایل (S3)', httpProbe(`${process.env.S3_ENDPOINT!.replace(/\/$/, '')}/${encodeURIComponent(process.env.S3_BUCKET!)}`), { onRecover: () => { setTimeout(() => syncPendingUploads().catch(() => {}), 0); } });
-} else if (storageMode === 'bucket') {
-  registerDependency(DEP, 'فضای ذخیره‌سازی فایل (Google Cloud)', httpProbe('https://storage.googleapis.com/'), { onRecover: () => { setTimeout(() => syncPendingUploads().catch(() => {}), 0); } });
 } else if (process.env.NODE_ENV === 'production') {
-  console.warn('No object storage configured (S3_* or UPLOAD_BUCKET): uploads stay on this server\'s disk.');
+  console.warn('No object storage configured (S3_*): uploads stay on this server\'s disk.');
 }
 
 async function keepLocally(key: string, buffer: Buffer, queue: boolean) {

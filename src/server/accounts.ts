@@ -6,7 +6,7 @@ import { changePoints, levelFor } from '../lib/points.ts';
 import { invalidateCachePattern } from '../lib/sharedStore.ts';
 import { notify } from '../lib/notifications.ts';
 
-// Account creation shared by every sign-in method (phone OTP, Google), including the
+// Account creation shared by every sign-in method (phone OTP, and the test-only login), including the
 // referral reward when the new user arrived through an invite link.
 
 export const INVITER_POINTS = 100;

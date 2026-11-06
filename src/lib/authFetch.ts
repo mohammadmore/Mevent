@@ -1,41 +1,13 @@
 /**
- * Phone-login sessions travel in an httpOnly cookie, which the browser sends with every
- * same-origin request on its own. For Google sign-in, the Firebase ID token is attached to
- * same-origin `/api` requests here, so existing `fetch('/api/...')` calls need no changes. The
- * same wrapper adds the app's base path (see basePath.ts) to app-relative URLs.
+ * Sign-in sessions travel in an httpOnly cookie, which the browser sends with every same-origin
+ * request on its own. This wrapper only adds the app's base path (see basePath.ts) to
+ * app-relative URLs, so no `fetch('/api/...')` call site has to care about it.
  */
 
-import { stripBase, withBase } from './basePath';
-
-type TokenGetter = () => Promise<string | null>;
-let getToken: TokenGetter | null = null;
-
-/** Registered by the auth layer while a Google user is signed in; null otherwise. */
-export function setAuthTokenGetter(getter: TokenGetter | null) {
-  getToken = getter;
-}
+import { withBase } from './basePath';
 
 export function installAuthFetch() {
   const originalFetch = window.fetch.bind(window);
-
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-    // App-relative URLs ("/api/events") get the base path, so no call site has to care about it.
-    if (typeof input === 'string') input = withBase(input);
-    if (input instanceof Request || !getToken) return originalFetch(input, init);
-
-    const url = new URL(String(input), window.location.origin);
-    const isApiCall = url.origin === window.location.origin && stripBase(url.pathname).startsWith('/api/');
-    if (!isApiCall) return originalFetch(input, init);
-
-    const headers = new Headers(init?.headers);
-    if (!headers.has('Authorization')) {
-      try {
-        const token = await getToken();
-        if (token) headers.set('Authorization', `Bearer ${token}`);
-      } catch (err) {
-        console.error('Could not get auth token:', err);
-      }
-    }
-    return originalFetch(input, { ...init, headers });
-  };
+  window.fetch = (input: RequestInfo | URL, init?: RequestInit) =>
+    originalFetch(typeof input === 'string' ? withBase(input) : input, init);
 }

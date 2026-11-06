@@ -52,11 +52,9 @@ async function startServer() {
   installBasePathPrefix(app);
 
   app.use(helmet({
-    // The SPA loads map tiles, remote images and Firebase scripts from many origins.
+    // The SPA loads map tiles and remote images from many origins.
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-    // Google sign-in uses a popup that must be able to talk back to this window.
-    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
     crossOriginResourcePolicy: { policy: 'cross-origin' },
     // The app is embedded in an iframe by AI Studio.
     frameguard: false,
@@ -72,7 +70,7 @@ async function startServer() {
   app.use(express.json({ limit: '1mb' }));
   installBasePathPayloads(app);
 
-  // Uploaded images (local disk in development, Cloud Storage when UPLOAD_BUCKET is set).
+  // Uploaded images (local disk, or S3-compatible storage when S3_* is set).
   app.get('/uploads/:name', asyncRoute(async (req, res) => sendUpload(req.params.name, res)));
   // Nothing else lives under /uploads (private files have their own authorised route).
   app.use('/uploads', (_req, res) => { res.status(404).end(); });

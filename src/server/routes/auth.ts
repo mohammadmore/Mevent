@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { and, desc, eq, gt, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { otpCodes, users } from '../../db/schema.ts';
-import { AuthRequest, requireAuth, googleLoginAvailable, notSignedIn } from '../../middleware/auth.ts';
+import { AuthRequest, requireAuth, notSignedIn } from '../../middleware/auth.ts';
 import { asyncRoute, createRateLimiter } from '../infra.ts';
 import { normalizeIranMobile, maskMobile, toLatinDigits } from '../../lib/phone.ts';
 import { sendVerificationCode, smsProvider, SmsError } from '../../lib/sms.ts';
@@ -82,7 +82,6 @@ export function registerAuthRoutes(app: Express) {
     res.json({
       data: {
         phone: phoneLoginEnabled,
-        google: googleLoginAvailable(),
         codeLength: CODE_LENGTH,
         resendSeconds: RESEND_COOLDOWN_MS / 1000,
       }
@@ -90,7 +89,7 @@ export function registerAuthRoutes(app: Express) {
   });
 
   app.get('/api/auth/me', (req: AuthRequest, res) => {
-    res.json({ data: req.dbUser ? selfView(req.dbUser) : null, via: req.sessionId ? 'session' : req.firebaseUser ? 'google' : null });
+    res.json({ data: req.dbUser ? selfView(req.dbUser) : null, via: req.sessionId ? 'session' : null });
   });
 
   app.post('/api/auth/otp/request', otpRequestLimiter, asyncRoute(async (req: AuthRequest, res) => {
@@ -165,8 +164,8 @@ export function registerAuthRoutes(app: Express) {
     res.json({ data: selfView(user), created });
   }));
 
-  // Attach a verified phone number to the signed-in account (e.g. an existing Google account),
-  // so the user can keep signing in with SMS when Google sign-in is unavailable.
+  // Attach a verified phone number to an account that has none (e.g. one created before phone
+  // login, or by an admin), so its owner can sign in with an SMS code.
   app.post('/api/auth/phone/link', otpVerifyLimiter, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const phone = normalizeIranMobile(req.body?.phone);
     const code = readCode(req.body?.code);
@@ -180,6 +179,33 @@ export function registerAuthRoutes(app: Express) {
     const [user] = await db.update(users).set({ phone }).where(eq(users.id, req.dbUser!.id)).returning();
     res.json({ data: selfView(user), message: 'شماره موبایل به حساب شما متصل شد.' });
   }));
+
+  // Automated tests only: signs in as a throwaway account identified by e-mail, without SMS.
+  // It exists only when TEST_LOGIN_SECRET (24+ characters) is set, and each request must carry
+  // the same value in X-Test-Login. A real deployment never sets it.
+  const testSecret = process.env.TEST_LOGIN_SECRET || '';
+  if (testSecret.length >= 24) {
+    console.warn('TEST_LOGIN_SECRET is set: /api/auth/test-login is enabled. Never set it on a real site.');
+    const expected = crypto.createHash('sha256').update(testSecret).digest();
+    app.post('/api/auth/test-login', asyncRoute(async (req, res) => {
+      const given = crypto.createHash('sha256').update(String(req.headers['x-test-login'] || '')).digest();
+      if (!crypto.timingSafeEqual(given, expected)) return res.status(404).json({ error: 'Not found' });
+      const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+      if (!/^[^@\s]+@[^@\s]+$/.test(email)) return res.status(400).json({ error: 'email required' });
+      let [user] = await db.select().from(users).where(eq(users.email, email));
+      let created = false;
+      if (!user) {
+        const name = typeof req.body?.name === 'string' && req.body.name.trim() ? req.body.name.trim() : email.split('@')[0];
+        ({ user, created } = await createUserWithInvite({ uid: `test:${email}`, email, name }, typeof req.body?.inviteCode === 'string' ? req.body.inviteCode : null));
+      }
+      const token = await createSession(req, res, user.id);
+      res.json({ data: selfView(user), created, token });
+    }));
+    // The signed-in test account, in the shape the old sign-up call answered with.
+    app.post('/api/auth/test-sync', requireAuth, (req: AuthRequest, res) => {
+      res.json({ data: selfView(req.dbUser!), created: false });
+    });
+  }
 
   app.post('/api/auth/logout', asyncRoute(async (req, res) => {
     await destroySession(req, res);

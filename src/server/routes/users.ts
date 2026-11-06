@@ -3,7 +3,7 @@ import { eq, desc, and, inArray } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
 import { users, interactions } from '../../db/schema.ts';
 import { getSavedEvents, getRsvpEvents } from '../../db/events.ts';
-import { AuthRequest, requireAuth, requireAdmin, requireSelfOrAdmin, isAdmin, notSignedIn } from '../../middleware/auth.ts';
+import { AuthRequest, requireAuth, requireAdmin, requireSelfOrAdmin, isAdmin } from '../../middleware/auth.ts';
 import { asyncRoute, limiters } from '../infra.ts';
 import { PUBLIC_USER_FIELDS, toPublicUser, parseJsonArray, formatEvents } from '../helpers.ts';
 import { getFromCache, setToCache, invalidateCachePattern } from '../../lib/sharedStore.ts';
@@ -12,31 +12,6 @@ import { notify } from '../../lib/notifications.ts';
 import { createUserWithInvite, newInviteCode, selfView } from '../accounts.ts';
 
 export function registerUserRoutes(app: Express) {
-  // Creates the DB user on first sign-in and keeps the e-mail in sync. Identity comes from the
-  // verified token; the display name is only set on creation so profile edits are not overwritten.
-  app.post('/api/auth/sync', asyncRoute(async (req: AuthRequest, res) => {
-    const decoded = req.firebaseUser;
-    if (!decoded) return req.googleUnavailable ? notSignedIn(req, res) : res.status(401).json({ error: 'اعتبارسنجی نا‌موفق بود' });
-
-    const existing = req.dbUser;
-    if (existing) {
-      const update: any = {};
-      if (decoded.email && decoded.email !== existing.email) update.email = decoded.email;
-      if (!existing.inviteCode) update.inviteCode = newInviteCode();
-      const user = Object.keys(update).length
-        ? (await db.update(users).set(update).where(eq(users.id, existing.id)).returning())[0]
-        : existing;
-      return res.json({ data: selfView(user), created: false });
-    }
-
-    const { user, created } = await createUserWithInvite({
-      uid: decoded.uid,
-      email: decoded.email || null,
-      name: (decoded.name || req.body?.name || 'بدون نام').toString(),
-    }, typeof req.body?.inviteCode === 'string' ? req.body.inviteCode : null);
-    res.json({ data: selfView(user), created });
-  }));
-
   app.get('/api/users/leaderboard', asyncRoute(async (req, res) => {
     const cached = await getFromCache('leaderboard');
     if (cached) return res.json({ data: cached });

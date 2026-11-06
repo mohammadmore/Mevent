@@ -48,6 +48,7 @@ export async function createSession(req: Request, res: Response, userId: number)
     expiresAt,
   });
   res.cookie(SESSION_COOKIE, token, cookieOptions(req, SESSION_DAYS * 86400_000));
+  return token;
 }
 
 /** Returns the user for a valid session cookie (and extends it when due), or null. */

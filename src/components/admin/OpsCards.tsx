@@ -44,7 +44,7 @@ export function BackupsCard() {
     setBusy(false);
     load();
   };
-  // Fetched with the admin's credentials (a plain link would not carry a Google sign-in token).
+  // Fetched through the API client so errors are shown as messages instead of a raw page.
   const download = async (b: any) => {
     try {
       const res = await fetch(`/api/admin/backups/${b.id}/download`);

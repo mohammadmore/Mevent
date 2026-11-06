@@ -42,9 +42,22 @@ fs.writeFileSync(path.join(out, 'package.json'), JSON.stringify({
   name: main.name === 'react-example' ? 'mevent' : main.name,
   version: main.version,
   private: true,
-  scripts: { start: 'node dist/server.cjs' },
+  scripts: { start: 'node app.js' },
+  engines: { node: '>=20.18.1' },
   dependencies,
 }, null, 2) + '\n');
+// The startup file for the host ("Application startup file: app.js", cPanel's default). Written in
+// old-style JavaScript so that even a very old Node.js can run it and explain what is wrong,
+// instead of failing on the modern syntax of dist/server.cjs with a confusing error.
+fs.writeFileSync(path.join(out, 'app.js'), `// Mevent startup file. Needs Node.js 20.18 or newer (22 recommended).
+var v = process.versions.node.split('.').map(Number);
+if (v[0] < 20 || (v[0] === 20 && v[1] < 18)) {
+  console.error('Mevent needs Node.js 22 (at least 20.18), but this app runs on Node.js ' + process.version + '.');
+  console.error('cPanel > Setup Node.js App > Edit > "Node.js version": choose 22, Save, then Run NPM Install and Restart.');
+  process.exit(1);
+}
+require('./dist/server.cjs');
+`);
 // The initial database tables, as a plain SQL file to import with phpPgAdmin (no command line needed).
 // The export tool prints a few notices on the same output; only SQL lines are kept.
 const exported = execSync('npx drizzle-kit export --config src/db/drizzle.config.ts --sql', {

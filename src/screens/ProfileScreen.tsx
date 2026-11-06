@@ -48,7 +48,7 @@ export function ProfileScreen() {
     } catch { /* toast shown */ }
   };
 
-  // Attach a mobile number (Google accounts), so the user can sign in by SMS later.
+  // Attach a mobile number to an account without one, so the user can sign in by SMS.
   const linkPhone = async () => {
     const raw = await promptDialog({ title: 'اتصال شماره موبایل', message: 'با این شماره می‌توانید همیشه با پیامک وارد حسابتان شوید.', placeholder: '09123456789', confirmText: 'ارسال کد' });
     if (!raw) return;
@@ -178,7 +178,7 @@ export function ProfileScreen() {
           {!profile.phone && (
             <button onClick={linkPhone} className="w-full flex items-center gap-3 p-4 rounded-xl border border-teal-600/30 bg-teal-600/5 hover:border-teal-600/60 text-right">
               <Smartphone className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
-              <span><span className="block font-bold text-gray-900 dark:text-gray-100">اتصال شماره موبایل</span><span className="text-xs text-gray-500">ورود با پیامک، حتی وقتی ورود با گوگل در دسترس نباشد</span></span>
+              <span><span className="block font-bold text-gray-900 dark:text-gray-100">اتصال شماره موبایل</span><span className="text-xs text-gray-500">برای ورود با پیامک به این حساب</span></span>
             </button>
           )}
           {profile.phone && (

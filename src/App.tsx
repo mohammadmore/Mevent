@@ -81,8 +81,7 @@ function useOnline() {
 }
 
 function LoginScreen() {
-  const { login, isLoggingIn, loginBlockedReason, config, prepareGoogle } = useAuth();
-  useEffect(() => { prepareGoogle(); }, [prepareGoogle]);
+  const { config } = useAuth();
   return (
     <div className="flex flex-col items-center justify-center min-h-full text-center space-y-5 py-6">
       <div className="w-20 h-20 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-3xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00] rotate-12">
@@ -95,26 +94,7 @@ function LoginScreen() {
 
       {config?.phone !== false && <PhoneLogin />}
 
-      {config?.google && (
-        <div className="w-full max-w-sm mx-auto space-y-3">
-          {config?.phone !== false && (
-            <div className="flex items-center gap-3 text-xs text-gray-400"><span className="flex-1 h-px bg-gray-200 dark:bg-white/10" /> یا <span className="flex-1 h-px bg-gray-200 dark:bg-white/10" /></div>
-          )}
-          {loginBlockedReason ? (
-            <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">{loginBlockedReason}</p>
-          ) : (
-            <button
-              onClick={login}
-              disabled={isLoggingIn}
-              className="w-full bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 shadow-sm disabled:opacity-50 text-sm"
-            >
-              {isLoggingIn ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-600" /> : 'ورود با حساب گوگل'}
-            </button>
-          )}
-        </div>
-      )}
-
-      {config && !config.phone && !config.google && (
+      {config && !config.phone && (
         <p className="text-sm text-red-600">ورود به حساب موقتاً در دسترس نیست.</p>
       )}
       <p className="text-xs text-gray-500 max-w-sm leading-relaxed">

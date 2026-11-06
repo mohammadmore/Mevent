@@ -3,7 +3,7 @@ import { integer, pgTable, serial, text, timestamp, doublePrecision, jsonb, bool
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  uid: text('uid').notNull().unique(), // Firebase Auth UID
+  uid: text('uid').notNull().unique(), // stable account key: "phone:+98..." (older rows may hold another provider's id)
   name: text('name').notNull(),
   city: text('city').notNull().default('تهران'),
   email: text('email'),
