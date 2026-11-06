@@ -173,7 +173,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {!q && <DiscoveryHeader city={city === 'all' ? undefined : city} onFlowSelect={onOpenFlow} onVibeSelect={onOpenVibe} onChainSelect={onOpenChain} />}
 
       {!q && (
-        <div className="bg-gradient-to-br from-[#3B4FD8]/90 via-[#5B21B6]/88 to-[#9D2BC9]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="bg-gradient-to-br from-[#3B4FD8]/90 via-[#7A24BE]/88 to-[#B01C82]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-[#d9ff00]/20 flex items-center justify-center shrink-0"><Plane className="w-5 h-5" /></div>
             <div>

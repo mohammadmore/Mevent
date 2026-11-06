@@ -205,18 +205,18 @@
   .glass, .glass-soft { background-color: var(--glass-strong-bg); }
 }
 
-/* Light theme: primary buttons and badges are a deep violet gradient with a touch of blue at one
-   end and magenta at the other, drifting very slowly. White text stays above 5:1 on every stop.
+/* Light theme: primary buttons and badges run from blue into a red-leaning purple (plum/magenta),
+   so the two ends contrast, drifting very slowly. White text stays above 5:1 on every stop.
    The dark theme keeps its own accent. */
 html:not(.dark) .bg-teal-600,
 html:not(.dark) .bg-teal-500,
 html:not(.dark) .btn-gradient {
-  background-image: linear-gradient(120deg, #3B4FD8 0%, #5B21B6 30%, #7C3AED 55%, #9D2BC9 80%, #5B21B6 100%);
+  background-image: linear-gradient(120deg, #3B4FD8 0%, #6A2BC9 28%, #9420B0 55%, #B01C82 80%, #9420B0 100%);
   background-size: 220% 100%;
   animation: btn-flow 9s ease-in-out infinite alternate;
 }
 html:not(.dark) .hover\:bg-teal-700:hover {
-  background-image: linear-gradient(120deg, #3341C2 0%, #4C1D95 30%, #6D28D9 55%, #86198F 80%, #4C1D95 100%);
+  background-image: linear-gradient(120deg, #3341C2 0%, #5B21B6 28%, #7E1A99 55%, #96186F 80%, #7E1A99 100%);
 }
 @keyframes btn-flow {
   from { background-position: 0% 50%; }
