@@ -154,7 +154,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           >
             <X className="w-5 h-5" />
           </button>
-          <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">
+          <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">
             {createMode === 'PLACE' ? 'افزودن پاتوق جدید' : createMode === 'CHAIN' ? 'ساخت زنجیره جدید' : 'ایجاد رویداد جدید'}
           </h3>
           {createMode === 'EVENT' && <EventForm onSuccess={() => { setCreateMode(null); fetchEvents(); }} />}
@@ -171,7 +171,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           >
             <X className="w-5 h-5" />
           </button>
-          <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش رویداد: {editingEvent.title}</h3>
+          <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش رویداد: {editingEvent.title}</h3>
           <EventForm 
             initialData={editingEvent} 
             onSuccess={() => {

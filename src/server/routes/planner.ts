@@ -9,6 +9,7 @@ import { formatEvents } from '../helpers.ts';
 import { getFromCache, setToCache } from '../../lib/sharedStore.ts';
 import { addDays, startOfTehranDay } from '../../lib/time.ts';
 import { parseQuery } from '../queryParser.ts';
+import { captureError } from '../../lib/monitoring.ts';
 
 // Trip planner and quick search. Both run entirely on our own data: no AI service, no prose —
 // the answer is the list of matching events.
@@ -43,13 +44,22 @@ export function registerPlannerRoutes(app: Express) {
     if (lastDay.getTime() - from.getTime() > MAX_TRIP_DAYS * 86400_000) return res.status(400).json({ error: `بازه سفر حداکثر ${MAX_TRIP_DAYS} روز است.` });
     const to = startOfTehranDay(addDays(lastDay, 1.5));
 
-    const { items } = await queryEvents({ city, from, to, limit: 200, offset: 0 });
+    // A failure here should not break the page: the visitor sees an empty trip ("nothing for now")
+    // and the error is recorded for the admin (System and monitoring > errors).
+    let found: any[] = [];
+    try {
+      const { items } = await queryEvents({ city, from, to, limit: 200, offset: 0 });
+      found = await formatEvents(items);
+    } catch (err) {
+      captureError(err, { source: 'server', path: req.path }).catch(() => {});
+      console.error('trip planner failed:', err);
+    }
     res.json({
       data: {
         city,
         startDate: from.toISOString(),
         endDate: lastDay.toISOString(),
-        events: await formatEvents(items),
+        events: found,
       },
     });
   }));

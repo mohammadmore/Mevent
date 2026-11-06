@@ -89,7 +89,7 @@ export function registerSocialRoutes(app: Express) {
 
   app.post('/api/hubs', limiters.contentWrite, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
-    if (!name) return res.status(400).json({ error: 'نام جامعه الزامی است' });
+    if (!name) return res.status(400).json({ error: 'نام اکیپ الزامی است' });
     const hub = await db.transaction(async (tx) => {
       const [created] = await tx.insert(hubs).values({
         name: name.slice(0, 200),
@@ -104,13 +104,13 @@ export function registerSocialRoutes(app: Express) {
       await tx.insert(hubMembers).values({ hubId: created.id, userId: req.dbUser!.id });
       return created;
     });
-    res.status(201).json({ data: { ...hub, isMember: true, isOwner: true }, message: 'جامعه با موفقیت ایجاد شد.' });
+    res.status(201).json({ data: { ...hub, isMember: true, isOwner: true }, message: 'اکیپ با موفقیت ایجاد شد.' });
   }));
 
   app.post('/api/hubs/:id/join', limiters.social, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const hubId = parseInt(req.params.id, 10);
     const [hub] = await db.select().from(hubs).where(eq(hubs.id, hubId));
-    if (!hub) return res.status(404).json({ error: 'جامعه یافت نشد' });
+    if (!hub) return res.status(404).json({ error: 'اکیپ یافت نشد' });
     await db.insert(hubMembers).values({ hubId, userId: req.dbUser!.id }).onConflictDoNothing();
     const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(hubMembers).where(eq(hubMembers.hubId, hubId));
     await db.update(hubs).set({ followersCount: Number(count) }).where(eq(hubs.id, hubId));
@@ -120,8 +120,8 @@ export function registerSocialRoutes(app: Express) {
   app.delete('/api/hubs/:id/join', limiters.social, requireAuth, asyncRoute(async (req: AuthRequest, res) => {
     const hubId = parseInt(req.params.id, 10);
     const [hub] = await db.select().from(hubs).where(eq(hubs.id, hubId));
-    if (!hub) return res.status(404).json({ error: 'جامعه یافت نشد' });
-    if (hub.ownerId === req.dbUser!.id) return res.status(400).json({ error: 'سازنده جامعه نمی‌تواند آن را ترک کند.' });
+    if (!hub) return res.status(404).json({ error: 'اکیپ یافت نشد' });
+    if (hub.ownerId === req.dbUser!.id) return res.status(400).json({ error: 'سازنده اکیپ نمی‌تواند آن را ترک کند.' });
     await db.delete(hubMembers).where(and(eq(hubMembers.hubId, hubId), eq(hubMembers.userId, req.dbUser!.id)));
     const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(hubMembers).where(eq(hubMembers.hubId, hubId));
     await db.update(hubs).set({ followersCount: Number(count) }).where(eq(hubs.id, hubId));

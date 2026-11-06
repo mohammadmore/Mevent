@@ -180,7 +180,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
       <div className="glass-strong rounded-2xl w-full max-w-sm overflow-hidden flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-white/10">
           <div>
-            <h3 className="font-bold text-[#515739] dark:text-gray-100">ورود شرکت‌کنندگان</h3>
+            <h3 className="font-bold text-[#4C1D95] dark:text-gray-100">ورود شرکت‌کنندگان</h3>
             <p className="text-xs text-gray-500 truncate max-w-[220px]">{eventTitle}</p>
           </div>
           <button onClick={onClose} aria-label="بستن" className="text-gray-400 hover:text-gray-700"><X className="w-5 h-5" /></button>

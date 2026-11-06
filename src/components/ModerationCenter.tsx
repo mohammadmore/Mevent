@@ -9,7 +9,7 @@ import { KycReview } from './admin/KycReview';
 // Everything an admin has to act on: organizer applications, content waiting for review,
 // user reports and refund requests.
 
-const TYPE_LABEL: Record<string, string> = { PLACE: 'پاتوق', VIBE: 'حال و هوا', FLOW: 'جریان', CHAIN: 'زنجیره', EVENT: 'رویداد', HUB: 'جامعه', USER: 'کاربر' };
+const TYPE_LABEL: Record<string, string> = { PLACE: 'پاتوق', VIBE: 'حال و هوا', FLOW: 'جریان', CHAIN: 'زنجیره', EVENT: 'رویداد', HUB: 'اکیپ', USER: 'کاربر' };
 const TARGET_PATH: Record<string, string> = { EVENT: '/events/', PLACE: '/places/', VIBE: '/vibes/', FLOW: '/flows/', CHAIN: '/chains/', HUB: '/hubs/' };
 
 function Section({ icon, title, count, children }: { icon: React.ReactNode; title: string; count: number; children: React.ReactNode }) {

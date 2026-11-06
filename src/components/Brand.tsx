@@ -4,7 +4,7 @@ export default function Brand({ size = 'md' }: { size?: 'md' | 'lg' }) {
   const en = size === 'lg' ? 'text-base' : 'text-xs';
   return (
     <span className="inline-flex items-baseline gap-2 leading-none">
-      <span className={`${fa} font-bold text-[#515739] dark:text-gray-100`}>می‌ونت</span>
+      <span className={`${fa} font-bold text-[#4C1D95] dark:text-gray-100`}>می‌ونت</span>
       <span dir="ltr" lang="en" className={`${en} font-semibold tracking-[0.18em] uppercase text-gray-500 dark:text-gray-400`}>Mevent</span>
     </span>
   );

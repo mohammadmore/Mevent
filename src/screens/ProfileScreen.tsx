@@ -99,7 +99,7 @@ export function ProfileScreen() {
       <div className="flex flex-col items-center gap-4 py-6 border-b border-gray-200 dark:border-white/10">
         <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#d9ff00] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100">{profile.name}</h2>
+          <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100">{profile.name}</h2>
           {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]">{profile.role === 'ADMIN' ? 'مدیر می‌ونت' : 'برگزارکننده'}</span>}
           <p className="text-gray-600 dark:text-gray-400">
             {[profile.phone ? <bdi key="p" dir="ltr">{maskMobile(profile.phone)}</bdi> : null, profile.email ? <bdi key="e" dir="ltr">{profile.email}</bdi> : null, profile.city]
@@ -154,7 +154,7 @@ export function ProfileScreen() {
       {profile.role === 'USER' && (
         <div className="bg-teal-600/10 dark:bg-[#d9ff00]/10 border border-teal-600/20 dark:border-[#d9ff00]/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-[#515739] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> خودت برنامه برگزار می‌کنی؟</h3>
+            <h3 className="text-lg font-bold text-[#4C1D95] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> خودت برنامه برگزار می‌کنی؟</h3>
             {profile.organizerStatus === 'PENDING' ? (
               <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1"><Clock className="w-4 h-4" /> درخواست شما در حال بررسی است. نتیجه از طریق اعلان‌ها اطلاع داده می‌شود.</p>
             ) : profile.organizerStatus === 'REJECTED' ? (
@@ -172,7 +172,7 @@ export function ProfileScreen() {
       )}
 
       <div className="glass border rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>
+        <h3 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">برای پیشنهادهای بهتر از علایق و رویدادهایی که دیده‌اید استفاده می‌کنیم. هر زمان بخواهید می‌توانید آن‌ها را تغییر دهید یا پاک کنید.</p>
         <div className="space-y-3">
           {!profile.phone && (

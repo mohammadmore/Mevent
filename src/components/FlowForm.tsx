@@ -47,7 +47,7 @@ export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100 mb-6 flex items-center gap-2">
+      <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100 mb-6 flex items-center gap-2">
         <Sparkles className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" />
         {initialData ? 'ویرایش جریان' : 'ایجاد جریان جدید'}
       </h2>

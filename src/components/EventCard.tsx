@@ -50,7 +50,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
           <div className="flex gap-3 min-w-0">
             <GeneratedAvatar seed={event.organizerId || event.title} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 glass-soft" />
             <div className="min-w-0">
-              <h3 className="font-bold text-lg mb-1 transition-colors text-[#515739] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</h3>
+              <h3 className="font-bold text-lg mb-1 transition-colors text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</h3>
               {event.organizer?.name && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{event.organizer.name}</p>}
               {event.description && <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400 line-clamp-3">{event.description}</p>}
             </div>
@@ -104,7 +104,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
             aria-pressed={saved}
             className={`flex items-center gap-2 border px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm ${
  saved
- ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] dark:bg-none dark:bg-[#18181b] text-white dark:text-gray-300 border-transparent dark:border-white/10'
+ ? 'btn-gradient dark:bg-[#18181b] text-white dark:text-gray-300 border-transparent dark:border-white/10'
  : 'glass text-violet-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1f1f23]'
  }`}
           >

@@ -9,7 +9,7 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuic
   const navItems = [
     { id: 'discover', icon: <Compass className="w-6 h-6" />, label: 'کشف' },
     { id: 'friends', icon: <Users className="w-6 h-6" />, label: 'دوستان' },
-    { id: 'hubs', icon: <Tent className="w-6 h-6" />, label: 'جوامع' },
+    { id: 'hubs', icon: <Tent className="w-6 h-6" />, label: 'اکیپ‌ها' },
     { id: 'profile', icon: <User className="w-6 h-6" />, label: 'پروفایل' },
   ];
   // Organizers get "create" in the middle.

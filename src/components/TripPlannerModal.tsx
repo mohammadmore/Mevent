@@ -239,7 +239,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                 {plan.events.length === 0 ? (
                   <div className="py-10 text-center space-y-2 text-gray-500 dark:text-gray-400">
                     <CalendarX className="w-10 h-10 mx-auto opacity-60" />
-                    <p className="font-bold text-gray-700 dark:text-gray-300">در این روزها رویدادی در {plan.city} ثبت نشده است.</p>
+                    <p className="font-bold text-gray-700 dark:text-gray-300">فعلاً رویدادی در {plan.city} برای این روزها موجود نیست.</p>
                     <p className="text-sm">تاریخ یا شهر دیگری را امتحان کنید.</p>
                   </div>
                 ) : (

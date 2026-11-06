@@ -300,7 +300,7 @@ export default function AdminPanel() {
 
   if (loading && !stats) {
     return (
-      <div className="flex items-center justify-center p-12 text-[#515739] dark:text-[#d9ff00]">
+      <div className="flex items-center justify-center p-12 text-[#4C1D95] dark:text-[#d9ff00]">
         <Activity className="w-8 h-8 animate-spin" />
       </div>
     );
@@ -687,7 +687,7 @@ export default function AdminPanel() {
         ) : activeTab === 'settings' ? (
           <div className="glass border border-gray-300 dark:border-white/20 rounded-xl p-6 shadow-sm space-y-6 text-right" dir="rtl">
             <div>
-              <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-2 flex items-center gap-2">
+              <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-2 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                 تنظیمات کلی
               </h3>
@@ -700,7 +700,7 @@ export default function AdminPanel() {
               <div className="pt-6 border-t border-gray-200 dark:border-white/10 mt-6">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">فیلدهای عمومی رویداد</h3>
+                    <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1">فیلدهای عمومی رویداد</h3>
                     <p className="text-xs text-gray-500">فیلدهای پایه فرم ثبت رویداد را تغییر نام داده یا غیرفعال کنید.</p>
                   </div>
                 </div>
@@ -771,7 +771,7 @@ export default function AdminPanel() {
               <div className="pt-6 border-t border-gray-200 dark:border-white/10 mt-6">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">فیلدهای تخصصی رویداد (ثبت‌نام تکمیلی)</h3>
+                    <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1">فیلدهای تخصصی رویداد (ثبت‌نام تکمیلی)</h3>
                     <p className="text-xs text-gray-500">تمامی آیتم‌های فرم را از اینجا مدیریت کنید. می‌توانید نام فیلد، عنوان و گزینه‌ها را تغییر دهید.</p>
                   </div>
                 </div>
@@ -876,7 +876,7 @@ export default function AdminPanel() {
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش رویداد: {editingEvent.title}</h3>
+                <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش رویداد: {editingEvent.title}</h3>
                 <EventForm
                   isAdmin={true}
                   initialData={editingEvent}
@@ -938,7 +938,7 @@ export default function AdminPanel() {
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش پاتوق: {editingPlace.name}</h3>
+                <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش پاتوق: {editingPlace.name}</h3>
                 <PlaceForm
                   isAdmin={true}
                   initialData={editingPlace}
@@ -974,7 +974,7 @@ export default function AdminPanel() {
                 <button onClick={() => setEditingChain(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش فستیوال: {editingChain.name}</h3>
+                <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش فستیوال: {editingChain.name}</h3>
                 <ChainForm isAdmin={true} initialData={editingChain} onSuccess={() => { setEditingChain(null); fetchData(); }} />
               </div>
             ) : (
@@ -1002,7 +1002,7 @@ export default function AdminPanel() {
                 <button onClick={() => setEditingVibe(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش حال و هوا: {editingVibe.title}</h3>
+                <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش حال و هوا: {editingVibe.title}</h3>
                 <VibeForm isAdmin={true} initialData={editingVibe} onSuccess={() => { setEditingVibe(null); fetchData(); }} />
               </div>
             ) : (
@@ -1031,7 +1031,7 @@ export default function AdminPanel() {
                 <button onClick={() => setEditingFlow(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش جریان: {editingFlow.title}</h3>
+                <h3 className="font-bold text-lg mb-4 text-[#4C1D95] dark:text-gray-100">ویرایش جریان: {editingFlow.title}</h3>
                 <FlowForm isAdmin={true} initialData={editingFlow} onSuccess={() => { setEditingFlow(null); fetchData(); }} />
               </div>
             ) : (

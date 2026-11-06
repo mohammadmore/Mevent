@@ -173,7 +173,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {!q && <DiscoveryHeader city={city === 'all' ? undefined : city} onFlowSelect={onOpenFlow} onVibeSelect={onOpenVibe} onChainSelect={onOpenChain} />}
 
       {!q && (
-        <div className="bg-gradient-to-br from-[#2563EB]/90 via-[#4F46E5]/85 to-[#7C3AED]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="bg-gradient-to-br from-[#3B4FD8]/90 via-[#5B21B6]/88 to-[#9D2BC9]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-[#d9ff00]/20 flex items-center justify-center shrink-0"><Plane className="w-5 h-5" /></div>
             <div>
@@ -197,7 +197,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           </div>
         )}
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2">
             {q ? `نتایج «${q}»` : 'همه برنامه‌ها'}
             <button onClick={() => load(0)} aria-label="بروزرسانی" className={`p-2.5 -m-1 rounded-full text-gray-600 dark:text-gray-400 ${loading ? 'animate-spin' : ''}`}>
               <RefreshCw className="w-4 h-4" />
@@ -312,7 +312,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {!loading && !error && events.length === 0 && (type === 'places' ? places.length === 0 : true) && (
         <div className="py-16 flex flex-col items-center justify-center text-center">
           <Search className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-          <h3 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-1">{q ? 'نتیجه‌ای یافت نشد' : 'رویدادی یافت نشد'}</h3>
+          <h3 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-1">{q ? 'نتیجه‌ای یافت نشد' : 'رویدادی یافت نشد'}</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             {userLocation ? `در شعاع ${pNum(radius)} کیلومتری شما رویدادی نیست.` : city !== 'all' ? `با این فیلترها رویدادی در ${city} پیدا نکردیم.` : 'با این فیلترها نتیجه‌ای پیدا نکردیم.'}
           </p>

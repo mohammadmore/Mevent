@@ -90,7 +90,7 @@ export function CheckoutModal() {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[210] flex flex-col justify-end md:items-center md:justify-center" onClick={closeCheckout} role="dialog" aria-modal="true" dir="rtl">
       <div className="glass-strong w-full md:w-[420px] rounded-t-3xl md:rounded-3xl p-6 animate-in slide-in-from-bottom-10 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-[#515739] dark:text-gray-100">خرید بلیت</h3>
+          <h3 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100">خرید بلیت</h3>
           <button onClick={closeCheckout} aria-label="بستن" className="w-8 h-8 bg-teal-50 dark:bg-white/5 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
             <X className="w-5 h-5" />
           </button>

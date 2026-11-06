@@ -377,7 +377,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             {event.city}
           </div>
         )}
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#515739] dark:text-gray-100 mb-3 leading-tight">{event.title}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#4C1D95] dark:text-gray-100 mb-3 leading-tight">{event.title}</h1>
         <VibeChips vibes={event.vibes} max={4} className="mb-6" />
         {isCancelled && (
           <div role="status" className="mb-6 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 p-4 text-sm text-red-800 dark:text-red-300">
@@ -397,7 +397,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">تاریخ و زمان</h3>
+              <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1">تاریخ و زمان</h3>
               {event.startTime ? <><p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{formatDetailDate(event.startTime).datePart}</p><p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ساعت {formatDetailDate(event.startTime).timePart}</p></> : <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{fuzzyTimeLabel(event.fuzzyTime) || 'زمان نامشخص'}</p>}
             </div>
           </div>}
@@ -406,7 +406,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               <MapPin className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">{getFieldLabel('address', 'مکان برگزاری')}</h3>
+              <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1">{getFieldLabel('address', 'مکان برگزاری')}</h3>
               <div className="flex items-start gap-2">
                 <p dir="auto" className="text-sm text-gray-700 dark:text-gray-300 font-medium leading-relaxed mt-0.5">{event.location?.address || (event as any).address || 'مکان نامشخص'}</p>
                 {((event.location?.lat && event.location?.lng) || ((event as any).lat && (event as any).lng)) && (
@@ -427,14 +427,14 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-1">{getFieldLabel('cost', 'هزینه شرکت')}</h3>
+              <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1">{getFieldLabel('cost', 'هزینه شرکت')}</h3>
               <div className="text-sm text-gray-700 dark:text-gray-300 font-medium"><PriceWidget cost={event.cost} /></div>
             </div>
           </div>}
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-3">درباره رویداد</h2>
+          <h2 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-3">درباره رویداد</h2>
           <div className="prose prose-sm text-gray-700 dark:text-gray-300 leading-loose">
             
             <div className="flex gap-4 mt-6">
@@ -538,7 +538,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
 
         {event.advancedDetails && (event.advancedDetails as any).cinemas && (event.advancedDetails as any).cinemas.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2">
               <Ticket className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
               سینماها و سانس‌های اکران
             </h2>
@@ -588,7 +588,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           return false;
         }).length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4">توضیحات تخصصی رویداد</h2>
+            <h2 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4">توضیحات تخصصی رویداد</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {Object.entries(event.advancedDetails).filter(([_, v]) => {
                 if (!v) return false;
@@ -630,7 +630,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         {/* Gallery Section */}
         {event.galleryUrls && event.galleryUrls.length > 0 && (
           <div className="mt-8 mb-4">
-            <h2 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4">گالری تصاویر رویداد</h2>
+            <h2 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4">گالری تصاویر رویداد</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {event.galleryUrls.map((url, i) => (
                 <div key={i} onClick={() => { setActiveModalImage(url); setIsImageModalOpen(true); }} className="rounded-xl overflow-hidden aspect-[4/3] bg-teal-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 relative group cursor-pointer">
@@ -679,7 +679,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10">
-              <h3 className="font-bold text-[#515739] dark:text-gray-100">مکان روی نقشه</h3>
+              <h3 className="font-bold text-[#4C1D95] dark:text-gray-100">مکان روی نقشه</h3>
               <button 
                 onClick={() => setIsMapModalOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors"

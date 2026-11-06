@@ -63,7 +63,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     setBusy(true);
     try {
       const res = await api<{ data: Hub }>('/api/hubs', { body: { name, description, type, imageUrl } });
-      showToast('جامعه ساخته شد.', 'success');
+      showToast('اکیپ ساخته شد.', 'success');
       setCreating(false);
       setName(''); setDescription(''); setImageUrl('');
       await fetchHubs();
@@ -79,7 +79,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     try {
       const res = await api<{ isMember: boolean; followersCount: number }>(`/api/hubs/${hub.id}/join`, { method: hub.isMember ? 'DELETE' : 'POST' });
       setHubs(prev => (prev || []).map(h => h.id === hub.id ? { ...h, isMember: res.isMember, followersCount: res.followersCount } : h));
-      showToast(res.isMember ? `به جامعه «${hub.name}» پیوستید.` : `از جامعه «${hub.name}» خارج شدید.`, 'success');
+      showToast(res.isMember ? `به اکیپ «${hub.name}» پیوستید.` : `از اکیپ «${hub.name}» خارج شدید.`, 'success');
     } catch { /* toast shown */ } finally {
       setBusy(false);
     }
@@ -88,12 +88,12 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
   const shareHub = (hub: Hub) => {
     const url = absoluteUrl(`/hubs/${hub.id}`);
     if (navigator.share) navigator.share({ title: hub.name, url }).catch(() => {});
-    else navigator.clipboard?.writeText(url).then(() => showToast('لینک جامعه کپی شد.', 'success'));
+    else navigator.clipboard?.writeText(url).then(() => showToast('لینک اکیپ کپی شد.', 'success'));
   };
 
   const reportHub = async (hub: Hub) => {
     if (!requireLogin()) return;
-    const reason = await promptDialog({ title: 'گزارش تخلف جامعه', message: 'دلیل گزارش را انتخاب یا وارد کنید.', choices: REPORT_REASONS, confirmText: 'ارسال گزارش' });
+    const reason = await promptDialog({ title: 'گزارش تخلف اکیپ', message: 'دلیل گزارش را انتخاب یا وارد کنید.', choices: REPORT_REASONS, confirmText: 'ارسال گزارش' });
     if (!reason) return;
     api<any>('/api/reports', { body: { targetType: 'HUB', targetId: hub.id, reason } }).then(r => showToast(r.message, 'success')).catch(() => {});
   };
@@ -110,21 +110,21 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
         <div className="flex items-center gap-3 mb-8">
           <div className="w-12 h-12 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00]"><PlusCircle className="w-6 h-6" /></div>
           <div>
-            <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100">ایجاد جامعه جدید</h2>
-            <p className="text-sm text-gray-500 mt-1">جامعه خود را بسازید و افراد هم‌فکر را دور هم جمع کنید.</p>
+            <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100">ایجاد اکیپ جدید</h2>
+            <p className="text-sm text-gray-500 mt-1">اکیپ خود را بسازید و افراد هم‌فکر را دور هم جمع کنید.</p>
           </div>
         </div>
         <form onSubmit={handleCreateHub} className="space-y-6">
           <label className="block">
-            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نام جامعه</span>
+            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نام اکیپ</span>
             <input required type="text" value={name} onChange={(e) => setName(e.target.value)} className={input} placeholder="مثلا: علاقه‌مندان به هوش مصنوعی" />
           </label>
           <label className="block">
             <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">توضیحات</span>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${input} min-h-[120px]`} placeholder="درباره جامعه خود توضیح دهید..." />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${input} min-h-[120px]`} placeholder="درباره اکیپ خود توضیح دهید..." />
           </label>
           <div>
-            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">تصویر جامعه (اختیاری)</span>
+            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">تصویر اکیپ (اختیاری)</span>
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 glass-soft rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-300 dark:border-white/20">
                 {imageUrl ? <img src={imageUrl} alt="" className="w-full h-full object-cover" /> : <Users className="w-8 h-8 text-gray-500" />}
@@ -136,7 +136,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
             </div>
           </div>
           <div>
-            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نوع جامعه</span>
+            <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نوع اکیپ</span>
             <div className="grid grid-cols-2 gap-4">
               {['عمومی', 'خصوصی'].map(t => (
                 <button type="button" key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`p-4 rounded-xl border text-sm font-medium ${type === t ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]' : 'border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300'}`}>{t}</button>
@@ -144,7 +144,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
             </div>
           </div>
           <button type="submit" disabled={busy || isUploading} className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3.5 rounded-xl disabled:opacity-50">
-            {busy ? 'در حال ایجاد...' : 'ایجاد جامعه'}
+            {busy ? 'در حال ایجاد...' : 'ایجاد اکیپ'}
           </button>
         </form>
       </div>
@@ -156,8 +156,8 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     if (!selectedHub) {
       return (
         <div className={`${panel} text-center py-16`}>
-          <p className="font-bold text-gray-800 dark:text-gray-100 mb-3">این جامعه پیدا نشد.</p>
-          <button onClick={onBack} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00]">بازگشت به جوامع</button>
+          <p className="font-bold text-gray-800 dark:text-gray-100 mb-3">این اکیپ پیدا نشد.</p>
+          <button onClick={onBack} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00]">بازگشت به اکیپ‌ها</button>
         </div>
       );
     }
@@ -172,7 +172,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h2 className="text-3xl font-bold text-[#515739] dark:text-gray-100">{selectedHub.name}</h2>
+              <h2 className="text-3xl font-bold text-[#4C1D95] dark:text-gray-100">{selectedHub.name}</h2>
               <span className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-2.5 py-1 rounded-full">{selectedHub.type}</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">{selectedHub.description || 'بدون توضیحات'}</p>
@@ -196,7 +196,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> رویدادهای جامعه</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> رویدادهای اکیپ</h3>
         {hubEvents === null ? (
           <div className="h-40 rounded-2xl glass-soft animate-pulse" />
         ) : hubEvents.length > 0 ? (
@@ -219,7 +219,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
         ) : (
           <div className="glass-soft rounded-2xl p-10 text-center border border-dashed border-gray-200 dark:border-white/10">
             <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">رویداد پیش رویی در این جامعه ثبت نشده است.</p>
+            <p className="text-gray-500 font-medium">رویداد پیش رویی در این اکیپ ثبت نشده است.</p>
           </div>
         )}
       </div>
@@ -230,11 +230,11 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     <div className={panel}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-200 dark:border-white/10">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">جوامع و هاب‌ها</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">به جوامع مورد علاقه بپیوندید یا جامعه خودتان را بسازید.</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">اکیپ‌ها</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">به اکیپ‌های مورد علاقه بپیوندید یا اکیپ خودتان را بسازید.</p>
         </div>
         <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-5 py-2.5 rounded-xl font-bold flex items-center gap-2">
-          <PlusCircle className="w-5 h-5" /> ایجاد جامعه
+          <PlusCircle className="w-5 h-5" /> ایجاد اکیپ
         </button>
       </div>
 
@@ -266,9 +266,9 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
       ) : (
         <div className="flex flex-col items-center justify-center py-20 glass-soft rounded-2xl border border-dashed border-gray-200 dark:border-white/10">
           <Users className="w-12 h-12 text-gray-400 mb-6" />
-          <p className="text-center text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">هنوز جامعه‌ای وجود ندارد</p>
-          <p className="text-center text-gray-500 mb-8 max-w-sm leading-relaxed">اولین نفری باشید که جامعه خود را می‌سازد.</p>
-          <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-8 py-3 rounded-xl font-bold flex items-center gap-2"><PlusCircle className="w-5 h-5" /> ایجاد اولین جامعه</button>
+          <p className="text-center text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">هنوز اکیپی وجود ندارد</p>
+          <p className="text-center text-gray-500 mb-8 max-w-sm leading-relaxed">اولین نفری باشید که اکیپ خود را می‌سازد.</p>
+          <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-8 py-3 rounded-xl font-bold flex items-center gap-2"><PlusCircle className="w-5 h-5" /> ایجاد اولین اکیپ</button>
         </div>
       )}
     </div>

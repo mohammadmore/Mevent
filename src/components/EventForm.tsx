@@ -866,7 +866,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">جامعه (اختیاری - چند مورد با نگه داشتن Ctrl)</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">اکیپ (اختیاری - چند مورد با نگه داشتن Ctrl)</label>
         <div className="relative mb-3">
           <select
             multiple
@@ -1025,7 +1025,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowAllIcons(false)}>
             <div className="glass-strong rounded-2xl p-6 w-full max-w-3xl max-h-[80vh] overflow-y-auto shadow-xl" onClick={e => e.stopPropagation()}>
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-[#515739] dark:text-gray-100">همه آیکون‌ها</h3>
+                <h3 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100">همه آیکون‌ها</h3>
                 <button onClick={() => setShowAllIcons(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                   <X className="w-6 h-6" />
                 </button>
@@ -1257,7 +1257,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10 shrink-0">
-              <h3 className="font-bold text-lg text-[#515739] dark:text-gray-100">توضیحات تخصصی رویداد</h3>
+              <h3 className="font-bold text-lg text-[#4C1D95] dark:text-gray-100">توضیحات تخصصی رویداد</h3>
               <button 
                 type="button"
                 onClick={() => setShowAdvancedDetailsModal(false)}
@@ -1290,7 +1290,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                   return (
                   <div key={field.name} className="glass-soft p-4 rounded-xl border border-gray-100 dark:border-white/10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                      <label className="text-sm font-bold text-[#515739] dark:text-gray-200">{field.label}</label>
+                      <label className="text-sm font-bold text-[#4C1D95] dark:text-gray-200">{field.label}</label>
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-1.5 text-sm font-medium cursor-pointer">
                           <input 

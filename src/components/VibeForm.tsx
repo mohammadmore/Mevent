@@ -130,7 +130,7 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <h2 className="text-2xl font-bold text-[#515739] dark:text-gray-100 mb-6 flex items-center gap-2">
+      <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100 mb-6 flex items-center gap-2">
         <Sparkles className="w-6 h-6 text-indigo-500" />
         {initialData ? 'ویرایش حال و هوا' : 'ثبت حال و هوای جدید'}
       </h2>

@@ -51,7 +51,7 @@ export function NotificationsScreen() {
   return (
     <div className="max-w-2xl mx-auto w-full space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 flex items-center gap-2"><Bell className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" /> اعلانات شما</h2>
+        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Bell className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" /> اعلانات شما</h2>
         {push && push !== 'unsupported' && push !== 'unavailable' && (
           <button onClick={togglePush} disabled={push === 'denied'} className="text-xs font-bold px-3 py-2 rounded-xl glass-soft flex items-center gap-1.5 disabled:opacity-60">
             {push === 'enabled' ? <><BellOff className="w-4 h-4" /> غیرفعال‌سازی اعلان گوشی</> : push === 'denied' ? 'اعلان در مرورگر مسدود است' : <><BellRing className="w-4 h-4" /> فعال‌سازی اعلان گوشی</>}

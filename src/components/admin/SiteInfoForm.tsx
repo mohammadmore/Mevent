@@ -42,7 +42,7 @@ export function SiteInfoForm() {
 
   return (
     <form onSubmit={save} className="space-y-4">
-      <h3 className="font-bold text-[#515739] dark:text-gray-100 flex items-center gap-2"><Building2 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> اطلاعات کسب‌وکار و اینماد</h3>
+      <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Building2 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> اطلاعات کسب‌وکار و اینماد</h3>
       <p className="text-xs text-gray-500">در صفحات «تماس با ما»، «قوانین» و پایین سایت نمایش داده می‌شود. اینماد این اطلاعات را بررسی می‌کند.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {FIELDS.map(f => (

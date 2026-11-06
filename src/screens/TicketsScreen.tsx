@@ -125,7 +125,7 @@ export function TicketsScreen() {
       )}
 
       <section>
-        <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 mb-1 flex items-center gap-2"><Ticket className="w-5 h-5" /> بلیت‌های من</h2>
+        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 mb-1 flex items-center gap-2"><Ticket className="w-5 h-5" /> بلیت‌های من</h2>
         <p className="text-xs text-gray-500 mb-4">کد QR را هنگام ورود به برگزارکننده نشان دهید.{offline ? ' (نمایش آفلاین از آخرین دریافت)' : ''}</p>
         {offline && <p className="text-xs flex items-center gap-1 text-amber-600 mb-3"><WifiOff className="w-4 h-4" /> اتصال برقرار نیست؛ آخرین اطلاعات ذخیره‌شده نمایش داده می‌شود.</p>}
         {tickets === null ? (
@@ -144,7 +144,7 @@ export function TicketsScreen() {
                   <div className="w-32 h-32 rounded-lg bg-white/60 dark:bg-white/5 flex flex-col items-center justify-center text-xs text-gray-600 gap-2"><Clock className="w-6 h-6" /> در انتظار پرداخت</div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <button onClick={() => navigate(`/events/${row.events.id}`)} className="font-bold text-[#515739] dark:text-gray-100 mb-1 text-right hover:underline">{row.events.title}</button>
+                  <button onClick={() => navigate(`/events/${row.events.id}`)} className="font-bold text-[#4C1D95] dark:text-gray-100 mb-1 text-right hover:underline">{row.events.title}</button>
                   <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1 mb-2"><Calendar className="w-3.5 h-3.5" /> {eventTimeLabel(row.events)}</p>
                   {(row.events as any).postponedFrom && (
                     <p className="text-xs text-amber-700 dark:text-amber-300 mb-2">زمان رویداد تغییر کرده است؛ تا پیش از زمان جدید می‌توانید بلیت را با بازپرداخت کامل لغو کنید.</p>
@@ -187,7 +187,7 @@ export function TicketsScreen() {
       </section>
 
       <section>
-        <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><CheckCircle className="w-5 h-5" /> رویدادهایی که می‌روم</h2>
+        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2"><CheckCircle className="w-5 h-5" /> رویدادهایی که می‌روم</h2>
         {rsvpEvents.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400 py-6 text-center">هنوز برای رویدادی ثبت‌نام نکرده‌اید.</p>
         ) : (
@@ -196,7 +196,7 @@ export function TicketsScreen() {
       </section>
 
       <section>
-        <h2 className="text-xl font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><Bookmark className="w-5 h-5" /> رویدادهای نشان‌شده</h2>
+        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2"><Bookmark className="w-5 h-5" /> رویدادهای نشان‌شده</h2>
         {savedEvents.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400 py-6 text-center">هنوز رویدادی نشان نکرده‌اید.</p>
         ) : (

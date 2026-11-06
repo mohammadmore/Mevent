@@ -74,7 +74,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
         >
           <ArrowRight className="w-5 h-5" />
         </button>
-        <h1 className="text-lg font-bold text-[#515739] dark:text-gray-100">پروفایل برگزارکننده</h1>
+        <h1 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100">پروفایل برگزارکننده</h1>
       </div>
 
       <div className="pt-16 pb-6 w-full">
@@ -170,7 +170,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
                   </div>
                 )}
                 <div className="p-4 relative z-10">
-                  <h3 className="font-bold text-lg mb-2 text-[#515739] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{event.title}</h3>
+                  <h3 className="font-bold text-lg mb-2 text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{event.title}</h3>
                   <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-gray-400 mb-3">
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 shrink-0" />
