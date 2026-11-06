@@ -177,7 +177,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
 
   return (
     <div className="fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4" role="dialog" aria-modal="true" dir="rtl">
-      <div className="bg-white dark:bg-[#18181b] rounded-2xl w-full max-w-sm overflow-hidden flex flex-col">
+      <div className="glass-strong rounded-2xl w-full max-w-sm overflow-hidden flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-white/10">
           <div>
             <h3 className="font-bold text-[#515739] dark:text-gray-100">ورود شرکت‌کنندگان</h3>
@@ -185,7 +185,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
           </div>
           <button onClick={onClose} aria-label="بستن" className="text-gray-400 hover:text-gray-700"><X className="w-5 h-5" /></button>
         </div>
-        <div className="px-4 py-2 text-[11px] flex items-center justify-between gap-2 bg-white dark:bg-[#18181b] border-b border-gray-100 dark:border-white/5" aria-live="polite">
+        <div className="px-4 py-2 text-[11px] flex items-center justify-between gap-2 glass border-b " aria-live="polite">
           <span className={`flex items-center gap-1 ${online ? 'text-emerald-600' : 'text-amber-600'}`}>
             {online ? <span className="w-2 h-2 rounded-full bg-emerald-500" /> : <WifiOff className="w-3.5 h-3.5" />}
             {local?.generatedAt
@@ -202,7 +202,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
             <AlertTriangle className="w-4 h-4 shrink-0" /> {pNum(duplicates.length)} بلیت روی دستگاه دیگری هم وارد شده بود: <span dir="ltr" className="font-mono">{duplicates.join(', ')}</span>
           </p>
         )}
-        <div className="p-5 space-y-4 bg-gray-50 dark:bg-[#1f1f23]">
+        <div className="p-5 space-y-4 glass-soft">
           {cameraOn ? (
             <video ref={videoRef} className="w-full rounded-xl bg-black aspect-square object-cover" muted playsInline />
           ) : canScan ? (
@@ -220,7 +220,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
               placeholder="کد بلیت"
               dir="ltr"
               autoFocus={!canScan}
-              className="flex-1 font-mono tracking-widest bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600"
+              className="flex-1 font-mono tracking-widest glass border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600"
             />
             <button type="submit" disabled={busy || !code.trim()} className="px-4 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-50">ثبت ورود</button>
           </form>

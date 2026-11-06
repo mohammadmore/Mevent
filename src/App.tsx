@@ -203,7 +203,7 @@ function Shell() {
   const isAdmin = profile?.role === 'ADMIN';
   const isOrganizer = profile?.role === 'ORGANIZER' || isAdmin;
   const bare = screenPath === '/login' || screenPath === '/onboarding';
-  const card = 'bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 mx-auto w-full';
+  const card = 'glass rounded-2xl p-6 shadow-sm border mx-auto w-full';
 
   const screen = (() => {
     switch (true) {
@@ -261,7 +261,7 @@ function Shell() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">شاید لینک اشتباه باشه یا صفحه برداشته شده. ولی می‌تونیم یه برنامه‌ی خوب پیدا کنیم:</p>
             <div className="flex flex-col gap-2">
               <button onClick={() => navigate('/bored')} className="py-3 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold">حوصله‌م سر رفته، یه چیزی پیشنهاد بده</button>
-              <button onClick={() => navigate('/')} className="py-3 rounded-2xl bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200 font-bold text-sm">صفحه اصلی</button>
+              <button onClick={() => navigate('/')} className="py-3 rounded-2xl glass-soft text-gray-800 dark:text-gray-200 font-bold text-sm">صفحه اصلی</button>
             </div>
           </div>
         );
@@ -269,8 +269,8 @@ function Shell() {
   })();
 
   return (
-    <div className="min-h-screen transition-colors duration-500 bg-white dark:bg-[#0f0f11] flex justify-center font-sans text-right text-gray-900 dark:text-gray-100" dir="rtl">
-      <div className="w-full max-w-7xl mx-auto bg-white dark:bg-[#141417] h-screen shadow-2xl overflow-hidden flex flex-col md:flex-row relative border-x border-gray-100 dark:border-white/5">
+    <div className="min-h-screen liquid-bg flex justify-center font-sans text-right text-gray-900 dark:text-gray-100" dir="rtl">
+      <div className="w-full max-w-7xl mx-auto bg-white/10 dark:bg-white/[0.015] h-screen md:shadow-2xl overflow-hidden flex flex-col md:flex-row relative md:border-x border-white/50 dark:border-white/5">
         {!bare && (
           <DockMenu
             activeTab={tabForPath(screenPath)}
@@ -287,7 +287,7 @@ function Shell() {
             </div>
           )}
           {!bare && (
-            <header className="pt-10 md:pt-6 pb-3 px-4 sm:px-6 bg-white/90 dark:bg-[#18181b] border-b border-gray-200 dark:border-white/10 z-10 sticky top-0">
+            <header className="pt-10 md:pt-6 pb-3 px-4 sm:px-6 glass-strong border-b z-10 sticky top-0">
               <div className="flex justify-between items-center w-full">
                 <div>
                   <button onClick={() => navigate('/')} className="text-2xl font-bold text-[#515739] dark:text-gray-100">میونت</button>
@@ -302,22 +302,22 @@ function Shell() {
                   </button>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
+                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-teal-600 to-[#515739] dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
                     <Plane className="w-4 h-4" /> <span className="hidden sm:inline">برنامه سفر</span>
                   </button>
-                  <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300">
+                  <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
                     <Search className="w-5 h-5" />
                   </button>
-                  <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? 'حالت روشن' : 'حالت تیره'} className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300">
+                  <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? 'حالت روشن' : 'حالت تیره'} className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
                     {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </button>
                   {dbUserId ? (
-                    <button onClick={() => navigate('/notifications')} aria-label={`اعلان‌ها${unreadCount ? ` (${unreadCount} خوانده‌نشده)` : ''}`} className={`w-10 h-10 rounded-full flex items-center justify-center relative ${screenPath === '/notifications' ? 'bg-teal-600/20 text-teal-600 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00]' : 'bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300'}`}>
+                    <button onClick={() => navigate('/notifications')} aria-label={`اعلان‌ها${unreadCount ? ` (${unreadCount} خوانده‌نشده)` : ''}`} className={`w-10 h-10 rounded-full flex items-center justify-center relative ${screenPath === '/notifications' ? 'bg-teal-600/20 text-teal-600 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00]' : 'glass-soft text-gray-700 dark:text-gray-300'}`}>
                       <Bell className="w-5 h-5" />
                       {unreadCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-[#18181b]">{pNum(Math.min(unreadCount, 99))}</span>}
                     </button>
                   ) : (
-                    <button onClick={() => navigate('/login')} className="text-xs font-bold px-3 py-2 rounded-full bg-gray-100 dark:bg-[#1f1f23]">ورود</button>
+                    <button onClick={() => navigate('/login')} className="text-xs font-bold px-3 py-2 rounded-full glass-soft">ورود</button>
                   )}
                 </div>
               </div>
@@ -330,7 +330,7 @@ function Shell() {
         </div>
 
         {showSearch && (
-          <div className="absolute inset-0 z-50 bg-white dark:bg-[#141417] flex flex-col">
+          <div className="absolute inset-0 z-50 liquid-bg flex flex-col">
             <Suspense fallback={<Spinner />}><QuickSearch onClose={() => setShowSearch(false)} /></Suspense>
           </div>
         )}

@@ -27,13 +27,13 @@ export function HomeGreeting() {
   const { profile } = useAppData();
   const name = profile?.name?.trim().split(/\s+/)[0];
   return (
-    <section className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-amber-50 via-orange-50 to-teal-50 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 border border-amber-200/60 dark:border-white/10">
+    <section className="rounded-3xl p-5 sm:p-6 glass bg-gradient-to-br from-amber-50/60 via-orange-50/40 to-teal-50/50 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 border">
       <p className="text-sm text-gray-600 dark:text-gray-400">{greeting()}{name ? `، ${name}` : ''} 👋</p>
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">امروز حوصله‌ت چی می‌خواد؟</h1>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 -mx-1 px-1 pb-1">
         {Object.entries(MOODS).map(([key, m]) => (
           <button key={key} onClick={() => navigate(`/bored?mood=${key}`)}
-            className="shrink-0 px-3 py-2 rounded-full bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-sm text-gray-800 dark:text-gray-200 hover:border-teal-500 dark:hover:border-[#d9ff00]/50">
+            className="shrink-0 px-3 py-2 rounded-full glass-soft border text-sm text-gray-800 dark:text-gray-200 hover:border-teal-500 dark:hover:border-[#d9ff00]/50">
             <span aria-hidden>{m.emoji}</span> {m.label}
           </button>
         ))}
@@ -42,7 +42,7 @@ export function HomeGreeting() {
         <button onClick={() => navigate('/bored')} className="flex-1 py-3.5 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold shadow-sm">
           حوصله‌م سر رفته، یه چیزی پیشنهاد بده
         </button>
-        <button onClick={() => navigate('/free')} className="sm:w-40 py-3.5 rounded-2xl bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center justify-center gap-1.5">
+        <button onClick={() => navigate('/free')} className="sm:w-40 py-3.5 rounded-2xl glass border text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center justify-center gap-1.5">
           <Wallet className="w-4 h-4" /> بدون خرج
         </button>
       </div>

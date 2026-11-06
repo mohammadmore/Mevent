@@ -67,9 +67,9 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
   const pill = 'inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00]';
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-[#141417] text-right" dir="rtl" role="dialog" aria-modal="true" aria-label="جستجوی سریع">
-      <form onSubmit={(e) => { e.preventDefault(); search(); }} className="p-4 bg-white dark:bg-[#18181b] border-b border-gray-200 dark:border-white/10 flex items-center gap-2">
-        <div className="flex-1 flex items-center gap-2 bg-gray-100 dark:bg-[#1f1f23] rounded-full px-4 py-2.5 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-[#d9ff00]/50">
+    <div className="flex flex-col h-full text-right" dir="rtl" role="dialog" aria-modal="true" aria-label="جستجوی سریع">
+      <form onSubmit={(e) => { e.preventDefault(); search(); }} className="p-4 glass border-b flex items-center gap-2">
+        <div className="flex-1 flex items-center gap-2 glass-soft rounded-full px-4 py-2.5 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-[#d9ff00]/50">
           <Search className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             ref={inputRef}
@@ -94,7 +94,7 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
         {!result && !error && (
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map(x => (
-              <button key={x} type="button" onClick={() => search(x)} className="text-sm px-3 py-1.5 rounded-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-teal-500">
+              <button key={x} type="button" onClick={() => search(x)} className="text-sm px-3 py-1.5 rounded-full glass border text-gray-700 dark:text-gray-300 hover:border-teal-500">
                 {x}
               </button>
             ))}

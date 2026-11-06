@@ -57,7 +57,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
             {vibes.map(vibe => (
-              <div key={vibe.id} className="min-w-[220px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-4 snap-center cursor-pointer hover:border-indigo-500 transition-colors" onClick={() => onVibeSelect && onVibeSelect(vibe)}>
+              <div key={vibe.id} className="min-w-[220px] glass border rounded-2xl p-4 snap-center cursor-pointer hover:border-indigo-500 transition-colors" onClick={() => onVibeSelect && onVibeSelect(vibe)}>
                 <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1">{vibe.title}</h3>
                 <p className="text-sm text-gray-500 line-clamp-2">{vibe.description}</p>
                 <div className="mt-3 inline-block bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs px-2 py-1 rounded-lg">
@@ -78,8 +78,8 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
             {chains.map(chain => (
-              <div key={chain.id} className="min-w-[250px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-4 snap-center cursor-pointer flex items-center gap-4 hover:border-orange-500 transition-colors" onClick={() => onChainSelect && onChainSelect(chain)}>
-                <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-white/5 overflow-hidden shrink-0">
+              <div key={chain.id} className="min-w-[250px] glass border rounded-2xl p-4 snap-center cursor-pointer flex items-center gap-4 hover:border-orange-500 transition-colors" onClick={() => onChainSelect && onChainSelect(chain)}>
+                <div className="w-16 h-16 rounded-xl glass-soft overflow-hidden shrink-0">
                   <img src={chain.coverImage || defaultChainCover} alt={chain.name} className="w-full h-full object-cover" />
                 </div>
                 <div>

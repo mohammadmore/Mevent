@@ -108,7 +108,7 @@ export function PhoneLogin() {
     if (code.length === codeLength) submitCode(code);
   }, [code]);
 
-  const input = 'w-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-lg outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40 text-center tracking-widest';
+  const input = 'w-full glass border rounded-xl px-4 py-3.5 text-lg outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40 text-center tracking-widest';
 
   if (step === 'phone') {
     return (

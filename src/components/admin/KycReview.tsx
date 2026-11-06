@@ -50,10 +50,10 @@ export function KycReview() {
   };
 
   return (
-    <section className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-5">
+    <section className="glass border rounded-2xl p-5">
       <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
         <BadgeCheck className="w-5 h-5 text-teal-600" /> احراز هویت برگزارکنندگان
-        <span className={`text-xs px-2 py-0.5 rounded-full ${items.length ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-500'}`}>{pNum(items.length)}</span>
+        <span className={`text-xs px-2 py-0.5 rounded-full ${items.length ? 'bg-red-500 text-white' : 'glass-soft text-gray-500'}`}>{pNum(items.length)}</span>
       </h3>
       {items.length === 0 ? <p className="text-sm text-gray-500">موردی برای بررسی نیست.</p> : (
         <ul className="space-y-3">
@@ -63,7 +63,7 @@ export function KycReview() {
                 <p className="font-bold text-sm">{u.name} <span className="text-xs text-gray-500 font-normal">{u.type === 'COMPANY' ? 'حقوقی' : 'حقیقی'} • <span dir="ltr">{u.fullPhone}</span> • {timeAgo(u.submittedAt)}</span></p>
                 <div className="flex gap-2">
                   <button disabled={busy === u.id} onClick={() => decide(u, 'approve')} className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 bg-emerald-600 text-white disabled:opacity-50"><Check className="w-4 h-4" /> تأیید</button>
-                  <button disabled={busy === u.id} onClick={() => decide(u, 'reject')} className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 bg-gray-100 dark:bg-white/10 disabled:opacity-50"><X className="w-4 h-4" /> رد</button>
+                  <button disabled={busy === u.id} onClick={() => decide(u, 'reject')} className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 glass-soft disabled:opacity-50"><X className="w-4 h-4" /> رد</button>
                 </div>
               </div>
               <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs">

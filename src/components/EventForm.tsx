@@ -391,7 +391,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       {!initialData && (
         <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">ایجاد رویداد جدید</h2>
-          <div className="flex bg-gray-100 dark:bg-[#18181b]/50 p-1 rounded-full border border-gray-200 dark:border-white/5">
+          <div className="flex glass-soft p-1 rounded-full border">
             <button 
               type="button"
               onClick={() => setImportMode('single')}
@@ -480,7 +480,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           </div>
 
           {batchResults && (
-            <div className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-xl p-4 text-sm">
+            <div className="glass-soft border border-gray-300 dark:border-white/20 rounded-xl p-4 text-sm">
               <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">نتیجه ورود گروهی:</h4>
               <div className="flex gap-4">
                 <span className="text-gray-700 dark:text-gray-300">تعداد کل: <strong>{batchResults.total}</strong></span>
@@ -628,7 +628,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
 
       
       {mainBranch !== 'cinema' && (<>
-<div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-4 rounded-xl space-y-4">
+<div className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-xl space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">زمان رویداد</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
@@ -653,7 +653,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                        disabled={fuzzyType !== 'none'}
                        onClick={fuzzyType === 'none' ? openCalendar : undefined}
                        value={value}
-                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
+                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
                        dir="rtl"
                        placeholder="انتخاب تاریخ و ساعت"
                      />
@@ -683,7 +683,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                        disabled={fuzzyType !== 'none'}
                        onClick={fuzzyType === 'none' ? openCalendar : undefined}
                        value={value}
-                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
+                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
                        dir="rtl"
                        placeholder="انتخاب تاریخ و ساعت"
                      />
@@ -697,7 +697,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
              <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 select-none">
                <input 
                  type="checkbox" 
-                 className="w-4 h-4 text-teal-600 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-white/5 focus:ring-teal-500"
+                 className="w-4 h-4 text-teal-600 rounded border-gray-300 dark:border-gray-600 glass-soft focus:ring-teal-500"
                  checked={fuzzyType !== 'none'}
                  onChange={(e) => {
                    if (e.target.checked) {
@@ -851,7 +851,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <div className="relative mb-3">
           <select
             multiple
-            className="w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
+            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
             value={formData.coOrganizerIds.map(String)}
             onChange={(e) => {
               const options = Array.from(e.target.selectedOptions, (option: any) => Number(option.value));
@@ -870,7 +870,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <div className="relative mb-3">
           <select
             multiple
-            className="w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
+            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
             value={formData.hubIds.map(String)}
             onChange={(e) => {
               const options = Array.from(e.target.selectedOptions, (option: any) => Number(option.value));
@@ -962,7 +962,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           />
         </div>
         {showTagDropdown && (
-          <div className="absolute z-10 w-full mt-[-10px] mb-3 bg-white dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl shadow-lg max-h-48 overflow-y-auto overflow-hidden">
+          <div className="absolute z-10 w-full mt-[-10px] mb-3 glass-soft border border-gray-200 dark:border-white/10 rounded-xl shadow-lg max-h-48 overflow-y-auto overflow-hidden">
             {categories.filter(cat => cat.includes(tagSearch) && !selectedTags.includes(cat)).length > 0 ? (
               categories.filter(cat => cat.includes(tagSearch) && !selectedTags.includes(cat)).map(cat => (
                 <div
@@ -999,10 +999,10 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                 type="button"
                 onClick={() => setFormData({ ...formData, bgIcon: formData.bgIcon === iconDef.icon ? 'none' : iconDef.icon })}
                 className={`p-3 flex items-center justify-center rounded-xl border-2 transition-all ${
-                  formData.bgIcon === iconDef.icon
-                    ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
-                    : 'border-gray-200 dark:border-white/10 text-gray-500 hover:border-teal-300 dark:hover:border-white/20 bg-white dark:bg-[#18181b]'
-                }`}
+ formData.bgIcon === iconDef.icon
+ ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
+ : ' text-gray-500 hover:border-teal-300 dark:hover:border-white/20 glass'
+ }`}
                 title={iconDef.icon + ' - ' + iconDef.tags.join(', ')}
               >
                 <Icon className="w-6 h-6" />
@@ -1013,7 +1013,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
              <button
               type="button"
               onClick={() => setShowAllIcons(true)}
-              className="p-3 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 text-gray-500 hover:border-teal-500 dark:hover:border-[#d9ff00] hover:text-teal-600 dark:hover:text-[#d9ff00] transition-all bg-white dark:bg-[#18181b]"
+              className="p-3 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 text-gray-500 hover:border-teal-500 dark:hover:border-[#d9ff00] hover:text-teal-600 dark:hover:text-[#d9ff00] transition-all glass"
               title="بیشتر"
              >
                <MoreHorizontal className="w-6 h-6" />
@@ -1023,7 +1023,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         
         {showAllIcons && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowAllIcons(false)}>
-            <div className="bg-white dark:bg-[#1f1f23] rounded-2xl p-6 w-full max-w-3xl max-h-[80vh] overflow-y-auto shadow-xl" onClick={e => e.stopPropagation()}>
+            <div className="glass-strong rounded-2xl p-6 w-full max-w-3xl max-h-[80vh] overflow-y-auto shadow-xl" onClick={e => e.stopPropagation()}>
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-[#515739] dark:text-gray-100">همه آیکون‌ها</h3>
                 <button onClick={() => setShowAllIcons(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -1040,10 +1040,10 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                       type="button"
                       onClick={() => setFormData({ ...formData, bgIcon: formData.bgIcon === iconDef.icon ? 'none' : iconDef.icon })}
                       className={`p-4 flex flex-col items-center gap-2 justify-center rounded-xl border-2 transition-all ${
-                        formData.bgIcon === iconDef.icon
-                          ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
-                          : 'border-gray-200 dark:border-white/10 text-gray-500 hover:border-teal-300 dark:hover:border-white/20 bg-white dark:bg-[#18181b]'
-                      }`}
+ formData.bgIcon === iconDef.icon
+ ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
+ : ' text-gray-500 hover:border-teal-300 dark:hover:border-white/20 glass'
+ }`}
                       title={iconDef.icon + ' - ' + iconDef.tags.join(', ')}
                     >
                       <Icon className="w-8 h-8" />
@@ -1091,7 +1091,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             <select
               value={formData.currency}
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-32 px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none bg-white dark:bg-[#18181b] text-gray-900 dark:text-white"
+              className="w-32 px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none glass text-gray-900 dark:text-white"
             >
               <option value="USD">دلار (USD)</option>
               <option value="EUR">یورو (EUR)</option>
@@ -1110,7 +1110,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <button
           type="button"
           onClick={() => setShowAdvancedDetailsModal(true)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 glass-soft border border-gray-200 dark:border-white/10 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
         >
           <span className="font-bold text-teal-700 dark:text-[#d9ff00]">توضیحات تخصصی رویداد (اختیاری)</span>
           <span className="text-xs bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-2 py-1 rounded-lg">
@@ -1121,7 +1121,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
 
       
       {selectedTags.includes('سینما') && (
-        <div className="bg-gray-50 dark:bg-white/5 p-5 rounded-2xl border border-teal-200 dark:border-teal-900/50 mt-6 shadow-sm">
+        <div className="glass-soft p-5 rounded-2xl border border-teal-200 dark:border-teal-900/50 mt-6 shadow-sm">
           <h3 className="font-bold text-teal-800 dark:text-[#d9ff00] mb-2 flex items-center gap-2">
             <Ticket className="w-5 h-5" />
             سینماها و سانس‌های اکران
@@ -1130,7 +1130,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           
           <div className="space-y-4 mb-6">
             {((formData.advancedDetails as any).cinemas || []).map((cinema: any, cIdx: number) => (
-              <div key={cIdx} className="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-4 rounded-xl relative">
+              <div key={cIdx} className="glass border p-4 rounded-xl relative">
                 <button 
                   type="button"
                   onClick={() => {
@@ -1147,7 +1147,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {cinema.showtimes.map((st: any, sIdx: number) => (
-                    <div key={sIdx} className="bg-gray-100 dark:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs border border-gray-200 dark:border-white/5">
+                    <div key={sIdx} className="glass-soft px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs border border-gray-200 dark:border-white/5">
                       <span className="text-gray-600 dark:text-gray-400">{st.date}</span>
                       <strong className="text-teal-700 dark:text-[#d9ff00]">{st.time}</strong>
                       <button 
@@ -1253,7 +1253,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       {showAdvancedDetailsModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdvancedDetailsModal(false)}>
           <div 
-            className="w-full max-w-2xl bg-white dark:bg-[#18181b] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+            className="w-full max-w-2xl glass-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10 shrink-0">
@@ -1288,7 +1288,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                   };
 
                   return (
-                  <div key={field.name} className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-100 dark:border-white/10">
+                  <div key={field.name} className="glass-soft p-4 rounded-xl border border-gray-100 dark:border-white/10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <label className="text-sm font-bold text-[#515739] dark:text-gray-200">{field.label}</label>
                       <div className="flex items-center gap-3">
@@ -1319,7 +1319,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                       <div className="mt-3 pr-2 sm:pr-4 border-r-2 border-teal-600/30 dark:border-[#d9ff00]/30 space-y-3">
                         <div className="flex flex-wrap gap-2">
                           {field.options.map(opt => (
-                            <label key={opt} className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === opt ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
+                            <label key={opt} className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === opt ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                               <input 
                                 type="radio" 
                                 name={`opt-${field.name}`} 
@@ -1331,7 +1331,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                               {opt}
                             </label>
                           ))}
-                          <label className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === 'سایر' ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
+                          <label className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === 'سایر' ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                             <input 
                               type="radio" 
                               name={`opt-${field.name}`} 
@@ -1348,7 +1348,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                           <div className="mt-3">
                             <input
                               type="text"
-                              className="w-full px-3 py-2 text-sm border-2 border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00] focus:border-teal-600 dark:focus:border-[#d9ff00] outline-none transition-all bg-white dark:bg-[#18181b] text-gray-900 dark:text-white"
+                              className="w-full px-3 py-2 text-sm border-2 rounded-xl focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00] focus:border-teal-600 dark:focus:border-[#d9ff00] outline-none transition-all glass text-gray-900 dark:text-white"
                               value={description}
                               onChange={(e) => handleUpdate({ description: e.target.value })}
                               placeholder={option === 'سایر' ? "لطفا جزئیات را بنویسید..." : "توضیحات تکمیلی (اختیاری)"}
@@ -1363,7 +1363,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
               </div>
             </div>
             
-            <div className="p-4 border-t border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-[#1f1f23] shrink-0">
+            <div className="p-4 border-t border-gray-100 dark:border-white/10 glass-soft shrink-0">
               <button 
                 type="button"
                 onClick={() => setShowAdvancedDetailsModal(false)}

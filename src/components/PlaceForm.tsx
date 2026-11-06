@@ -239,7 +239,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
           <label className="block text-sm text-gray-400 mb-1">شهر</label>
           <input 
             type="text" 
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
             value={formData.city || 'تهران'} 
             onChange={e => setFormData({...formData, city: e.target.value})} 
             required
@@ -249,7 +249,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
         <label className="block text-sm text-gray-400 mb-1">نام پاتوق</label>
           <input 
             type="text" 
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
             value={formData.name || ''} 
             onChange={e => setFormData({...formData, name: e.target.value})} 
           />
@@ -259,7 +259,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
           <label className="block text-sm text-gray-400 mb-1">آدرس متنی</label>
           <input 
             type="text" 
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
             value={formData.address || ''} 
             onChange={e => setFormData({...formData, address: e.target.value})} 
           />
@@ -268,7 +268,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
           <label className="block text-sm text-gray-400 mb-1">لینک تصویر (کاور)</label>
           <input 
             type="text" 
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
             value={formData.imageUrl || ''} 
             onChange={e => setFormData({...formData, imageUrl: e.target.value})} 
           />
@@ -276,7 +276,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
         <div>
           <label className="block text-sm text-gray-400 mb-1">نوع کسب‌وکار</label>
           <select 
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
             value={formData.type || ''} 
             onChange={e => setFormData({...formData, type: e.target.value})}
           >
@@ -292,7 +292,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
         <div className="space-y-4">
           <textarea
             rows={3}
-            className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white resize-none"
+            className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white resize-none"
             placeholder="لینک تصاویر گالری را با کاما جدا کنید..."
             value={formData.galleryUrls.join(', ')}
             onChange={(e) => {
@@ -331,7 +331,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
       <div>
         <label className="block text-sm text-gray-400 mb-1">پاتوق شما واسه چه حال و هوایی مناسبه؟</label>
         <textarea 
-          className="w-full bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white h-24"
+          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white h-24"
           value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         ></textarea>
@@ -339,7 +339,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
 
       <VibePicker value={formData.moods || []} onChange={(moods) => setFormData({ ...formData, moods })} />
 
-      <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
+      <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
         <label className="block text-sm text-gray-400 mb-4 flex items-center gap-2 font-bold">
           <Store className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
           امکانات و ویژگی‌ها
@@ -374,7 +374,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
         </div>
       </div>
 
-      <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
+      <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
         <div className="flex items-center justify-between mb-4">
           <label className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
             <Clock className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
@@ -416,14 +416,14 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
                         type="time" 
                         value={slot.openTime} 
                         onChange={(e) => updateRegularTimeSlot(i, 'openTime', e.target.value)}
-                        className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                        className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                       />
                       <span className="text-gray-500">تا</span>
                       <input 
                         type="time" 
                         value={slot.closeTime} 
                         onChange={(e) => updateRegularTimeSlot(i, 'closeTime', e.target.value)}
-                        className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                        className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                       />
                     </div>
                     {regularTimeSlots.length > 1 && (
@@ -487,14 +487,14 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
                           type="time" 
                           value={slot.openTime} 
                           onChange={(e) => updateVariableTimeSlot(dayIndex, slotIndex, 'openTime', e.target.value)}
-                          className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                          className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                         />
                         <span className="text-gray-500 text-sm">تا</span>
                         <input 
                           type="time" 
                           value={slot.closeTime} 
                           onChange={(e) => updateVariableTimeSlot(dayIndex, slotIndex, 'closeTime', e.target.value)}
-                          className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                          className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                         />
                         {sch.timeSlots.length > 1 && (
                           <button type="button" onClick={() => removeVariableTimeSlot(dayIndex, slotIndex)} className="text-red-500 p-2">

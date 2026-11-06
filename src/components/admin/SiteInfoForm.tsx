@@ -52,7 +52,7 @@ export function SiteInfoForm() {
               dir={f.dir}
               value={String(form[f.key] ?? '')}
               onChange={e => setForm({ ...form, [f.key]: f.key === 'refundBusinessDays' ? Number(e.target.value.replace(/\D/g, '')) || '' : e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b]"
+              className="w-full px-3 py-2 border rounded-lg text-sm glass"
             />
             {f.hint && <span className="block text-[11px] text-gray-400 mt-1">{f.hint}</span>}
           </label>

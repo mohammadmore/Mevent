@@ -20,7 +20,7 @@ export function SmsOutboxCard() {
   };
 
   return (
-    <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-5 rounded-2xl shadow-sm space-y-3">
+    <div className="glass border p-5 rounded-2xl shadow-sm space-y-3">
       <div className="flex items-center justify-between text-sm text-gray-500 font-bold">
         <span className="flex items-center gap-2"><MessageSquare className="w-4 h-4 text-teal-600" /> پیامک‌ها (۷ روز اخیر)</span>
         <button onClick={load} aria-label="به‌روزرسانی" className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10"><RefreshCw className="w-4 h-4" /></button>

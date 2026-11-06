@@ -12,8 +12,8 @@ type Who = { id: number; name: string; city?: string };
 type FriendsData = { friends: Who[]; incoming: { requestId: number; user: Who }[]; outgoing: { requestId: number; user: Who }[]; inviteCode: string | null; shareAttendance: boolean };
 type Match = { id: number; event: { id: number; title: string; startTime: string | null }; other: Who; lastMessageAt: string | null; lastMessage: { body: string; mine: boolean } | null };
 
-const card = 'bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-5';
-const input = 'flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] text-sm';
+const card = 'glass border rounded-2xl p-5';
+const input = 'flex-1 min-w-0 px-3 py-2.5 rounded-xl border glass text-sm';
 const primary = 'px-4 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold flex items-center gap-1.5 disabled:opacity-50';
 
 export function FriendsScreen() {
@@ -102,7 +102,7 @@ export function FriendsScreen() {
                 <GeneratedAvatar seed={r.user.id} className="w-10 h-10 rounded-full bg-gray-100" />
                 <span className="flex-1 text-sm font-bold text-gray-900 dark:text-gray-100">{r.user.name}</span>
                 <button onClick={() => respond(r.requestId, 'accept')} className={primary}><Check className="w-4 h-4" /> قبول</button>
-                <button onClick={() => respond(r.requestId, 'decline')} aria-label="رد" className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10"><X className="w-4 h-4" /></button>
+                <button onClick={() => respond(r.requestId, 'decline')} aria-label="رد" className="p-2.5 rounded-xl glass-soft"><X className="w-4 h-4" /></button>
               </li>
             ))}
           </ul>
@@ -111,7 +111,7 @@ export function FriendsScreen() {
 
       <section className={card} aria-label="دوستانم">
         <h2 className="font-bold text-gray-900 dark:text-gray-100 mb-3">دوستانم{data ? ` (${pNum(data.friends.length)})` : ''}</h2>
-        {!data ? <div className="h-16 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse" /> : data.friends.length === 0 ? (
+        {!data ? <div className="h-16 rounded-xl glass-soft animate-pulse" /> : data.friends.length === 0 ? (
           <p className="text-sm text-gray-500">هنوز دوستی اضافه نکردی. لینک دعوتت رو برای چند نفر بفرست.</p>
         ) : (
           <ul className="divide-y divide-gray-100 dark:divide-white/5">
@@ -153,7 +153,7 @@ export function TogetherScreen({ id }: { id: number }) {
     return () => clearInterval(t);
   }, [id]);
   useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [data?.messages?.length]);
-  if (!data) return <div className="max-w-2xl mx-auto w-full h-40 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />;
+  if (!data) return <div className="max-w-2xl mx-auto w-full h-40 rounded-2xl glass-soft animate-pulse" />;
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,20 +183,20 @@ export function TogetherScreen({ id }: { id: number }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto w-full bg-white/90 dark:bg-[#18181b] rounded-2xl p-5 border border-gray-200 dark:border-white/10 space-y-4">
+    <div className="max-w-2xl mx-auto w-full glass rounded-2xl p-5 border space-y-4">
       <div className="flex items-center gap-3">
         <GeneratedAvatar seed={data.other.id} className="w-11 h-11 rounded-full bg-gray-100" />
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-gray-900 dark:text-gray-100">{data.other.name}</h1>
           <button onClick={() => navigate(`/events/${data.event.id}`)} className="text-xs text-teal-700 dark:text-[#d9ff00] truncate block">با هم: {data.event.title}</button>
         </div>
-        {!data.isFriend && data.open && <button onClick={() => act('befriend')} className="text-xs px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center gap-1"><UserPlus className="w-4 h-4" /> دوست شیم</button>}
+        {!data.isFriend && data.open && <button onClick={() => act('befriend')} className="text-xs px-3 py-2 rounded-xl glass-soft flex items-center gap-1"><UserPlus className="w-4 h-4" /> دوست شیم</button>}
       </div>
       <p className="text-[11px] text-gray-500 bg-amber-50 dark:bg-white/5 rounded-xl p-3">اولین بار توی خود رویداد یا یه جای شلوغ همدیگه رو ببینید. لازم نیست شماره یا آدرست رو بدی.</p>
       <ol className="space-y-2 min-h-[120px]">
         {data.messages.length === 0 && <li className="text-sm text-gray-500 text-center py-6">سلام کن و قرارتون رو بذارید 👋</li>}
         {data.messages.map((m: any) => (
-          <li key={m.id} className={`max-w-[85%] w-fit rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${m.mine ? 'ml-auto bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'mr-auto bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100'}`}>
+          <li key={m.id} className={`max-w-[85%] w-fit rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${m.mine ? 'ml-auto bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'mr-auto glass-soft text-gray-900 dark:text-gray-100'}`}>
             {m.body}
             <span className="block text-[10px] opacity-60 mt-1">{timeAgo(m.createdAt)}</span>
           </li>

@@ -15,7 +15,7 @@ export function ProfileScreen() {
   const { profile, setProfile, refreshProfile, rsvpEvents } = useAppData();
   const { logout } = useAuth();
   const [editing, setEditing] = useState(false);
-  if (!profile) return <div className="h-40 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />;
+  if (!profile) return <div className="h-40 rounded-2xl glass-soft animate-pulse" />;
 
   const requestOrganizer = async () => {
     const note = await promptDialog({
@@ -125,27 +125,27 @@ export function ProfileScreen() {
       <GamificationPanel />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <button onClick={() => navigate('/tickets')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
+        <button onClick={() => navigate('/tickets')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
           <span className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500"><Heart className="w-6 h-6" /></span>
           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">بلیت‌ها و ذخیره‌ها</span>
         </button>
-        <button onClick={() => navigate('/friends')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
+        <button onClick={() => navigate('/friends')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
           <span className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500"><Users className="w-6 h-6" /></span>
           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">دوستان و همراه‌ها</span>
         </button>
         {isOrganizer && (
-          <button onClick={() => navigate('/organizer')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
+          <button onClick={() => navigate('/organizer')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
             <span className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500"><Activity className="w-6 h-6" /></span>
             <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">پنل برگزارکننده</span>
           </button>
         )}
         {profile.role === 'ADMIN' && (
-          <button onClick={() => navigate('/admin')} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
+          <button onClick={() => navigate('/admin')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
             <span className="w-12 h-12 rounded-full bg-teal-600/10 flex items-center justify-center text-teal-600 dark:text-[#d9ff00]"><Shield className="w-6 h-6" /></span>
             <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">مدیریت سیستم</span>
           </button>
         )}
-        <button onClick={signOut} className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-red-500/10 hover:border-red-500/30 group">
+        <button onClick={signOut} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-red-500/10 hover:border-red-500/30 group">
           <span className="w-12 h-12 rounded-full bg-gray-500/10 flex items-center justify-center text-gray-600 dark:text-gray-400 group-hover:text-red-500"><LogOut className="w-6 h-6" /></span>
           <span className="font-bold text-gray-600 dark:text-gray-400 group-hover:text-red-500 text-sm">خروج از حساب</span>
         </button>
@@ -171,7 +171,7 @@ export function ProfileScreen() {
         </div>
       )}
 
-      <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+      <div className="glass border rounded-2xl p-6">
         <h3 className="text-lg font-bold text-[#515739] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">برای پیشنهادهای بهتر از علایق و رویدادهایی که دیده‌اید استفاده می‌کنیم. هر زمان بخواهید می‌توانید آن‌ها را تغییر دهید یا پاک کنید.</p>
         <div className="space-y-3">

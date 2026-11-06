@@ -20,7 +20,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
   }, [flow.tag]);
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-[#18181b] z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
+    <div className="fixed inset-0 liquid-bg z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {flow.imageUrl ? (
         <div className="relative h-64 sm:h-80 bg-teal-50 dark:bg-white/5 flex-shrink-0">
           <img loading="lazy" src={flow.imageUrl} alt={flow.name} className="w-full h-full object-cover" />
@@ -55,7 +55,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
         {events.length > 0 ? (
           <div className="space-y-4">
             {events.map((ev: Event) => (
-              <div key={ev.id} onClick={() => onEventClick(ev)} className="flex gap-4 p-4 bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer shadow-sm hover:shadow-md transition-all">
+              <div key={ev.id} onClick={() => onEventClick(ev)} className="flex gap-4 p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer shadow-sm hover:shadow-md transition-all">
                 {ev.imageUrl && (
                   <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-24 h-24 rounded-xl object-cover" />
                 )}
@@ -68,7 +68,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-10 bg-gray-50 dark:bg-white/5 rounded-2xl">
+          <div className="text-center py-10 glass-soft rounded-2xl">
              <p className="text-gray-500 dark:text-gray-400">در حال حاضر پیشنهادی در این جریان نیست.</p>
           </div>
         )}

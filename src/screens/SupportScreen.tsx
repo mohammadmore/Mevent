@@ -16,7 +16,7 @@ export const STATUS: Record<string, { label: string; cls: string }> = {
   ANSWERED: { label: 'پاسخ داده شد', cls: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300' },
   CLOSED: { label: 'بسته شده', cls: 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400' },
 };
-const input = 'w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] text-sm';
+const input = 'w-full px-3 py-2.5 rounded-xl border glass text-sm';
 
 export function SupportThread({ id, backTo, onBack }: { id: number; backTo: string; onBack?: () => void }) {
   const { profile } = useAppData();
@@ -28,7 +28,7 @@ export function SupportThread({ id, backTo, onBack }: { id: number; backTo: stri
   const load = () => api<{ data: any }>(`/api/support/${id}`).then(d => setData(d.data)).catch(() => (onBack ? onBack() : navigate(backTo, { replace: true })));
   useEffect(() => { load(); }, [id]);
   useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [data?.messages?.length]);
-  if (!data) return <div className="h-40 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />;
+  if (!data) return <div className="h-40 rounded-2xl glass-soft animate-pulse" />;
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +61,7 @@ export function SupportThread({ id, backTo, onBack }: { id: number; backTo: stri
       </div>
       <ol className="space-y-3">
         {data.messages.map((m: any) => (
-          <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${m.isStaff ? 'mr-auto bg-teal-600/10 dark:bg-[#d9ff00]/10' : 'ml-auto bg-gray-100 dark:bg-white/5'}`}>
+          <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${m.isStaff ? 'mr-auto bg-teal-600/10 dark:bg-[#d9ff00]/10' : 'ml-auto glass-soft'}`}>
             <p className="text-[11px] text-gray-500 mb-1">{m.authorName} · {timeAgo(m.createdAt)}</p>
             {m.body}
           </li>
@@ -115,7 +115,7 @@ export function SupportScreen({ ticketId }: { ticketId?: number }) {
   useEffect(() => { if (!ticketId) api<{ data: any[] }>('/api/support', { silent: true }).then(d => setList(d.data)).catch(() => setList([])); }, [ticketId]);
 
   return (
-    <div className="max-w-2xl mx-auto w-full bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
+    <div className="max-w-2xl mx-auto w-full glass rounded-2xl p-6 shadow-sm border ">
       {ticketId ? <SupportThread id={ticketId} backTo="/support" /> : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export function SupportScreen({ ticketId }: { ticketId?: number }) {
             {!creating && <button onClick={() => setCreating(true)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold flex items-center gap-1"><Plus className="w-4 h-4" /> درخواست جدید</button>}
           </div>
           {creating && <NewRequest onCreated={(id) => navigate(`/support/${id}`)} />}
-          {list === null ? <div className="h-24 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" /> : list.length === 0 && !creating ? (
+          {list === null ? <div className="h-24 rounded-2xl glass-soft animate-pulse" /> : list.length === 0 && !creating ? (
             <p className="text-sm text-gray-500 py-6 text-center">درخواستی ثبت نکرده‌اید. اگر مشکلی در خرید، بلیت یا حساب دارید، درخواست جدید ثبت کنید.</p>
           ) : (
             <ul className="divide-y divide-gray-100 dark:divide-white/5">

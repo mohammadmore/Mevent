@@ -14,7 +14,7 @@ interface KycState {
   phoneVerified: boolean;
 }
 
-const input = 'w-full px-3 py-2.5 border border-gray-200 dark:border-white/10 rounded-xl text-sm bg-white dark:bg-[#18181b] outline-none focus:ring-2 focus:ring-teal-600/40';
+const input = 'w-full px-3 py-2.5 border rounded-xl text-sm glass outline-none focus:ring-2 focus:ring-teal-600/40';
 
 function Field({ label, error, children }: { label: string; error?: string | false; children: React.ReactNode }) {
   return (
@@ -122,7 +122,7 @@ export function KycCard() {
           <div className="flex gap-2" role="radiogroup" aria-label="نوع برگزارکننده">
             {(['INDIVIDUAL', 'COMPANY'] as const).map(t => (
               <button type="button" key={t} role="radio" aria-checked={type === t} onClick={() => setType(t)}
-                className={`flex-1 py-2 rounded-xl text-sm font-bold ${type === t ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black' : 'bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10'}`}>
+                className={`flex-1 py-2 rounded-xl text-sm font-bold ${type === t ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black' : 'glass-soft border border-gray-200 dark:border-white/10'}`}>
                 {t === 'INDIVIDUAL' ? 'شخص حقیقی' : 'شرکت / مؤسسه'}
               </button>
             ))}

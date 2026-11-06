@@ -119,7 +119,7 @@ export function SmartTileLayer({ onUnavailable }: { onUnavailable?: () => void }
 /** Shown over a map whose tiles could not be loaded from any source. */
 export function MapUnavailableNotice({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="absolute inset-x-3 top-3 z-[500] rounded-xl bg-white/95 dark:bg-[#18181b]/95 border border-amber-300 dark:border-amber-500/40 p-3 text-xs text-amber-800 dark:text-amber-300 shadow" role="status">
+    <div className="absolute inset-x-3 top-3 z-[500] rounded-xl glass border border-amber-300 dark:border-amber-500/40 p-3 text-xs text-amber-800 dark:text-amber-300 shadow" role="status">
       نقشه در حال حاضر بارگذاری نمی‌شود. {children}
     </div>
   );

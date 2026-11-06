@@ -23,7 +23,7 @@ const firstName = (n?: string) => (n || '').trim().split(/\s+/)[0];
 const names = (list: Who[]) => list.length <= 2 ? list.map(w => `«${firstName(w.name)}»`).join(' و ') : `«${firstName(list[0].name)}» و ${pNum(list.length - 1)} دوست دیگه`;
 const btn = 'px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 disabled:opacity-50';
 const primary = `${btn} bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black`;
-const quiet = `${btn} bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200`;
+const quiet = `${btn} glass-soft text-gray-800 dark:text-gray-200`;
 
 function Faces({ people }: { people: Who[] }) {
   return (
@@ -54,12 +54,12 @@ function InviteFriends({ eventId, onClose }: { eventId: number; onClose: () => v
   };
   return (
     <div className="fixed inset-0 z-[120] bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
-      <div role="dialog" aria-label="دعوت دوستان" className="w-full max-w-sm bg-white dark:bg-[#18181b] rounded-2xl p-4 space-y-3 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div role="dialog" aria-label="دعوت دوستان" className="w-full max-w-sm glass-strong rounded-2xl p-4 space-y-3 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center">
           <h3 className="font-bold text-gray-900 dark:text-gray-100">کیا رو با خودت می‌بری؟</h3>
           <button onClick={onClose} aria-label="بستن"><X className="w-5 h-5 text-gray-500" /></button>
         </div>
-        {friends === null ? <div className="h-20 bg-gray-100 dark:bg-white/5 rounded-xl animate-pulse" /> : friends.length === 0 ? (
+        {friends === null ? <div className="h-20 glass-soft rounded-xl animate-pulse" /> : friends.length === 0 ? (
           <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3">
             <p>هنوز دوستی توی میونت نداری.</p>
             <button onClick={() => navigate('/friends')} className={primary}><UserPlus className="w-4 h-4" /> دعوت دوستان به میونت</button>
@@ -143,7 +143,7 @@ export function GoTogether({ eventId }: { eventId: number }) {
       )}
 
       {data.canPlan && profile && data.myPost && (
-        <div className="rounded-2xl bg-white/80 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-3 space-y-3">
+        <div className="rounded-2xl glass border p-3 space-y-3">
           <div className="flex justify-between items-start gap-2">
             <p className="text-sm text-gray-800 dark:text-gray-200"><b>دنبال همراهی.</b> {data.myPost.note && <span className="text-gray-600 dark:text-gray-400">«{data.myPost.note}»</span>}</p>
             <button disabled={busy === 'close'} onClick={() => run('close', () => api(`/api/events/${eventId}/companions`, { method: 'DELETE' }))} className="text-xs text-gray-500 shrink-0">دیگه نمی‌گردم</button>
@@ -175,7 +175,7 @@ export function GoTogether({ eventId }: { eventId: number }) {
       {data.canPlan && data.posts.length > 0 && (
         <ul className="space-y-2" aria-label="دنبال همراه">
           {data.posts.map(p => (
-            <li key={p.id} className="rounded-2xl bg-white/80 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-3 flex items-center gap-3 flex-wrap">
+            <li key={p.id} className="rounded-2xl glass border p-3 flex items-center gap-3 flex-wrap">
               <GeneratedAvatar seed={p.user.id} className="w-10 h-10 rounded-full bg-gray-100" />
               <span className="flex-1 min-w-0 text-sm">
                 <b className="text-gray-900 dark:text-gray-100">{p.user.name}</b> <span className="text-xs text-gray-500">{trust(p)}</span>

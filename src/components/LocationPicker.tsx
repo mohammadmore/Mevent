@@ -61,7 +61,7 @@ function CoordinatesInput({ value, onChange }: { value: { lat: number; lng: numb
         placeholder="35.6892, 51.3890"
         aria-label="مختصات مکان"
         aria-invalid={Boolean(text.trim() && !parsed)}
-        className="w-full rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] px-3 py-2 text-sm"
+        className="w-full rounded-lg border glass px-3 py-2 text-sm"
       />
       {text.trim() && (parsed
         ? <p className="text-xs text-emerald-700 dark:text-emerald-400">ثبت شد: {parsed.lat.toFixed(5)}, {parsed.lng.toFixed(5)}</p>

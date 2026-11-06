@@ -66,9 +66,9 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
   p.events = placeData?.events || place?.events || [];
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-[#18181b] z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
+    <div className="fixed inset-0 liquid-bg z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {p.imageUrl ? (
-        <div className="relative h-72 sm:h-96 flex-shrink-0 bg-white dark:bg-[#18181b] overflow-hidden">
+        <div className="relative h-72 sm:h-96 flex-shrink-0 glass overflow-hidden">
           <img 
             onClick={() => { setActiveModalImage(p.imageUrl || null); setIsImageModalOpen(true); }}
             loading="lazy" 
@@ -90,7 +90,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#18181b] dark:via-[#18181b]/80 dark:to-transparent pointer-events-none z-10" />
         </div>
       ) : (
-        <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
+        <div className="p-4 flex items-center gap-4 glass-soft border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
           <button onClick={onBack} aria-label="بازگشت" className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
             <ArrowRight className="w-6 h-6" />
           </button>
@@ -115,7 +115,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div 
             onClick={() => setIsMapModalOpen(true)}
-            className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer hover:border-teal-500/50 dark:hover:border-[#d9ff00]/50 transition-colors group"
+            className="flex items-center justify-between p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer hover:border-teal-500/50 dark:hover:border-[#d9ff00]/50 transition-colors group"
           >
             <div className="flex items-center gap-3">
               <MapPin className="text-teal-600 dark:text-[#d9ff00] w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
@@ -133,7 +133,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </button>
           </div>
 
-          <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/5">
+          <div className="flex items-center gap-3 p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5">
             <Clock className="text-teal-600 dark:text-[#d9ff00] w-6 h-6 shrink-0" />
             <div>
               <p className="text-xs text-gray-500 mb-1">ساعات کاری</p>
@@ -170,11 +170,11 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </h3>
             <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {p.events.map((ev: Event) => (
-                <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
+                <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-32 bg-gray-100 dark:bg-white/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-full h-32 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                       <Calendar className="text-gray-300 w-8 h-8" />
                     </div>
                   )}
@@ -195,11 +195,11 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </h3>
             <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {nearbyEvents.map((ev: Event) => (
-                <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
+                <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-32 bg-gray-100 dark:bg-white/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-full h-32 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                       <Calendar className="text-gray-300 w-8 h-8" />
                     </div>
                   )}
@@ -223,12 +223,12 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                 <div 
                   key={np.id} 
                   onClick={() => onPlaceClick?.(np)}
-                  className="min-w-[200px] bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 dark:hover:border-[#d9ff00] transition-colors"
+                  className="min-w-[200px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 dark:hover:border-[#d9ff00] transition-colors"
                 >
                   {np.imageUrl ? (
                     <img loading="lazy" src={np.imageUrl} alt={np.name} className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-24 bg-gray-100 dark:bg-white/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-full h-24 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                       <span className="text-gray-400 text-xs font-medium">بدون عکس</span>
                     </div>
                   )}
@@ -246,7 +246,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
       {/* Map Modal for Place */}
       {isMapModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#18181b] rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-white/10 flex flex-col max-h-[90vh]">
+          <div className="glass-strong rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10">
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
@@ -261,7 +261,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </div>
             
             {p.lat && p.lng ? (
-              <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[320px] relative z-0">
+              <div className="flex-1 w-full glass-soft min-h-[320px] relative z-0">
                 <Suspense fallback={<div className="min-h-[320px]" />}>
                   <MiniMap lat={Number(p.lat)} lng={Number(p.lng)} className="min-h-[320px]" fallback={<p className="p-6 text-sm text-gray-600 dark:text-gray-300">{p.address || 'نقشه در حال حاضر بارگذاری نمی‌شود.'}</p>} />
                 </Suspense>
@@ -270,7 +270,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
               <p className="p-6 text-sm text-gray-600 dark:text-gray-300">{p.address || p.name}</p>
             )}
 
-            <div className="p-4 bg-gray-50 dark:bg-[#1f1f23] border-t border-gray-100 dark:border-white/10">
+            <div className="p-4 glass-soft border-t border-gray-100 dark:border-white/10">
               <NavigationLinks lat={p.lat ? Number(p.lat) : null} lng={p.lng ? Number(p.lng) : null} query={p.address || p.name} />
             </div>
           </div>

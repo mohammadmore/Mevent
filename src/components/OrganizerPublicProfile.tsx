@@ -58,16 +58,16 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-white dark:bg-[#18181b] z-[120] flex items-center justify-center animate-in fade-in">
+      <div className="fixed inset-0 liquid-bg z-[120] flex items-center justify-center animate-in fade-in">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-[#d9ff00]"></div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-[#18181b] z-[120] overflow-y-auto flex flex-col animate-in slide-in-from-right duration-300" dir="rtl">
+    <div className="fixed inset-0 liquid-bg z-[120] overflow-y-auto flex flex-col animate-in slide-in-from-right duration-300" dir="rtl">
       {/* Header (App Bar) */}
-      <div className="flex items-center gap-4 p-4 fixed top-0 w-full bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-md z-50 border-b border-gray-100 dark:border-white/10">
+      <div className="flex items-center gap-4 p-4 fixed top-0 w-full glass-strong z-50 border-b ">
         <button 
           onClick={onBack}
           className="w-10 h-10 rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
@@ -99,7 +99,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
             <GeneratedAvatar
               seed={organizerId}
               alt="Organizer Avatar" 
-              className="w-24 h-24 rounded-full border-4 border-white dark:border-[#18181b] bg-gray-100 dark:bg-[#1f1f23] shadow-md"
+              className="w-24 h-24 rounded-full border-4 border-white dark:border-[#18181b] glass-soft shadow-md"
             />
             <div className="flex-1 md:mt-14">
               <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
@@ -161,7 +161,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
               <div 
                 key={event.id}
                 onClick={() => onEventClick(event)}
-                className="group break-inside-avoid rounded-2xl border border-gray-200 dark:border-white/10 bg-white/90 dark:bg-[#1f1f23] hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 transition-all duration-300 cursor-pointer overflow-hidden relative"
+                className="group break-inside-avoid rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 transition-all duration-300 cursor-pointer overflow-hidden relative"
               >
                 {getEventBackgroundIcon(event.bgIcon, event.tags || [], false)}
                 {event.imageUrl && (
@@ -189,7 +189,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {event.tags.slice(0, 3).map(tag => (
-                      <span key={tag} className="text-[10px] bg-gray-100 dark:bg-[#18181b] text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-md border border-gray-200 dark:border-white/5">
+                      <span key={tag} className="text-[10px] glass-soft text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-md border border-gray-200 dark:border-white/5">
                         {tag}
                       </span>
                     ))}

@@ -34,8 +34,8 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in" dir="rtl">
-      <div className="bg-white dark:bg-[#18181b] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10 sticky top-0 bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-md z-10">
+      <div className="glass-strong rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between p-4 border-b sticky top-0 glass-strong z-10">
           <h2 className="font-bold text-lg text-gray-900 dark:text-white">ویرایش پروفایل عمومی</h2>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 transition-colors">
             <X className="w-5 h-5" />
@@ -51,7 +51,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 required
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
               />
             </div>
             
@@ -60,7 +60,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
               <select
                 value={formData.city}
                 onChange={e => setFormData({ ...formData, city: e.target.value })}
-                className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
               >
                 {[...new Set([formData.city, ...CITIES])].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -73,7 +73,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 <select
                   value={formData.organizerType}
                   onChange={e => setFormData({ ...formData, organizerType: e.target.value as 'INDIVIDUAL' | 'CORPORATE' })}
-                  className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
                 >
                   <option value="INDIVIDUAL">حقیقی (شخص)</option>
                   <option value="CORPORATE">حقوقی (موسسه / گالری / سالن)</option>
@@ -89,7 +89,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 onChange={e => setFormData({ ...formData, bio: e.target.value })}
                 rows={3}
                 placeholder="توضیحاتی در مورد فعالیت‌های شما..."
-                className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors resize-none dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors resize-none dark:text-white"
               />
             </div>
 
@@ -101,7 +101,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   placeholder="https://example.com/cover.jpg"
                   value={formData.coverImage}
                   onChange={e => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
                   dir="ltr"
                 />
                 <ImageIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
@@ -115,7 +115,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   type="url"
                   value={formData.website}
                   onChange={e => setFormData({ ...formData, website: e.target.value })}
-                  className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
                   dir="ltr"
                 />
               </div>
@@ -125,7 +125,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   type="text"
                   value={formData.instagram}
                   onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full bg-gray-50 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
                   dir="ltr"
                 />
               </div>
@@ -133,7 +133,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
           </form>
         </div>
 
-        <div className="p-4 border-t border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-[#1f1f23] sticky bottom-0">
+        <div className="p-4 border-t border-gray-100 dark:border-white/10 glass-soft sticky bottom-0">
           <button 
             type="submit"
             form="profile-edit-form"

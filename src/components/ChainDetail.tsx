@@ -26,7 +26,7 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
   c.events = chainData?.events || chain?.events || [];
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-[#18181b] z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
+    <div className="fixed inset-0 liquid-bg z-[100] overflow-y-auto animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {c.imageUrl ? (
         <div className="relative h-48 sm:h-64 bg-teal-50 dark:bg-white/5 flex-shrink-0">
           <img loading="lazy" src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
@@ -37,7 +37,7 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
           </div>
         </div>
       ) : (
-        <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
+        <div className="p-4 flex items-center gap-4 glass-soft border-b border-gray-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
           <button onClick={onBack} aria-label="بازگشت" className="p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
             <ArrowRight className="w-6 h-6" />
           </button>
@@ -61,7 +61,7 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {c.events.map((ev: Event) => (
-                <div key={ev.id} onClick={() => onEventClick(ev)} className="p-4 bg-gray-50 dark:bg-[#1f1f23] rounded-2xl cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-teal-200 dark:hover:border-white/10">
+                <div key={ev.id} onClick={() => onEventClick(ev)} className="p-4 glass-soft rounded-2xl cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-teal-200 dark:hover:border-white/10">
                   <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{ev.title}</h4>
                   <p className="text-sm text-gray-500">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
                 </div>

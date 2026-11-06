@@ -182,7 +182,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
 
   const chip = (active: boolean) => `px-4 py-2 rounded-xl text-sm font-medium transition-colors ${active
     ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold'
-    : 'bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'}`;
+    : 'glass-soft text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'}`;
   const quickRange = (days: number) => { setStartDate(dayIso(0)); setEndDate(dayIso(days - 1)); };
 
   return (
@@ -192,7 +192,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
+          className="relative w-full max-w-3xl glass-strong border rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
         >
           <div className="p-5 bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-700 dark:from-[#18181b] dark:via-[#222226] dark:to-[#18181b] border-b border-white/10 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
@@ -230,7 +230,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                     <button onClick={handleSave} className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold ${isSaved ? 'bg-emerald-600 text-white' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}>
                       <Bookmark className="w-4 h-4" /> {isSaved ? 'ذخیره شد' : plan.isOwner === false ? 'ذخیره در سفرهای من' : 'ذخیره'}
                     </button>
-                    <button onClick={handleShare} className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-white dark:bg-[#222226] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200">
+                    <button onClick={handleShare} className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium glass border text-gray-700 dark:text-gray-200">
                       <Share2 className="w-4 h-4" /> {copiedLink ? 'لینک کپی شد' : 'اشتراک‌گذاری'}
                     </button>
                   </div>
@@ -256,7 +256,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   ))
                 )}
 
-                <button type="button" onClick={newTrip} className="w-full py-3 rounded-2xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center gap-2">
+                <button type="button" onClick={newTrip} className="w-full py-3 rounded-2xl glass-soft text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center gap-2">
                   <PlusCircle className="w-4 h-4" /> سفر جدید
                 </button>
               </div>
@@ -274,7 +274,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {savedPlans.map(saved => (
                       <div key={saved.id} role="button" tabIndex={0} onClick={() => openPlan(saved, true)} onKeyDown={e => e.key === 'Enter' && openPlan(saved, true)}
-                        className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex items-start justify-between gap-3 bg-gray-50 dark:bg-white/5 cursor-pointer hover:border-teal-500 dark:hover:border-[#d9ff00]">
+                        className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex items-start justify-between gap-3 glass-soft cursor-pointer hover:border-teal-500 dark:hover:border-[#d9ff00]">
                         <div className="space-y-1 min-w-0">
                           <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100"><MapPin className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" />{saved.city}</div>
                           {saved.startDate && saved.endDate && <div className="text-xs text-gray-600 dark:text-gray-400">{rangeLabel(saved)}</div>}

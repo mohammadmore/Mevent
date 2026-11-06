@@ -40,7 +40,7 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuic
         ref={containerRef}
         onPointerDown={handlePointerEvent}
         onPointerMove={handlePointerEvent}
-        className="bg-white/95 dark:bg-[#18181b]/90 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-[2rem] p-1.5 flex items-center justify-center gap-0.5 shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] relative pointer-events-auto mx-auto w-max touch-none select-none"
+        className="glass-strong border rounded-[2rem] p-1.5 flex items-center justify-center gap-0.5 shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] relative pointer-events-auto mx-auto w-max touch-none select-none"
       >
         {navItems.map((item) => {
           const isActive = activeTab === item.id;

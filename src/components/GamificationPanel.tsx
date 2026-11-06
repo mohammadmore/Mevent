@@ -76,7 +76,7 @@ export default function GamificationPanel() {
       </div>
 
       {data && data.history.length > 0 && (
-        <details className="bg-white/90 dark:bg-[#18181b] rounded-3xl p-6 border border-gray-200 dark:border-white/10">
+        <details className="glass rounded-3xl p-6 border ">
           <summary className="font-bold text-gray-800 dark:text-gray-100 cursor-pointer flex items-center gap-2"><History className="w-5 h-5" /> تاریخچه امتیازها</summary>
           <ul className="mt-4 space-y-2">
             {data.history.map(h => (
@@ -89,7 +89,7 @@ export default function GamificationPanel() {
         </details>
       )}
 
-      <div className="bg-white/90 dark:bg-[#18181b] rounded-3xl p-6 border border-gray-200 dark:border-white/10 shadow-sm">
+      <div className="glass rounded-3xl p-6 border shadow-sm">
         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> برترین‌های میونت</h3>
         {leaderboard === null ? (
           <div className="flex justify-center py-10"><div className="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" /></div>
@@ -98,7 +98,7 @@ export default function GamificationPanel() {
             {leaderboard.map((u, i) => {
               const me = u.id === dbUserId;
               return (
-                <li key={u.id} className={`flex items-center justify-between p-3 rounded-2xl border ${me ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/20' : 'bg-gray-100/50 dark:bg-[#1f1f23]/50 border-transparent'}`}>
+                <li key={u.id} className={`flex items-center justify-between p-3 rounded-2xl border ${me ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/20' : 'glass-soft border-transparent'}`}>
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${i === 0 ? 'bg-yellow-500/20 text-yellow-600' : i === 2 ? 'bg-orange-500/20 text-orange-500' : 'bg-gray-200 dark:bg-white/5 text-gray-600 dark:text-gray-400'}`}>{pNum(i + 1)}</span>
                     <span className="w-10 h-10 rounded-full bg-teal-600/15 flex items-center justify-center text-teal-600 dark:text-[#d9ff00] font-bold">{u.name?.charAt(0) || 'U'}</span>

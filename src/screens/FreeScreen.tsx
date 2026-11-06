@@ -41,7 +41,7 @@ export function FreeScreen({ userLocation }: { userLocation: { lat: number; lng:
       {SECTIONS.map(s => (
         <section key={s.key} aria-label={s.title}>
           <h2 className="text-base font-bold text-gray-800 dark:text-gray-100 mb-3">{s.title}</h2>
-          {!data ? <div className="h-28 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />
+          {!data ? <div className="h-28 rounded-2xl glass-soft animate-pulse" />
             : data[s.key].length === 0 ? <p className="text-sm text-gray-500">{s.empty}</p>
             : <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{data[s.key].map(p => <PickCard key={`${p.kind}:${p.id}`} pick={p} />)}</div>}
         </section>

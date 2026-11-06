@@ -37,7 +37,7 @@ function useEntity<T>(kind: string, id: string, url: string, unwrap: (json: any)
 
 function NotFound({ text }: { text: string }) {
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#18181b] flex flex-col items-center justify-center gap-4 p-6 text-center" dir="rtl">
+    <div className="fixed inset-0 z-[100] liquid-bg flex flex-col items-center justify-center gap-4 p-6 text-center" dir="rtl">
       <SearchX className="w-16 h-16 text-gray-300" />
       <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{text}</h2>
       <p className="text-sm text-gray-500">ممکن است حذف شده یا هنوز منتشر نشده باشد.</p>
@@ -48,7 +48,7 @@ function NotFound({ text }: { text: string }) {
 
 function Loading() {
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#18181b] flex items-center justify-center">
+    <div className="fixed inset-0 z-[100] liquid-bg flex items-center justify-center">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 dark:border-[#d9ff00]" />
     </div>
   );

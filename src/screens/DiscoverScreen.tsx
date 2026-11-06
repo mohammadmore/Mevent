@@ -138,7 +138,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
   }, [hasMore, loading, events.length, params]);
 
   const filtersActive = price !== 'all' || date !== 'all';
-  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#d9ff00] text-white dark:text-black' : 'bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`;
+  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#d9ff00] text-white dark:text-black' : 'glass border text-gray-700 dark:text-gray-300'}`;
 
   const searchBox = (
       <div className="relative">
@@ -148,7 +148,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           inputMode="search"
           aria-label="جستجو"
           placeholder="جستجوی رویداد، پاتوق، دسته‌بندی..."
-          className="w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl pr-10 pl-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30"
+          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pr-10 pl-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -173,7 +173,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {!q && <DiscoveryHeader city={city === 'all' ? undefined : city} onFlowSelect={onOpenFlow} onVibeSelect={onOpenVibe} onChainSelect={onOpenChain} />}
 
       {!q && (
-        <div className="bg-gradient-to-r from-teal-800 via-emerald-700 to-teal-900 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-teal-600/30 dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="bg-gradient-to-br from-teal-700/90 via-teal-800/85 to-[#515739]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(194,65,12,0.18)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-[#d9ff00]/20 flex items-center justify-center shrink-0"><Plane className="w-5 h-5" /></div>
             <div>
@@ -211,13 +211,13 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
                 aria-label="شهر"
                 value={city}
                 onChange={(e) => setParam({ city: e.target.value })}
-                className="text-sm bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-full px-3 py-1.5 outline-none"
+                className="text-sm glass-soft border border-gray-200 dark:border-white/10 rounded-full px-3 py-1.5 outline-none"
               >
                 <option value="all">همه شهرها</option>
                 {[...new Set([profile?.city, ...CITIES].filter(Boolean) as string[])].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             )}
-            <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-bold border ${showFilters || filtersActive ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/30 dark:border-[#d9ff00]/30 text-teal-600 dark:text-[#d9ff00]' : 'bg-white/90 dark:bg-[#18181b] border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}>
+            <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-bold border ${showFilters || filtersActive ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/30 dark:border-[#d9ff00]/30 text-teal-600 dark:text-[#d9ff00]' : 'glass text-gray-700 dark:text-gray-300'}`}>
               <Filter className="w-3.5 h-3.5" /> فیلترها{filtersActive ? ' •' : ''}
             </button>
             <button onClick={() => navigate('/map')} className="flex items-center gap-1.5 text-xs font-bold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-3 py-2.5 rounded-full">
@@ -233,7 +233,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
         )}
 
         {showFilters && (
-          <div className="bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 p-4 rounded-xl space-y-4">
+          <div className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-xl space-y-4">
             <div>
               <span className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 block">هزینه</span>
               <div className="flex gap-2 flex-wrap">
@@ -275,8 +275,8 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           <h3 className="text-base font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2"><Store className="w-4 h-4" /> پاتوق‌ها</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {places.map(p => (
-              <button key={p.id} onClick={() => onOpenPlace(p)} className="text-right bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-3 flex gap-3 items-center hover:border-teal-500/50">
-                {p.imageUrl ? <img src={p.imageUrl} alt="" loading="lazy" className="w-14 h-14 rounded-xl object-cover" /> : <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center"><Store className="w-6 h-6 text-gray-400" /></div>}
+              <button key={p.id} onClick={() => onOpenPlace(p)} className="text-right glass border rounded-2xl p-3 flex gap-3 items-center hover:border-teal-500/50">
+                {p.imageUrl ? <img src={p.imageUrl} alt="" loading="lazy" className="w-14 h-14 rounded-xl object-cover" /> : <div className="w-14 h-14 rounded-xl glass-soft flex items-center justify-center"><Store className="w-6 h-6 text-gray-400" /></div>}
                 <span className="min-w-0">
                   <span className="block font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{p.name}</span>
                   <span className="block text-xs text-gray-500 truncate">{p.city} • {p.address || placeTypeLabel(p.type)}</span>
@@ -290,7 +290,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {type !== 'places' && (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 md:gap-6">
           {loading && events.length === 0 && Array(6).fill(0).map((_, i) => (
-            <div key={'skeleton-' + i} className="break-inside-avoid rounded-2xl border border-gray-200 dark:border-white/10 bg-white/90 dark:bg-[#18181b] overflow-hidden animate-pulse mb-4">
+            <div key={'skeleton-' + i} className="break-inside-avoid rounded-2xl border glass overflow-hidden animate-pulse mb-4">
               <div className="w-full h-40 bg-teal-100 dark:bg-white/10" />
               <div className="p-4 space-y-3">
                 <div className="h-5 bg-teal-100 dark:bg-white/10 rounded w-3/4" />
@@ -318,10 +318,10 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {(filtersActive || category !== 'all' || city !== 'all' || q) && (
-              <button onClick={() => { setSearchInput(''); navigate(`/?city=all`, { replace: true }); }} className="px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-sm font-bold text-gray-800 dark:text-gray-200">همه‌ی برنامه‌ها</button>
+              <button onClick={() => { setSearchInput(''); navigate(`/?city=all`, { replace: true }); }} className="px-3 py-2 rounded-xl glass-soft text-sm font-bold text-gray-800 dark:text-gray-200">همه‌ی برنامه‌ها</button>
             )}
             <button onClick={() => navigate('/bored')} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">یه چیزی پیشنهاد بده</button>
-            <button onClick={() => navigate('/free')} className="px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-sm font-bold text-gray-800 dark:text-gray-200">بدون خرج</button>
+            <button onClick={() => navigate('/free')} className="px-3 py-2 rounded-xl glass-soft text-sm font-bold text-gray-800 dark:text-gray-200">بدون خرج</button>
           </div>
         </div>
       )}
@@ -329,7 +329,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       <div ref={sentinel} />
       {hasMore && (
         <div className="flex justify-center pb-6">
-          <button onClick={() => load(events.length)} disabled={loading} className="px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 text-sm font-bold text-gray-700 dark:text-gray-300 disabled:opacity-50">
+          <button onClick={() => load(events.length)} disabled={loading} className="px-5 py-2.5 rounded-xl glass-soft text-sm font-bold text-gray-700 dark:text-gray-300 disabled:opacity-50">
             {loading ? 'در حال بارگذاری...' : 'نمایش بیشتر'}
           </button>
         </div>

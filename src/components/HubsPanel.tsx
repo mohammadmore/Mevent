@@ -98,8 +98,8 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     api<any>('/api/reports', { body: { targetType: 'HUB', targetId: hub.id, reason } }).then(r => showToast(r.message, 'success')).catch(() => {});
   };
 
-  const input = 'w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30';
-  const panel = 'bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 max-w-5xl mx-auto w-full relative';
+  const input = 'w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30';
+  const panel = 'glass rounded-2xl p-6 shadow-sm border max-w-5xl mx-auto w-full relative';
 
   if (creating) {
     return (
@@ -126,7 +126,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           <div>
             <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">تصویر جامعه (اختیاری)</span>
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-300 dark:border-white/20">
+              <div className="w-20 h-20 glass-soft rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-300 dark:border-white/20">
                 {imageUrl ? <img src={imageUrl} alt="" className="w-full h-full object-cover" /> : <Users className="w-8 h-8 text-gray-500" />}
               </div>
               <div className="flex-1">
@@ -186,23 +186,23 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
               <button
                 onClick={() => toggleMembership(selectedHub)}
                 disabled={busy}
-                className={`flex-1 md:flex-none px-8 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${selectedHub.isMember ? 'bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}
+                className={`flex-1 md:flex-none px-8 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${selectedHub.isMember ? 'glass-soft text-gray-800 dark:text-gray-200' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}
               >
                 {selectedHub.isMember ? <><Check className="w-4 h-4" /> عضو هستید</> : 'پیوستن'}
               </button>
             )}
-            <button onClick={() => shareHub(selectedHub)} aria-label="اشتراک‌گذاری" className="p-3 rounded-xl bg-gray-100 dark:bg-white/10"><Share2 className="w-5 h-5" /></button>
-            <button onClick={() => reportHub(selectedHub)} aria-label="گزارش تخلف" className="p-3 rounded-xl bg-gray-100 dark:bg-white/10"><Flag className="w-5 h-5" /></button>
+            <button onClick={() => shareHub(selectedHub)} aria-label="اشتراک‌گذاری" className="p-3 rounded-xl glass-soft"><Share2 className="w-5 h-5" /></button>
+            <button onClick={() => reportHub(selectedHub)} aria-label="گزارش تخلف" className="p-3 rounded-xl glass-soft"><Flag className="w-5 h-5" /></button>
           </div>
         </div>
 
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> رویدادهای جامعه</h3>
         {hubEvents === null ? (
-          <div className="h-40 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />
+          <div className="h-40 rounded-2xl glass-soft animate-pulse" />
         ) : hubEvents.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {hubEvents.map((event: any) => (
-              <button key={event.id} onClick={() => openEvent(event)} className="text-right bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:shadow-xl transition-all group relative">
+              <button key={event.id} onClick={() => openEvent(event)} className="text-right glass border rounded-2xl overflow-hidden hover:shadow-xl transition-all group relative">
                 {getEventBackgroundIcon(event.bgIcon, event.tags || [], false)}
                 {event.imageUrl ? (
                   <div className="w-full h-40 overflow-hidden"><img src={event.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
@@ -217,7 +217,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
             ))}
           </div>
         ) : (
-          <div className="bg-gray-100 dark:bg-[#1f1f23] rounded-2xl p-10 text-center border border-dashed border-gray-200 dark:border-white/10">
+          <div className="glass-soft rounded-2xl p-10 text-center border border-dashed border-gray-200 dark:border-white/10">
             <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 font-medium">رویداد پیش رویی در این جامعه ثبت نشده است.</p>
           </div>
@@ -239,11 +239,11 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
       </div>
 
       {hubs === null ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{[0, 1, 2].map(i => <div key={i} className="h-56 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />)}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{[0, 1, 2].map(i => <div key={i} className="h-56 rounded-2xl glass-soft animate-pulse" />)}</div>
       ) : hubs.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {hubs.map(hub => (
-            <div key={hub.id} className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center">
+            <div key={hub.id} className="glass border p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center">
               <button onClick={() => onOpenHub(hub.id)} className="flex flex-col items-center w-full">
                 <span className="w-20 h-20 bg-teal-600/10 dark:bg-[#d9ff00]/10 rounded-full overflow-hidden flex items-center justify-center text-teal-600 dark:text-[#d9ff00] mb-4">
                   {hub.imageUrl ? <img src={hub.imageUrl} alt="" className="w-full h-full object-cover" /> : <Users className="w-10 h-10" />}
@@ -254,7 +254,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
               <div className="flex items-center justify-center gap-3 w-full border-t border-gray-100 dark:border-white/5 pt-4 mt-auto">
                 <span className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-2.5 py-1 rounded-full">{pNum(hub.followersCount)} عضو</span>
                 {!hub.isOwner && (
-                  <button onClick={() => toggleMembership(hub)} disabled={busy} className={`text-xs font-bold px-3 py-1 rounded-full ${hub.isMember ? 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}>
+                  <button onClick={() => toggleMembership(hub)} disabled={busy} className={`text-xs font-bold px-3 py-1 rounded-full ${hub.isMember ? 'glass-soft text-gray-700 dark:text-gray-300' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}>
                     {hub.isMember ? 'عضو هستید' : 'پیوستن'}
                   </button>
                 )}
@@ -264,7 +264,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-100 dark:bg-[#1f1f23] rounded-2xl border border-dashed border-gray-200 dark:border-white/10">
+        <div className="flex flex-col items-center justify-center py-20 glass-soft rounded-2xl border border-dashed border-gray-200 dark:border-white/10">
           <Users className="w-12 h-12 text-gray-400 mb-6" />
           <p className="text-center text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">هنوز جامعه‌ای وجود ندارد</p>
           <p className="text-center text-gray-500 mb-8 max-w-sm leading-relaxed">اولین نفری باشید که جامعه خود را می‌سازد.</p>

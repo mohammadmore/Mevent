@@ -118,7 +118,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                 ایجاد جدید +
               </button>
               {showCreateMenu && (
-                <div className="absolute top-12 right-0 w-64 bg-white dark:bg-[#1f1f23] rounded-xl shadow-xl border border-gray-200 dark:border-white/10 z-50 overflow-hidden">
+                <div className="absolute top-12 right-0 w-64 glass-soft rounded-xl shadow-xl border border-gray-200 dark:border-white/10 z-50 overflow-hidden">
                   <div className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-white/5" onClick={() => { setCreateMode('PLACE'); setShowCreateMenu(false); }}>
                     <h4 className="font-bold text-sm text-gray-800 dark:text-gray-100">افزودن پاتوق</h4>
                     <p className="text-xs text-gray-500 mt-1">کسب‌وکار یا مکانی با ساعات کاری مشخص دارید؟ (مثل کافه، موزه)</p>
@@ -147,10 +147,10 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
 
       
       {createMode && (
-        <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
+        <div className="glass rounded-2xl p-6 shadow-sm border w-full relative">
           <button 
             onClick={() => setCreateMode(null)}
-            className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
+            className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
@@ -164,10 +164,10 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
       )}
 
       {editingEvent ? (
-        <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
+        <div className="glass rounded-2xl p-6 shadow-sm border w-full relative">
           <button 
             onClick={() => setEditingEvent(null)}
-            className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
+            className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
@@ -181,7 +181,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           />
         </div>
       ) : events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-gray-100 dark:bg-[#1f1f23] rounded-2xl border border-dashed border-gray-300 dark:border-white/20">
+        <div className="flex flex-col items-center justify-center py-16 glass-soft rounded-2xl border border-dashed border-gray-300 dark:border-white/20">
           <Calendar className="w-12 h-12 text-gray-300 mb-4" />
           <p className="text-gray-500 dark:text-gray-400 font-medium">شما هنوز رویدادی ایجاد نکرده‌اید.</p>
         </div>
@@ -195,7 +195,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                 <div 
                   key={event.id}
                   onClick={() => setSelectedEventId(event.id)}
-                  className={`relative overflow-hidden p-4 rounded-xl border cursor-pointer transition-all ${selectedEventId === event.id ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 shadow-sm' : 'border-gray-300 dark:border-white/20 bg-white/90 dark:bg-[#18181b] hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:shadow-sm'}`}
+                  className={`relative overflow-hidden p-4 rounded-xl border cursor-pointer transition-all ${selectedEventId === event.id ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 shadow-sm' : 'border-gray-300 dark:border-white/20 glass hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:shadow-sm'}`}
                 >
                   <div className="relative z-10">
                   <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{event.title}</h4>
@@ -210,13 +210,13 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                     <div className="flex gap-1">
                       <button 
                         onClick={(e) => { e.stopPropagation(); setEditingEvent(event); }}
-                        aria-label="ویرایش" className="p-2.5 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10" title="ویرایش"
+                        aria-label="ویرایش" className="p-2.5 rounded-lg glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10" title="ویرایش"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); toggleStatus(event.id, event.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED'); }}
-                        aria-label={event.status === 'PUBLISHED' ? 'منتشر شده؛ برای پیش‌نویس کردن بزنید' : 'پیش‌نویس؛ برای انتشار بزنید'} className={`p-2.5 rounded-lg ${event.status === 'PUBLISHED' ? 'bg-green-500/20 text-green-600' : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`} title="تغییر وضعیت (انتشار/پیش‌نویس)"
+                        aria-label={event.status === 'PUBLISHED' ? 'منتشر شده؛ برای پیش‌نویس کردن بزنید' : 'پیش‌نویس؛ برای انتشار بزنید'} className={`p-2.5 rounded-lg ${event.status === 'PUBLISHED' ? 'bg-green-500/20 text-green-600' : 'glass-soft text-gray-700 dark:text-gray-300'}`} title="تغییر وضعیت (انتشار/پیش‌نویس)"
                       >
                         <Power className="w-4 h-4" />
                       </button>
@@ -237,7 +237,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
           {/* Stats Panel */}
           <div className="lg:col-span-2">
             {selectedEventId ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl border border-gray-300 dark:border-white/20 p-6 shadow-sm">
+              <div className="glass rounded-2xl border border-gray-300 dark:border-white/20 p-6 shadow-sm">
                 <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                   آمار رویداد
@@ -285,7 +285,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                         <p className="text-sm text-emerald-700 font-medium mb-1">مجموع درآمد</p>
                         <p className="text-3xl font-bold text-emerald-600">{(stats.revenue / 1000).toLocaleString()} <span className="text-lg">هزار تومان</span></p>
                       </div>
-                      <div className="w-12 h-12 bg-white/90 dark:bg-[#18181b] rounded-full flex items-center justify-center shadow-sm text-emerald-600">
+                      <div className="w-12 h-12 glass rounded-full flex items-center justify-center shadow-sm text-emerald-600">
                         <Activity className="w-6 h-6" />
                       </div>
                     </div>
@@ -301,7 +301,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                             if (attendees) { setAttendees(null); return; }
                             api<{ data: any[] }>(`/api/organizer/events/${selectedEventId}/attendees`).then(d => setAttendees(d.data)).catch(() => {});
                           }}
-                          className="flex-1 bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-100"
+                          className="flex-1 glass border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-100"
                         >
                           {attendees ? 'بستن لیست' : 'لیست ثبت‌نامی‌ها'}
                         </button>
@@ -327,7 +327,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                 )}
               </div>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center bg-gray-100 dark:bg-[#1f1f23] rounded-2xl border border-dashed border-gray-300 dark:border-white/20 py-20">
+              <div className="h-full flex flex-col items-center justify-center glass-soft rounded-2xl border border-dashed border-gray-300 dark:border-white/20 py-20">
                 <BarChart3 className="w-12 h-12 text-gray-300 mb-4" />
                 <p className="text-gray-500 dark:text-gray-400 font-medium">یک رویداد را برای مشاهده آمار انتخاب کنید.</p>
               </div>

@@ -80,7 +80,7 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
         <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">نام زنجیره (فستیوال/دوره)</label>
         <input 
           type="text" 
-          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
+          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white" 
           value={formData.name} 
           onChange={e => setFormData({...formData, name: e.target.value})} 
         />
@@ -88,7 +88,7 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
       <div>
         <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">توضیحات کلی</label>
         <textarea 
-          className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white h-24"
+          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white h-24"
           value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         ></textarea>
@@ -96,7 +96,7 @@ export default function ChainForm({ onSuccess, initialData, isAdmin }: any) {
       
       <div>
         <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">انتخاب رویدادهای زیرمجموعه</label>
-        <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl max-h-64 overflow-y-auto p-2 space-y-2">
+        <div className="glass-soft border border-gray-200 dark:border-white/10 rounded-xl max-h-64 overflow-y-auto p-2 space-y-2">
           {events.length === 0 ? (
             <p className="text-gray-500 text-center py-4">رویدادی یافت نشد</p>
           ) : (

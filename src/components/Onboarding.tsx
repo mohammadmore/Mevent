@@ -45,7 +45,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
   };
 
   return (
-    <div className="flex flex-col h-full bg-white/90 dark:bg-[#18181b] text-right" dir="rtl">
+    <div className="flex flex-col h-full glass text-right" dir="rtl">
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="flex items-center justify-center w-16 h-16 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full mb-6 mx-auto text-teal-600 dark:text-[#d9ff00]">
           <Sparkles className="w-8 h-8" />
@@ -63,10 +63,10 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
                 key={tag}
                 onClick={() => toggleTag(tag)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
-                  isSelected 
-                    ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-teal-600 dark:border-[#d9ff00] shadow-md shadow-teal-600/20 dark:shadow-[#d9ff00]/20' 
-                    : 'bg-white dark:bg-[#18181b] text-gray-700 dark:text-gray-200 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:bg-teal-600/10 dark:hover:bg-[#d9ff00]/10'
-                }`}
+ isSelected 
+ ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-teal-600 dark:border-[#d9ff00] shadow-md shadow-teal-600/20 dark:shadow-[#d9ff00]/20' 
+ : 'glass text-gray-700 dark:text-gray-200 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:bg-teal-600/10 dark:hover:bg-[#d9ff00]/10'
+ }`}
               >
                 <div className="flex items-center gap-1.5">
                   {tag}
@@ -78,7 +78,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
         </div>
       </div>
       
-      <div className="p-6 border-t border-gray-200 dark:border-white/10 bg-white/90 dark:bg-[#18181b]">
+      <div className="p-6 border-t glass">
         <button
           onClick={handleSave}
           disabled={loading || selectedTags.length === 0}

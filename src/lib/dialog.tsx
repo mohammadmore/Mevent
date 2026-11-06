@@ -81,7 +81,7 @@ export function DialogHost() {
       dir="rtl"
     >
       <form
-        className="w-full sm:max-w-md bg-white dark:bg-[#18181b] rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-white/10 animate-in slide-in-from-bottom-4"
+        className="w-full sm:max-w-md glass-strong rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border animate-in slide-in-from-bottom-4"
         onClick={(e) => e.stopPropagation()}
         onSubmit={(e) => { e.preventDefault(); if (canSubmit) close(true); }}
       >
@@ -121,7 +121,7 @@ export function DialogHost() {
                 onChange={(e) => setValue(e.target.value)}
                 placeholder={current.opts.placeholder}
                 rows={4}
-                className="w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
               />
             ) : (
               <input
@@ -129,7 +129,7 @@ export function DialogHost() {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder={current.opts.placeholder}
-                className="w-full bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
               />
             )}
             {minLength > 1 && value.trim().length < minLength && (
@@ -146,7 +146,7 @@ export function DialogHost() {
           >
             {opts.confirmText || 'تأیید'}
           </button>
-          <button type="button" onClick={() => close(false)} className="flex-1 py-3 rounded-xl font-bold text-sm bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300">
+          <button type="button" onClick={() => close(false)} className="flex-1 py-3 rounded-xl font-bold text-sm glass-soft text-gray-700 dark:text-gray-300">
             {opts.cancelText || 'انصراف'}
           </button>
         </div>

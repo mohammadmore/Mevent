@@ -52,10 +52,10 @@ export function EventChangeActions({ event, onChanged }: { event: Event; onChang
           <p className="font-bold text-sm">{mode === 'cancel' ? 'لغو رویداد' : 'تغییر زمان رویداد'}</p>
           {mode === 'postpone' && (
             <label className="block"><span className="block text-xs text-gray-500 mb-1">زمان جدید شروع</span>
-              <input type="datetime-local" required value={start} onChange={(e) => setStart(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] text-sm" dir="ltr" /></label>
+              <input type="datetime-local" required value={start} onChange={(e) => setStart(e.target.value)} className="w-full px-3 py-2 rounded-lg border glass text-sm" dir="ltr" /></label>
           )}
           <label className="block"><span className="block text-xs text-gray-500 mb-1">{mode === 'cancel' ? 'دلیل لغو (برای شرکت‌کنندگان ارسال می‌شود)' : 'توضیح (اختیاری)'}</span>
-            <textarea required={mode === 'cancel'} minLength={mode === 'cancel' ? 5 : 0} value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] text-sm" /></label>
+            <textarea required={mode === 'cancel'} minLength={mode === 'cancel' ? 5 : 0} value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border glass text-sm" /></label>
           <p className="text-xs text-gray-500 leading-relaxed">
             {mode === 'cancel'
               ? 'همه بلیت‌ها باطل و مبلغ بلیت‌های پرداختی بدون درخواست خریدار بازگردانده می‌شود. این کار برگشت‌پذیر نیست.'

@@ -6,7 +6,7 @@ import { SupportThread, STATUS, SUPPORT_CATEGORIES } from '../../screens/Support
 
 // Admin cards: grouped errors, database backups, and the support queue.
 
-const card = 'bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-5 rounded-2xl shadow-sm space-y-3';
+const card = 'glass border p-5 rounded-2xl shadow-sm space-y-3';
 
 export function ErrorsCard() {
   const [rows, setRows] = useState<any[]>([]);
@@ -91,7 +91,7 @@ export function SupportAdmin() {
       <p className="font-bold flex items-center gap-2"><LifeBuoy className="w-5 h-5 text-teal-600" /> درخواست‌های پشتیبانی</p>
       <div className="flex gap-2">
         {(['OPEN', 'ANSWERED', 'CLOSED'] as const).map(s => (
-          <button key={s} onClick={() => setStatus(s)} className={`text-xs px-3 py-1.5 rounded-full ${status === s ? STATUS[s].cls + ' font-bold' : 'bg-gray-50 dark:bg-white/5'}`}>{STATUS[s].label}</button>
+          <button key={s} onClick={() => setStatus(s)} className={`text-xs px-3 py-1.5 rounded-full ${status === s ? STATUS[s].cls + ' font-bold' : 'glass-soft'}`}>{STATUS[s].label}</button>
         ))}
       </div>
       {rows.length === 0 ? <p className="text-sm text-gray-500">موردی نیست.</p> : (

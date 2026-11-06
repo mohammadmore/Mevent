@@ -92,3 +92,114 @@
     --color-blue-900: #3b0764;
   }
 }
+
+/* ---------------------------------------------------------------------------------------------
+   Glass look. The page sits on a soft gradient in the brand palette whose colour blobs drift very
+   slowly, like liquid (.liquid-bg). Surfaces on top are frosted glass:
+     .glass         cards and panels
+     .glass-strong  bars, sheets and dialogs that float over content (always blurred)
+     .glass-soft    chips, inputs and inner panels
+   Cards are blurred only on devices with a mouse: on phones, blurring dozens of cards over a moving
+   background costs frames, and over a soft gradient the blur is barely visible anyway.
+   --------------------------------------------------------------------------------------------- */
+:root {
+  --liquid-base: linear-gradient(160deg, #FFF8F0 0%, #FFEAD1 55%, #EEF2DA 100%);
+  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(253, 111, 47, 0.30), transparent 70%),
+              radial-gradient(40% 36% at 78% 70%, rgba(220, 228, 184, 0.95), transparent 70%);
+  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(255, 178, 122, 0.38), transparent 70%),
+              radial-gradient(42% 38% at 26% 78%, rgba(81, 87, 57, 0.12), transparent 70%);
+  --glass-bg: rgba(255, 255, 255, 0.52);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.12));
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 4px 18px rgba(81, 87, 57, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-strong-bg: rgba(255, 250, 245, 0.74);
+  --glass-soft-bg: rgba(255, 255, 255, 0.46);
+  --glass-soft-border: rgba(81, 87, 57, 0.10);
+}
+.dark {
+  --liquid-base: linear-gradient(160deg, #0f0f11 0%, #141417 60%, #101012 100%);
+  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(20, 184, 166, 0.20), transparent 70%),
+              radial-gradient(40% 36% at 78% 70%, rgba(168, 85, 247, 0.18), transparent 70%);
+  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(217, 255, 0, 0.09), transparent 70%),
+              radial-gradient(42% 38% at 26% 78%, rgba(13, 148, 136, 0.14), transparent 70%);
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01));
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-shadow: 0 4px 18px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-strong-bg: rgba(22, 22, 26, 0.72);
+  --glass-soft-bg: rgba(255, 255, 255, 0.06);
+  --glass-soft-border: rgba(255, 255, 255, 0.08);
+}
+
+@layer components {
+  .liquid-bg {
+    background: var(--liquid-base);
+    background-color: #FFF4E8;
+    isolation: isolate;
+  }
+  .dark .liquid-bg, .dark.liquid-bg { background-color: #121215; }
+  .liquid-bg::before,
+  .liquid-bg::after {
+    content: "";
+    position: fixed;
+    inset: -30%;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .liquid-bg::before {
+    background: var(--liquid-a);
+    animation: liquid-drift-a 28s ease-in-out infinite alternate;
+  }
+  .liquid-bg::after {
+    background: var(--liquid-b);
+    animation: liquid-drift-b 36s ease-in-out infinite alternate;
+  }
+
+  .glass {
+    background-color: var(--glass-bg);
+    background-image: var(--glass-sheen);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  .glass-strong {
+    background-color: var(--glass-strong-bg);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+  }
+  .glass-soft {
+    background-color: var(--glass-soft-bg);
+    border-color: var(--glass-soft-border);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .glass {
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+  }
+}
+
+@keyframes liquid-drift-a {
+  0%   { transform: translate3d(-4%, -3%, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate3d(3%, 4%, 0) rotate(12deg) scale(1.08); }
+  100% { transform: translate3d(5%, -2%, 0) rotate(-8deg) scale(1.12); }
+}
+@keyframes liquid-drift-b {
+  0%   { transform: translate3d(4%, 3%, 0) rotate(0deg) scale(1.1); }
+  50%  { transform: translate3d(-3%, -4%, 0) rotate(-14deg) scale(1); }
+  100% { transform: translate3d(-5%, 3%, 0) rotate(10deg) scale(1.06); }
+}
+
+/* Without a blur, glass needs more body to keep text readable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-strong { background-color: rgba(255, 250, 245, 0.95); }
+  .dark .glass-strong { background-color: rgba(22, 22, 26, 0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .liquid-bg::before, .liquid-bg::after { animation: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-soft { background-color: var(--glass-strong-bg); }
+}

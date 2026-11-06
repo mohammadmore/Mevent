@@ -163,7 +163,7 @@ export function LegalScreen({ path }: { path: string }) {
   const page = PAGES[path];
   if (!page) return null;
   return (
-    <article className="max-w-2xl mx-auto w-full bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
+    <article className="max-w-2xl mx-auto w-full glass rounded-2xl p-6 shadow-sm border ">
       <button onClick={() => goBack('/')} className="text-sm text-gray-500 flex items-center gap-1 mb-3 py-2.5 -my-2"><ArrowRight className="w-4 h-4" /> بازگشت</button>
       <h1 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-4">{page.title}</h1>
       {info ? page.body(info) : <div className="py-10 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-teal-600/20 border-t-teal-600 animate-spin" /></div>}

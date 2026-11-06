@@ -28,12 +28,12 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
   return (
     <article
       className={`group break-inside-avoid rounded-2xl border-2 transition-all duration-300 relative overflow-hidden cursor-pointer mb-4 ${
-        going
-          ? 'bg-[#FFEAD1] dark:bg-[#d9ff00]/10 border-[#FD6F2F] dark:border-[#d9ff00]/50 dark:shadow-[0_0_15px_rgba(217,255,0,0.15)]'
-          : saved
-          ? 'bg-[#DCE4B8] dark:bg-blue-500/10 border-[#747E4D] dark:border-blue-500/50'
-          : 'bg-white dark:bg-[#18181b] border-gray-300 dark:border-white/20'
-      }`}
+ going
+ ? 'bg-[#FFEAD1] dark:bg-[#d9ff00]/10 border-[#FD6F2F] dark:border-[#d9ff00]/50 dark:shadow-[0_0_15px_rgba(217,255,0,0.15)]'
+ : saved
+ ? 'bg-[#DCE4B8] dark:bg-blue-500/10 border-[#747E4D] dark:border-blue-500/50'
+ : 'glass border-gray-300 dark:border-white/20'
+ }`}
       onClick={open}
       onKeyDown={(e) => { if (e.key === 'Enter') open(); }}
       tabIndex={0}
@@ -48,7 +48,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
       <div className="p-4 relative z-10">
         <div className="flex justify-between items-start mb-3">
           <div className="flex gap-3 min-w-0">
-            <GeneratedAvatar seed={event.organizerId || event.title} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+            <GeneratedAvatar seed={event.organizerId || event.title} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 glass-soft" />
             <div className="min-w-0">
               <h3 className="font-bold text-lg mb-1 transition-colors text-[#515739] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</h3>
               {event.organizer?.name && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{event.organizer.name}</p>}
@@ -93,7 +93,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
         {tags.length > 0 && (
           <div className="flex gap-2 mb-4 flex-wrap">
             {tags.slice(0, 3).map(tag => (
-              <span key={tag} className="text-xs bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-200 dark:border-white/10">{tag}</span>
+              <span key={tag} className="text-xs glass-soft text-gray-700 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-200 dark:border-white/10">{tag}</span>
             ))}
           </div>
         )}
@@ -103,10 +103,10 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
             onClick={(e) => { e.stopPropagation(); toggleSave(event); }}
             aria-pressed={saved}
             className={`flex items-center gap-2 border px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm ${
-              saved
-                ? 'bg-[#747E4D] dark:bg-[#18181b] text-white dark:text-gray-300 border-[#747E4D] dark:border-white/10'
-                : 'bg-white dark:bg-[#18181b] text-[#747E4D] dark:text-gray-300 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[#1f1f23]'
-            }`}
+ saved
+ ? 'bg-[#747E4D] dark:bg-[#18181b] text-white dark:text-gray-300 border-[#747E4D] dark:border-white/10'
+ : 'glass text-[#747E4D] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1f1f23]'
+ }`}
           >
             <Bookmark className={`w-4 h-4 ${saved ? 'fill-white dark:fill-blue-500 dark:text-blue-500' : ''}`} /> {saved ? 'ذخیره شده' : 'ذخیره'}
           </button>

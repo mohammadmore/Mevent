@@ -88,7 +88,7 @@ export function CheckoutModal() {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[210] flex flex-col justify-end md:items-center md:justify-center" onClick={closeCheckout} role="dialog" aria-modal="true" dir="rtl">
-      <div className="bg-white dark:bg-[#18181b] w-full md:w-[420px] rounded-t-3xl md:rounded-3xl p-6 animate-in slide-in-from-bottom-10 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="glass-strong w-full md:w-[420px] rounded-t-3xl md:rounded-3xl p-6 animate-in slide-in-from-bottom-10 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-[#515739] dark:text-gray-100">خرید بلیت</h3>
           <button onClick={closeCheckout} aria-label="بستن" className="w-8 h-8 bg-teal-50 dark:bg-white/5 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
@@ -96,7 +96,7 @@ export function CheckoutModal() {
           </button>
         </div>
 
-        <div className="bg-gray-100 dark:bg-[#1f1f23] rounded-2xl p-4 border border-gray-200 dark:border-white/10 mb-4">
+        <div className="glass-soft rounded-2xl p-4 border border-gray-200 dark:border-white/10 mb-4">
           <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2 truncate">{event.title}</h4>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600 dark:text-gray-400">قیمت هر بلیت:</span>
@@ -135,9 +135,9 @@ export function CheckoutModal() {
               placeholder="کد تخفیف"
               aria-label="کد تخفیف"
               dir="ltr"
-              className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1f1f23] text-sm font-mono uppercase"
+              className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 glass-soft text-sm font-mono uppercase"
             />
-            <button disabled={!couponInput.trim() || checkingCoupon} className="px-4 rounded-xl bg-gray-100 dark:bg-white/10 text-sm font-bold disabled:opacity-50 flex items-center gap-1">
+            <button disabled={!couponInput.trim() || checkingCoupon} className="px-4 rounded-xl glass-soft text-sm font-bold disabled:opacity-50 flex items-center gap-1">
               <TicketPercent className="w-4 h-4" /> {checkingCoupon ? '...' : 'اعمال'}
             </button>
           </div>

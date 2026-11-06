@@ -12,7 +12,7 @@ interface Coupon {
   active: boolean; eventTitle: string | null; scope: 'SITE' | 'EVENT' | 'ORGANIZER'; totalDiscount: number;
 }
 
-const input = 'w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b]';
+const input = 'w-full px-3 py-2 border rounded-lg text-sm glass';
 const EMPTY = { code: '', type: 'PERCENT', value: '', maxDiscount: '', minAmount: '', maxUses: '', perUserLimit: '1', endsAt: '', scope: 'ORGANIZER', eventId: '' };
 
 export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: boolean }) {
@@ -57,14 +57,14 @@ export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: b
     : formatToman(c.value);
 
   return (
-    <section className="bg-white/90 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-white/10 p-5 space-y-4">
+    <section className="glass rounded-2xl border p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><TicketPercent className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> کدهای تخفیف</h3>
         <button onClick={() => setOpen(!open)} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00] flex items-center gap-1 px-2 py-2.5 -my-2">{open ? <><X className="w-4 h-4" /> بستن</> : <><Plus className="w-4 h-4" /> کد جدید</>}</button>
       </div>
 
       {open && (
-        <form onSubmit={create} className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/5">
+        <form onSubmit={create} className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-xl glass-soft">
           <label className="col-span-2"><span className="block text-xs text-gray-500 mb-1">کد (حروف لاتین و عدد)</span><input required dir="ltr" className={`${input} font-mono uppercase`} value={f.code} onChange={set('code')} placeholder="NOWRUZ1405" /></label>
           <label><span className="block text-xs text-gray-500 mb-1">نوع</span>
             <select className={input} value={f.type} onChange={set('type')}><option value="PERCENT">درصدی</option><option value="AMOUNT">مبلغ ثابت (تومان)</option></select></label>
@@ -97,7 +97,7 @@ export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: b
                   {c.endsAt && <> · تا {new Date(c.endsAt).toLocaleDateString('fa-IR', { timeZone: 'Asia/Tehran' })}</>}
                 </p>
               </div>
-              <button onClick={() => toggle(c)} className={`text-xs font-bold px-3 py-1.5 rounded-lg ${c.active ? 'bg-gray-100 dark:bg-white/10' : 'bg-emerald-600 text-white'}`}>{c.active ? 'غیرفعال کردن' : 'فعال کردن'}</button>
+              <button onClick={() => toggle(c)} className={`text-xs font-bold px-3 py-1.5 rounded-lg ${c.active ? 'glass-soft' : 'bg-emerald-600 text-white'}`}>{c.active ? 'غیرفعال کردن' : 'فعال کردن'}</button>
             </li>
           ))}
         </ul>

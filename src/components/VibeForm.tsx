@@ -148,7 +148,7 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
           <input type="text" value={formData.areaName} onChange={e => setFormData({ ...formData, areaName: e.target.value })} className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-xl bg-white/50 dark:bg-black/50 text-gray-800 dark:text-gray-100" />
         </div>
         
-        <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
+        <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
           <div className="flex items-center justify-between mb-4">
             <label className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
               <Clock className="w-5 h-5 text-indigo-500" />
@@ -189,14 +189,14 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
                         type="time" 
                         value={slot.openTime} 
                         onChange={(e) => updateRegularTimeSlot(i, 'openTime', e.target.value)}
-                        className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                        className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                       />
                       <span className="text-gray-500">تا</span>
                       <input 
                         type="time" 
                         value={slot.closeTime} 
                         onChange={(e) => updateRegularTimeSlot(i, 'closeTime', e.target.value)}
-                        className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                        className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                       />
                     </div>
                     {regularTimeSlots.length > 1 && (
@@ -243,14 +243,14 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
                             type="time" 
                             value={slot.openTime} 
                             onChange={(e) => updateVariableTimeSlot(dayIndex, slotIndex, 'openTime', e.target.value)}
-                            className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                            className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                           />
                           <span className="text-gray-500 text-sm">تا</span>
                           <input 
                             type="time" 
                             value={slot.closeTime} 
                             onChange={(e) => updateVariableTimeSlot(dayIndex, slotIndex, 'closeTime', e.target.value)}
-                            className="flex-1 bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
+                            className="flex-1 glass-soft border border-gray-200 dark:border-white/10 rounded-lg p-2 text-gray-900 dark:text-white text-sm"
                           />
                           {sch.timeSlots.length > 1 && (
                             <button type="button" onClick={() => removeVariableTimeSlot(dayIndex, slotIndex)} className="text-red-500 p-2">
@@ -272,7 +272,7 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
           <input type="url" value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-xl bg-white/50 dark:bg-black/50 text-gray-800 dark:text-gray-100 text-left" dir="ltr" />
         </div>
         
-        <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
+        <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
           <label className="block text-sm text-gray-400 mb-2 flex items-center gap-2 font-bold">
             <Map className="w-4 h-4 text-indigo-500" />
             مسیر حال و هوا (آرایه مکانی دقیق - Waypoints)
@@ -280,7 +280,7 @@ export default function VibeForm({ onSuccess, initialData, isAdmin }: any) {
           
           <div className="space-y-2 mb-4">
             {waypoints.map((wp, i) => (
-              <div key={i} className="flex justify-between items-center bg-gray-100 dark:bg-white/5 p-3 rounded-lg border border-gray-200 dark:border-white/5 text-sm">
+              <div key={i} className="flex justify-between items-center glass-soft p-3 rounded-lg border border-gray-200 dark:border-white/5 text-sm">
                 <span className="font-mono text-gray-600 dark:text-gray-400" dir="ltr">Lat: {wp.lat.toFixed(5)}, Lng: {wp.lng.toFixed(5)}</span>
                 <button type="button" onClick={() => setWaypoints(waypoints.filter((_, idx) => idx !== i))} className="text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-500/10 rounded">
                   <Trash2 className="w-4 h-4" />

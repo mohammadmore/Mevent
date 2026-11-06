@@ -330,7 +330,7 @@ export default function AdminPanel() {
 
       {/* Overview Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4" dir="rtl">
-        <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
           <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg">
             <Users className="w-5 h-5" />
           </div>
@@ -340,7 +340,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
           <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-[#d9ff00] rounded-lg">
             <Calendar className="w-5 h-5" />
           </div>
@@ -350,7 +350,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
           <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
             <Activity className="w-5 h-5" />
           </div>
@@ -360,7 +360,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
           <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
             <DollarSign className="w-5 h-5" />
           </div>
@@ -500,7 +500,7 @@ export default function AdminPanel() {
           <div className="space-y-6" dir="rtl">
             {/* Live Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="glass border p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-500 font-bold">
                   <span className="flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-indigo-500" />
@@ -522,7 +522,7 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="glass border p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-500 font-bold">
                   <span className="flex items-center gap-2">
                     <Database className="w-4 h-4 text-emerald-500" />
@@ -544,7 +544,7 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="glass border p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-500 font-bold">
                   <span className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-amber-500" />
@@ -577,7 +577,7 @@ export default function AdminPanel() {
             </div>
 
             {/* Cache Control & Background Job Trigger */}
-            <div className="bg-white/90 dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-4">
+            <div className="glass border rounded-2xl p-6 shadow-sm space-y-4">
               <h3 className="font-bold text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Server className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
                 عملیات کنترل زیرساخت و کارهای پس‌زمینه
@@ -600,7 +600,7 @@ export default function AdminPanel() {
                   value={crawlerUrl}
                   onChange={(e) => setCrawlerUrl(e.target.value)}
                   aria-label="آدرس صفحه برای خزش"
-                  className="px-3 py-2 rounded-xl text-xs border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1f1f23] min-w-[220px]"
+                  className="px-3 py-2 rounded-xl text-xs border border-gray-200 dark:border-white/10 glass-soft min-w-[220px]"
                 />
                 <button
                   onClick={triggerAsyncCrawler}
@@ -640,10 +640,10 @@ export default function AdminPanel() {
             </div>
           </div>
         ) : activeTab === 'users' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm" dir="rtl">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm" dir="rtl">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
+                <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
                   <tr>
                     <th className="px-4 py-3">شناسه</th>
                     <th className="px-4 py-3">نام</th>
@@ -654,7 +654,7 @@ export default function AdminPanel() {
                 </thead>
                 <tbody className="divide-y divide-white/10">
                   {users.map(u => (
-                    <tr key={pNum(u.id)} className="hover:bg-gray-100/50 dark:bg-[#1f1f23]/50">
+                    <tr key={pNum(u.id)} className="hover:bg-gray-100/50 dark:hover:bg-white/5">
                       <td className="px-4 py-3 text-gray-400 font-mono">{pNum(u.id)}</td>
                       <td className="px-4 py-3 font-bold text-gray-900 dark:text-gray-100">{u.name}</td>
                       <td className="px-4 py-3 text-gray-700 dark:text-gray-300" dir="ltr">{u.email || u.phone || '-'}</td>
@@ -671,7 +671,7 @@ export default function AdminPanel() {
                           disabled={updating === u.id}
                           value={u.role}
                           onChange={(e) => changeRole(u.id, e.target.value)}
-                          className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 text-gray-700 text-xs rounded-lg focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] block p-1.5"
+                          className="glass border border-gray-300 dark:border-white/20 text-gray-700 text-xs rounded-lg focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] block p-1.5"
                         >
                           <option value="USER">کاربر عادی</option>
                           <option value="ORGANIZER">برگزارکننده</option>
@@ -685,7 +685,7 @@ export default function AdminPanel() {
             </div>
           </div>
         ) : activeTab === 'settings' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl p-6 shadow-sm space-y-6 text-right" dir="rtl">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl p-6 shadow-sm space-y-6 text-right" dir="rtl">
             <div>
               <h3 className="font-bold text-[#515739] dark:text-gray-100 mb-2 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
@@ -707,7 +707,7 @@ export default function AdminPanel() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {basicFieldsConfig.map((field, index) => (
-                    <div key={index} className={`p-3 border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-white/5 flex flex-col gap-3 ${field.name === 'category' ? 'md:col-span-2' : ''}`}>
+                    <div key={index} className={`p-3 border border-gray-200 dark:border-white/10 rounded-xl glass-soft flex flex-col gap-3 ${field.name === 'category' ? 'md:col-span-2' : ''}`}>
                       <div className="flex items-center gap-3 w-full">
                         <div className="flex-1">
                           <label className="block text-xs font-bold text-gray-500 mb-1">{field.name}</label>
@@ -719,7 +719,7 @@ export default function AdminPanel() {
                               newConfig[index].label = e.target.value;
                               setBasicFieldsConfig(newConfig);
                             }}
-                            className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b] text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
+                            className="w-full px-3 py-2 border rounded-lg text-sm glass text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
                           />
                         </div>
                         <div className="pt-5">
@@ -778,7 +778,7 @@ export default function AdminPanel() {
                 
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                   {advancedFieldsConfig.map((field, index) => (
-                    <div key={index} className="p-4 border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-white/5">
+                    <div key={index} className="p-4 border border-gray-200 dark:border-white/10 rounded-xl glass-soft">
                       <div className="flex justify-between items-start mb-3">
                         <div className="grid grid-cols-2 gap-3 flex-1">
                           <div>
@@ -791,7 +791,7 @@ export default function AdminPanel() {
                                 newConfig[index].name = e.target.value.replace(/\s+/g, '');
                                 setAdvancedFieldsConfig(newConfig);
                               }}
-                              className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b] text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
+                              className="w-full px-3 py-2 border rounded-lg text-sm glass text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
                             />
                           </div>
                           <div>
@@ -804,7 +804,7 @@ export default function AdminPanel() {
                                 newConfig[index].label = e.target.value;
                                 setAdvancedFieldsConfig(newConfig);
                               }}
-                              className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b] text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
+                              className="w-full px-3 py-2 border rounded-lg text-sm glass text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
                             />
                           </div>
                         </div>
@@ -829,7 +829,7 @@ export default function AdminPanel() {
                             newConfig[index].options = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
                             setAdvancedFieldsConfig(newConfig);
                           }}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-[#18181b] text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
+                          className="w-full px-3 py-2 border rounded-lg text-sm glass text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-600"
                           placeholder="مثلا: رسمی, نیمه رسمی, آزاد"
                         />
                         <p className="text-xs text-gray-400 mt-1">در صورت خالی بودن، فقط چک‌باکس و توضیحات نمایش داده می‌شود. گزینه «سایر» به صورت خودکار به انتهای لیست اضافه می‌شود.</p>
@@ -869,10 +869,10 @@ export default function AdminPanel() {
         ) : activeTab === 'events' ? (
           <div className="space-y-4" dir="rtl">
             {editingEvent ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10 w-full relative">
+              <div className="glass rounded-2xl p-6 shadow-sm border w-full relative">
                 <button
                   onClick={() => setEditingEvent(null)}
-                  className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
+                  className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -887,10 +887,10 @@ export default function AdminPanel() {
                 />
               </div>
             ) : (
-              <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
+              <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-right">
-                    <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
+                    <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium border-b border-gray-300 dark:border-white/20">
                       <tr>
                         <th className="px-4 py-3">شناسه</th>
                         <th className="px-4 py-3">عنوان</th>
@@ -901,7 +901,7 @@ export default function AdminPanel() {
                     </thead>
                     <tbody className="divide-y divide-white/10">
                       {events.map(e => (
-                        <tr key={pNum(e.id)} className="hover:bg-gray-100/50 dark:bg-[#1f1f23]/50">
+                        <tr key={pNum(e.id)} className="hover:bg-gray-100/50 dark:hover:bg-white/5">
                           <td className="px-4 py-3 text-gray-400 font-mono">{pNum(e.id)}</td>
                           <td className="px-4 py-3 font-bold text-gray-900 dark:text-gray-100">{e.title}</td>
                           <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{e.organizerName || '-'}</td>
@@ -929,12 +929,12 @@ export default function AdminPanel() {
             )}
           </div>
         ) : activeTab === 'places' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingPlace ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
+              <div className="glass rounded-2xl p-6 w-full relative">
                 <button
                   onClick={() => setEditingPlace(null)}
-                  className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
+                  className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -950,7 +950,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
+                <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">نام</th><th className="px-4 py-3">نوع</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -968,10 +968,10 @@ export default function AdminPanel() {
             )}
           </div>
         ) : activeTab === 'chains' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingChain ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingChain(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+              <div className="glass rounded-2xl p-6 w-full relative">
+                <button onClick={() => setEditingChain(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش فستیوال: {editingChain.name}</h3>
@@ -979,7 +979,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
+                <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">نام</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -996,10 +996,10 @@ export default function AdminPanel() {
             )}
           </div>
         ) : activeTab === 'vibes' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingVibe ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingVibe(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+              <div className="glass rounded-2xl p-6 w-full relative">
+                <button onClick={() => setEditingVibe(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش حال و هوا: {editingVibe.title}</h3>
@@ -1007,7 +1007,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
+                <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">عنوان</th><th className="px-4 py-3">محدوده</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -1025,10 +1025,10 @@ export default function AdminPanel() {
             )}
           </div>
         ) : activeTab === 'flows' ? (
-          <div className="bg-white/90 dark:bg-[#18181b] border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
+          <div className="glass border border-gray-300 dark:border-white/20 rounded-xl overflow-hidden shadow-sm">
             {editingFlow ? (
-              <div className="bg-white/90 dark:bg-[#18181b] rounded-2xl p-6 w-full relative">
-                <button onClick={() => setEditingFlow(null)} className="absolute top-4 left-4 p-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+              <div className="glass rounded-2xl p-6 w-full relative">
+                <button onClick={() => setEditingFlow(null)} className="absolute top-4 left-4 p-2 glass-soft text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
                 <h3 className="font-bold text-lg mb-4 text-[#515739] dark:text-gray-100">ویرایش جریان: {editingFlow.title}</h3>
@@ -1036,7 +1036,7 @@ export default function AdminPanel() {
               </div>
             ) : (
               <table className="w-full text-sm text-right">
-                <thead className="bg-gray-100 dark:bg-[#1f1f23] text-gray-700 dark:text-gray-300 font-medium">
+                <thead className="glass-soft text-gray-700 dark:text-gray-300 font-medium">
                   <tr><th className="px-4 py-3">عنوان</th><th className="px-4 py-3">عملیات</th></tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">

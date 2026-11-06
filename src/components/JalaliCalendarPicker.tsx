@@ -207,7 +207,7 @@ export default function JalaliCalendarPicker({
   }
 
   return (
-    <div className="bg-white dark:bg-[#222226] border border-gray-200 dark:border-white/10 rounded-2xl p-4 space-y-4 shadow-sm">
+    <div className="glass border rounded-2xl p-4 space-y-4 shadow-sm">
       {/* Header with selected summary */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-white/10">
         <div>
@@ -233,21 +233,21 @@ export default function JalaliCalendarPicker({
           <button
             type="button"
             onClick={() => applyPreset(2)}
-            className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             آخر هفته (۲ روز)
           </button>
           <button
             type="button"
             onClick={() => applyPreset(3)}
-            className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             ۳ روز آینده
           </button>
           <button
             type="button"
             onClick={() => applyPreset(7)}
-            className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             یک هفته
           </button>

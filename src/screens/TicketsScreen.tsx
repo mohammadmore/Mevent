@@ -117,7 +117,7 @@ export function TicketsScreen() {
               <p className="text-sm"><Gift className="w-4 h-4 inline ml-1 text-teal-600" /> <b>{t.fromName}</b> بلیت «{t.eventTitle}» را برایتان فرستاده است.</p>
               <div className="flex gap-2">
                 <button onClick={() => respond(t.id, 'accept')} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">پذیرفتن</button>
-                <button onClick={() => respond(t.id, 'decline')} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-sm">رد</button>
+                <button onClick={() => respond(t.id, 'decline')} className="px-4 py-2 rounded-xl glass-soft text-sm">رد</button>
               </div>
             </div>
           ))}
@@ -129,7 +129,7 @@ export function TicketsScreen() {
         <p className="text-xs text-gray-500 mb-4">کد QR را هنگام ورود به برگزارکننده نشان دهید.{offline ? ' (نمایش آفلاین از آخرین دریافت)' : ''}</p>
         {offline && <p className="text-xs flex items-center gap-1 text-amber-600 mb-3"><WifiOff className="w-4 h-4" /> اتصال برقرار نیست؛ آخرین اطلاعات ذخیره‌شده نمایش داده می‌شود.</p>}
         {tickets === null ? (
-          <div className="h-32 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />
+          <div className="h-32 rounded-2xl glass-soft animate-pulse" />
         ) : active.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10">
             <CreditCard className="w-14 h-14 text-gray-300 dark:text-gray-600 mb-3" />
@@ -173,7 +173,7 @@ export function TicketsScreen() {
             <summary className="text-sm font-bold text-gray-600 dark:text-gray-400 cursor-pointer">بلیت‌های گذشته و لغوشده ({pNum(past.length)})</summary>
             <ul className="mt-3 space-y-2">
               {past.map(row => (
-                <li key={row.tickets.id} className="text-sm flex justify-between bg-gray-100 dark:bg-white/5 rounded-xl px-3 py-2">
+                <li key={row.tickets.id} className="text-sm flex justify-between glass-soft rounded-xl px-3 py-2">
                   <span className="truncate">{row.events.title}</span>
                   <span className="text-xs text-gray-500 shrink-0">
                     {(row.events as any).status === 'CANCELLED' ? 'رویداد لغو شد' : STATUS_LABEL[row.tickets.status]}

@@ -12,7 +12,7 @@ export function EventRow({ event, onSelect }: { event: Event; onSelect?: (e: Eve
     <button
       type="button"
       onClick={() => onSelect?.(event)}
-      className="w-full text-right bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 hover:border-teal-500 dark:hover:border-[#d9ff00] p-3 rounded-2xl transition-colors flex items-center gap-3 group"
+      className="w-full text-right glass border hover:border-teal-500 dark:hover:border-[#d9ff00] p-3 rounded-2xl transition-colors flex items-center gap-3 group"
     >
       {event.imageUrl ? (
         <img src={event.imageUrl} alt="" loading="lazy" className="w-16 h-16 rounded-xl object-cover shrink-0" />

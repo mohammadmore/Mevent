@@ -246,10 +246,10 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
 
   return (
     <>
-    <div ref={containerRef} className="fixed inset-0 bg-gradient-to-b from-teal-50 via-white to-white dark:from-[#18181b] dark:via-[#18181b] dark:to-[#18181b] z-[100] overflow-y-auto flex flex-col animate-in slide-in-from-bottom-full duration-300" dir="rtl">
+    <div ref={containerRef} className="fixed inset-0 liquid-bg z-[100] overflow-y-auto flex flex-col animate-in slide-in-from-bottom-full duration-300" dir="rtl">
       {/* Header Image & Actions */}
       {event.imageUrl ? (
-        <div className="relative h-72 sm:h-96 bg-white dark:bg-[#18181b] flex-shrink-0 overflow-hidden">
+        <div className="relative h-72 sm:h-96 glass flex-shrink-0 overflow-hidden">
           <img 
             onClick={() => { setActiveModalImage(event.imageUrl || null); setIsImageModalOpen(true); }}
             loading="lazy" 
@@ -301,11 +301,11 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#18181b] dark:via-[#18181b]/80 dark:to-transparent pointer-events-none z-10" />
         </div>
       ) : (
-        <div className="flex justify-between items-center px-4 py-3 sticky top-0 z-50 bg-white/85 dark:bg-[#18181b]/85 backdrop-blur-md border-b border-gray-100 dark:border-white/5">
+        <div className="flex justify-between items-center px-4 py-3 sticky top-0 z-50 glass-strong border-b ">
           <button 
             onClick={onBack}
             aria-label="بازگشت"
-            className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
+            className="w-10 h-10 glass-soft rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
           >
             <ArrowRight className="w-5 h-5" />
           </button>
@@ -313,21 +313,21 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             <button 
               onClick={handleReport}
               aria-label="گزارش تخلف"
-              className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
+              className="w-10 h-10 glass-soft rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
             >
               <Flag className="w-5 h-5" />
             </button>
             <button 
               onClick={handleShare}
               aria-label="اشتراک‌گذاری"
-              className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
+              className="w-10 h-10 glass-soft rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
             >
               <Share2 className="w-5 h-5" />
             </button>
             <button 
               onClick={onToggleSave}
                 aria-label={isSaved ? 'حذف از ذخیره‌ها' : 'ذخیره'}
-              className="w-10 h-10 bg-white/90 dark:bg-[#1f1f23] rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
+              className="w-10 h-10 glass-soft rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-sm"
             >
               <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
             </button>
@@ -351,7 +351,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 p-2 rounded-xl transition-colors"
             onClick={() => onOrganizerClick && onOrganizerClick(event.organizerId)}
           >
-            <GeneratedAvatar loading="lazy" seed={event.organizerId || event.title} alt="Organizer" className="w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+            <GeneratedAvatar loading="lazy" seed={event.organizerId || event.title} alt="Organizer" className="w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 shrink-0 glass-soft" />
             <div className="flex flex-col">
               <span className="text-xs text-gray-600 dark:text-gray-400">برگزارکننده اصلی</span>
               <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">{event.organizer?.name || 'مجری رویداد'}</span>
@@ -364,7 +364,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 p-2 rounded-xl transition-colors"
               onClick={() => onOrganizerClick && onOrganizerClick(coId)}
             >
-              <GeneratedAvatar loading="lazy" seed={coId} alt="Co-Organizer" className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 bg-gray-100 dark:bg-[#1f1f23]/50" />
+              <GeneratedAvatar loading="lazy" seed={coId} alt="Co-Organizer" className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 glass-soft" />
               <div className="flex flex-col">
                 <span className="text-xs text-gray-600 dark:text-gray-400">همکار</span>
               </div>
@@ -392,8 +392,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         )}
 
         <div className="space-y-5 mb-8">
-          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 bg-white dark:bg-[#18181b] rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
               <Calendar className="w-6 h-6" />
             </div>
             <div>
@@ -401,8 +401,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               {event.startTime ? <><p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{formatDetailDate(event.startTime).datePart}</p><p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ساعت {formatDetailDate(event.startTime).timePart}</p></> : <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">{fuzzyTimeLabel(event.fuzzyTime) || 'زمان نامشخص'}</p>}
             </div>
           </div>}
-          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 bg-white dark:bg-[#18181b] rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
               <MapPin className="w-6 h-6" />
             </div>
             <div>
@@ -422,8 +422,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               </div>
             </div>
           </div>}
-          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-100 dark:bg-[#1f1f23] border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 bg-white dark:bg-[#18181b] rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+          {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
@@ -439,7 +439,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             
             <div className="flex gap-4 mt-6">
               {(event.website || event.instagram || event.telegram || event.twitter) && (
-                <div className="flex flex-wrap gap-3 w-full bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10">
+                <div className="flex flex-wrap gap-3 w-full glass-soft p-4 rounded-2xl border border-gray-100 dark:border-white/10">
                   {event.website && (
                     <a href={event.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#d9ff00] transition-colors">
                       <ExternalLink className="w-4 h-4" />
@@ -488,10 +488,10 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               {similarEvents.map(simEvent => (
                 <button
                   key={simEvent.id}
-                  className="text-right bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors group"
+                  className="text-right glass-soft rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors group"
                   onClick={() => window.dispatchEvent(new CustomEvent('navToEvent', { detail: simEvent }))}
                 >
-                  <span className="w-16 h-16 rounded-xl overflow-hidden shrink-0 relative bg-gray-100 dark:bg-white/5">
+                  <span className="w-16 h-16 rounded-xl overflow-hidden shrink-0 relative glass-soft">
                     {simEvent.imageUrl
                       ? <img src={simEvent.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
                       : <span className="absolute inset-0 flex items-center justify-center"><Calendar className="w-6 h-6 text-gray-300 dark:text-gray-600" /></span>}
@@ -518,7 +518,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               {nearbyPlaces.map(place => (
                 <button
                   key={place.id}
-                  className="text-right bg-white dark:bg-[#1f1f23] rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors"
+                  className="text-right glass-soft rounded-2xl border border-gray-100 dark:border-white/10 p-2.5 flex items-center gap-3 hover:border-teal-500/50 transition-colors"
                   onClick={() => window.dispatchEvent(new CustomEvent('navToPlace', { detail: place }))}
                 >
                   {place.imageUrl && <img src={place.imageUrl} alt="" loading="lazy" className="w-16 h-16 rounded-xl object-cover shrink-0" />}
@@ -544,8 +544,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </h2>
             <div className="space-y-4">
               {(event.advancedDetails as any).cinemas.map((cinema: any, idx: number) => (
-                <div key={idx} className="bg-white dark:bg-[#18181b] border border-gray-100 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm">
-                  <div className="px-5 py-4 bg-gray-50 dark:bg-white/5 border-b border-gray-100 dark:border-white/5 flex items-center gap-3">
+                <div key={idx} className="glass border rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-5 py-4 glass-soft border-b border-gray-100 dark:border-white/5 flex items-center gap-3">
                     <div className="bg-white dark:bg-black/20 p-2 rounded-xl shadow-sm">
                       <MapPin className="w-5 h-5 text-rose-500" />
                     </div>
@@ -612,7 +612,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                 }
                 
                 return (
-                  <div key={key} className="bg-white dark:bg-[#1f1f23] border border-gray-100 dark:border-white/5 p-3 rounded-xl flex items-start gap-3">
+                  <div key={key} className="glass-soft border border-gray-100 dark:border-white/5 p-3 rounded-xl flex items-start gap-3">
                     <div className="mt-0.5 text-teal-600 dark:text-[#d9ff00] bg-teal-50 dark:bg-white/5 p-1.5 rounded-lg shrink-0">
                       <Info className="w-4 h-4" />
                     </div>
@@ -648,7 +648,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       </div>
 
       {/* Fixed Bottom Bar for Action */}
-      <div className="sticky bottom-0 w-full p-4 bg-white dark:bg-[#18181b] border-t border-gray-200 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 mt-auto">
+      <div className="sticky bottom-0 w-full p-4 glass-strong border-t shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 mt-auto">
         <div className="max-w-md mx-auto w-full">
         {seatsLeft !== null && !event.ticketUrl && (
           <p className={`text-xs text-center mb-2 flex items-center justify-center gap-1 ${seatsLeft <= 10 ? 'text-orange-600 font-bold' : 'text-gray-500'}`}>
@@ -675,7 +675,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       {isMapModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsMapModalOpen(false)}>
           <div 
-            className="w-full max-w-lg bg-white dark:bg-[#18181b] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]" 
+            className="w-full max-w-lg glass-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]" 
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10">
@@ -689,7 +689,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </div>
             
             {mapLat != null && mapLng != null ? (
-              <div className="flex-1 w-full bg-gray-100 dark:bg-[#1f1f23] min-h-[300px] relative z-0">
+              <div className="flex-1 w-full glass-soft min-h-[300px] relative z-0">
                 <Suspense fallback={<div className="min-h-[300px]" />}>
                   <MiniMap lat={mapLat} lng={mapLng} fallback={<p className="p-6 text-sm text-gray-600 dark:text-gray-300">{event.location?.address || (event as any).address || 'نقشه در حال حاضر بارگذاری نمی‌شود.'}</p>} />
                 </Suspense>
@@ -698,7 +698,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               <p className="p-6 text-sm text-gray-600 dark:text-gray-300">{event.location?.address || (event as any).address}</p>
             )}
 
-            <div className="p-4 bg-gray-50 dark:bg-[#1f1f23] border-t border-gray-100 dark:border-white/10">
+            <div className="p-4 glass-soft border-t border-gray-100 dark:border-white/10">
               <NavigationLinks lat={mapLat} lng={mapLng} query={event.location?.address || (event as any).address} />
             </div>
           </div>

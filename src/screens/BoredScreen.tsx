@@ -72,7 +72,7 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
   useEffect(() => { if (done) load(false); }, [done, key, userLocation?.lat, userLocation?.lng]);
 
   const restart = () => navigate('/bored');
-  const card = 'max-w-xl mx-auto w-full bg-white/90 dark:bg-[#18181b] rounded-3xl p-5 sm:p-7 shadow-sm border border-gray-200 dark:border-white/10';
+  const card = 'max-w-xl mx-auto w-full glass rounded-3xl p-5 sm:p-7 shadow-sm border ';
 
   if (!done) {
     const s = STEPS[step];
@@ -88,7 +88,7 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
         <div className="grid grid-cols-2 gap-3" role="list">
           {s.options.map(o => (
             <button key={o.key} role="listitem" onClick={() => answer(s.param, o.key)}
-              className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:border-teal-500 dark:hover:border-[#d9ff00]/60 px-3 py-4 text-sm font-bold text-gray-800 dark:text-gray-100 flex flex-col items-center gap-2">
+              className="rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-500 dark:hover:border-[#d9ff00]/60 px-3 py-4 text-sm font-bold text-gray-800 dark:text-gray-100 flex flex-col items-center gap-2">
               {o.emoji && <span className="text-2xl" aria-hidden>{o.emoji}</span>}
               {o.label}
             </button>
@@ -111,7 +111,7 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
           answers.company !== ANY && COMPANY[answers.company as keyof typeof COMPANY]?.short, answers.budget === 'free' && 'بدون خرج'].filter(Boolean).join(' · ')}
       </p>
 
-      {picks === null && !error && <div className="space-y-3">{[0, 1, 2].map(i => <div key={i} className="h-28 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />)}</div>}
+      {picks === null && !error && <div className="space-y-3">{[0, 1, 2].map(i => <div key={i} className="h-28 rounded-2xl glass-soft animate-pulse" />)}</div>}
       {error && (
         <div className="text-center py-8">
           <p className="text-gray-600 dark:text-gray-400 mb-3">الان نتونستیم پیشنهاد بیاریم.</p>
@@ -123,9 +123,9 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
         <div className="text-center py-8 space-y-3">
           <p className="text-gray-700 dark:text-gray-300">{shown.current.length ? 'دیگه چیزی با این حال و هوا نداریم.' : 'با این انتخاب‌ها چیزی پیدا نکردیم.'}</p>
           <div className="flex flex-wrap justify-center gap-2">
-            {answers.when !== 'weekend' && <button onClick={() => answer('when', 'weekend')} className="px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/5 text-sm">آخر هفته چی؟</button>}
-            {answers.mood !== ANY && <button onClick={() => answer('mood', ANY)} className="px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/5 text-sm">هر حال و هوایی</button>}
-            <button onClick={() => navigate('/free')} className="px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/5 text-sm flex items-center gap-1"><Wallet className="w-4 h-4" /> بدون خرج</button>
+            {answers.when !== 'weekend' && <button onClick={() => answer('when', 'weekend')} className="px-3 py-2 rounded-xl glass-soft text-sm">آخر هفته چی؟</button>}
+            {answers.mood !== ANY && <button onClick={() => answer('mood', ANY)} className="px-3 py-2 rounded-xl glass-soft text-sm">هر حال و هوایی</button>}
+            <button onClick={() => navigate('/free')} className="px-3 py-2 rounded-xl glass-soft text-sm flex items-center gap-1"><Wallet className="w-4 h-4" /> بدون خرج</button>
           </div>
         </div>
       )}

@@ -44,9 +44,9 @@ export function PickCard({ pick, size = 'large' }: { pick: Pick; size?: 'large' 
     <button
       onClick={() => navigate(pick.url)}
       data-pick={`${pick.kind}:${pick.id}`}
-      className={`text-right bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden flex hover:border-teal-500/50 dark:hover:border-[#d9ff00]/40 transition-colors ${large ? 'w-full gap-4 p-3' : 'w-64 shrink-0 gap-3 p-2.5'}`}
+      className={`text-right glass border rounded-2xl overflow-hidden flex hover:border-teal-500/50 dark:hover:border-[#d9ff00]/40 transition-colors ${large ? 'w-full gap-4 p-3' : 'w-64 shrink-0 gap-3 p-2.5'}`}
     >
-      <div className={`${large ? 'w-24 h-24' : 'w-16 h-16'} rounded-xl overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5`}>
+      <div className={`${large ? 'w-24 h-24' : 'w-16 h-16'} rounded-xl overflow-hidden shrink-0 glass-soft`}>
         {pick.imageUrl
           ? <img src={pick.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
           : <GeneratedAvatar seed={`${pick.kind}-${pick.id}-${pick.title}`} className="w-full h-full" />}
