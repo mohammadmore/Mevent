@@ -20,6 +20,7 @@ export function invalidateEventCaches() {
   invalidateCachePattern('events_list');
   invalidateCachePattern('admin_stats');
   invalidateCachePattern('trip_cities'); // the trip planner's destinations follow new events and places at once
+  invalidateCachePattern('quick_suggestions');
 }
 
 /** Content from non-admins waits in the moderation queue unless it is saved as a draft. */

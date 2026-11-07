@@ -64,6 +64,70 @@ export async function citiesWithContent(): Promise<{ city: string; events: numbe
   return list;
 }
 
+
+/** The quick search itself: text -> filters -> events (with typo correction and a fallback). */
+async function runQuickSearch(q: string, limit = 30) {
+  const parsed = parseQuery(q, await knownCities());
+  const base = { city: parsed.city, from: parsed.from, to: parsed.to, price: parsed.price, limit, offset: 0 };
+  let { items } = await queryEvents({ ...base, q: parsed.keywords.join(' ') || undefined });
+  // A typo in the keywords ("کنسرتت"): try the closest real words before giving up on them.
+  let correctedQuery: string | null = null;
+  if (!items.length && parsed.keywords.length) {
+    const fixed = await correctQuery(parsed.keywords.join(' '));
+    if (fixed) {
+      const retry = (await queryEvents({ ...base, q: fixed })).items;
+      if (retry.length) { items = retry; correctedQuery = fixed; }
+    }
+  }
+  // Nothing matches the keywords: show what else is on in the same city/time instead of nothing.
+  let keywordsDropped = false;
+  if (!items.length && parsed.keywords.length && (parsed.city || parsed.from || parsed.price)) {
+    items = (await queryEvents(base)).items;
+    keywordsDropped = items.length > 0;
+  }
+  return { items, parsed, keywordsDropped, correctedQuery };
+}
+
+/** Most common tags of upcoming events, without the leading '#'. */
+async function topTags(limit: number): Promise<string[]> {
+  const rows = await db.execute(sql`
+    SELECT t.tag, count(*)::int AS n
+    FROM ${events}, jsonb_array_elements_text(CASE WHEN jsonb_typeof(${events.tags}) = 'array' THEN ${events.tags} ELSE '[]'::jsonb END) AS t(tag)
+    WHERE ${upcomingCondition()}
+    GROUP BY 1 ORDER BY 2 DESC LIMIT ${limit}`);
+  return (rows.rows as { tag: string }[]).map(r => String(r.tag).replace(/^#/, '').trim()).filter(t => t.length > 1);
+}
+
+export async function quickSuggestions(): Promise<{ q: string; count: number }[]> {
+  const cached = await getFromCache<{ q: string; count: number }[]>('quick_suggestions');
+  if (cached) return cached;
+  const [cities, tags] = await Promise.all([citiesWithContent(), topTags(6)]);
+  const topCities = cities.filter(c => c.events > 0).slice(0, 3).map(c => c.city);
+  const times = ['امروز', 'فردا', 'آخر هفته', 'این هفته'];
+  const candidates = new Set<string>();
+  for (const tag of tags) {
+    candidates.add(tag);
+    for (const t of times) candidates.add(`${tag} ${t}`);
+    for (const c of topCities) candidates.add(`${tag} در ${c}`);
+  }
+  for (const t of times) { candidates.add(`رویدادهای رایگان ${t}`); for (const c of topCities) candidates.add(`${t} در ${c}`); }
+  candidates.add('رویدادهای رایگان');
+  for (const c of topCities) candidates.add(`رویدادهای ${c}`);
+
+  const found: { q: string; count: number; ids: string }[] = [];
+  for (const q of candidates) {
+    const r = await runQuickSearch(q, 200);
+    if (!r.items.length || r.keywordsDropped) continue; // only searches that really match
+    found.push({ q, count: r.items.length, ids: r.items.map((e: any) => e.event?.id ?? e.id).sort().join(',') });
+  }
+  // Most results first; of searches that find exactly the same events, keep the shortest wording.
+  found.sort((a, b) => b.count - a.count || a.q.length - b.q.length);
+  const seen = new Set<string>();
+  const list = found.filter(f => !seen.has(f.ids) && seen.add(f.ids)).slice(0, 8).map(({ q, count }) => ({ q, count }));
+  await setToCache('quick_suggestions', list, 60_000);
+  return list;
+}
+
 export function registerPlannerRoutes(app: Express) {
   // Destinations worth suggesting in the trip planner (only cities with events or places).
   app.get('/api/trip-cities', asyncRoute(async (_req, res) => {
@@ -104,24 +168,7 @@ export function registerPlannerRoutes(app: Express) {
   app.get('/api/quick-search', limiters.tripPlanner, asyncRoute(async (req, res) => {
     const q = String(req.query.q || '').trim().slice(0, 200);
     if (!q) return res.status(400).json({ error: 'عبارتی برای جستجو بنویسید.' });
-    const parsed = parseQuery(q, await knownCities());
-    const base = { city: parsed.city, from: parsed.from, to: parsed.to, price: parsed.price, limit: 30, offset: 0 };
-    let { items } = await queryEvents({ ...base, q: parsed.keywords.join(' ') || undefined });
-    // A typo in the keywords ("کنسرتت"): try the closest real words before giving up on them.
-    let correctedQuery: string | null = null;
-    if (!items.length && parsed.keywords.length) {
-      const fixed = await correctQuery(parsed.keywords.join(' '));
-      if (fixed) {
-        const retry = (await queryEvents({ ...base, q: fixed })).items;
-        if (retry.length) { items = retry; correctedQuery = fixed; }
-      }
-    }
-    // Nothing matches the keywords: show what else is on in the same city/time instead of nothing.
-    let keywordsDropped = false;
-    if (!items.length && parsed.keywords.length && (parsed.city || parsed.from || parsed.price)) {
-      items = (await queryEvents(base)).items;
-      keywordsDropped = items.length > 0;
-    }
+    const { items, parsed, keywordsDropped, correctedQuery } = await runQuickSearch(q);
     res.json({
       data: await formatEvents(items),
       filters: {
@@ -135,5 +182,12 @@ export function registerPlannerRoutes(app: Express) {
         correctedQuery,
       },
     });
+  }));
+
+  // Ready-made searches for the quick-search screen, built from what is actually on: each one
+  // is run through the same search the visitor would get, kept only if it finds something,
+  // and listed from the most results to the fewest.
+  app.get('/api/quick-suggestions', asyncRoute(async (_req, res) => {
+    res.json({ data: await quickSuggestions() });
   }));
 }

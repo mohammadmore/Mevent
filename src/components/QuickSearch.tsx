@@ -4,6 +4,7 @@ import { api, ApiError } from '../lib/apiClient';
 import { Event } from '../types';
 import { EventRow, groupEventsByDay } from './EventRow';
 import { navigate } from '../lib/router';
+import { pNum } from '../lib/format';
 
 // One-line search: «کنسرت آخر هفته در شیراز» -> the matching events. The text is read on the
 // server (city, time, free/paid, keywords); the recognised parts are shown as chips.
@@ -19,7 +20,8 @@ interface Filters {
   correctedQuery?: string | null;
 }
 
-const EXAMPLES = ['کنسرت آخر هفته', 'رویدادهای رایگان امروز', 'تئاتر فردا در تهران', 'نمایشگاه این هفته اصفهان'];
+// Suggestions come from the server: searches that find something right now, most results first.
+type Suggestion = { q: string; count: number };
 
 export default function QuickSearch({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState('');
@@ -29,6 +31,14 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
+  const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    api<{ data: Suggestion[] }>('/api/quick-suggestions', { silent: true })
+      .then(d => alive && setSuggestions(d.data))
+      .catch(() => alive && setSuggestions([]));
+    return () => { alive = false; };
+  }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
@@ -76,7 +86,7 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
             type="search"
             enterKeyHint="search"
             aria-label="چه رویدادی، کجا، کی؟"
-            placeholder="مثلاً: کنسرت آخر هفته در شیراز"
+            placeholder={suggestions?.length ? `مثلاً: ${suggestions[0].q}` : 'چه رویدادی، کجا، کی؟'}
             value={input}
             onChange={e => setInput(e.target.value)}
             className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
@@ -92,13 +102,23 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
         {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
         {!result && !error && (
-          <div className="flex flex-wrap gap-2">
-            {EXAMPLES.map(x => (
-              <button key={x} type="button" onClick={() => search(x)} className="text-sm px-3 py-1.5 rounded-full glass border text-gray-700 dark:text-gray-300 hover:border-teal-500">
-                {x}
-              </button>
-            ))}
-          </div>
+          suggestions === null ? (
+            <div className="flex flex-wrap gap-2" aria-busy="true">
+              {[110, 140, 96, 128].map((w, i) => <span key={i} className="h-10 rounded-full glass-soft animate-pulse" style={{ width: w }} />)}
+            </div>
+          ) : suggestions.length ? (
+            <div className="flex flex-wrap gap-2 animate-in fade-in duration-300">
+              {suggestions.map(x => (
+                <button key={x.q} type="button" onClick={() => search(x.q)} title={`${pNum(x.count)} رویداد`}
+                  className="inline-flex items-center gap-1.5 text-sm px-3 min-h-[40px] rounded-full glass border text-gray-700 dark:text-gray-300 hover:border-teal-500">
+                  {x.q}
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400">{pNum(x.count)}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-600 dark:text-gray-400">فعلاً رویدادی برای پیشنهاد نیست. هر چیزی بنویسید تا جستجو کنیم.</p>
+          )
         )}
 
         {result && f && (
