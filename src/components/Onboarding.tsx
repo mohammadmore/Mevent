@@ -47,7 +47,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
   return (
     <div className="flex flex-col h-full glass text-right" dir="rtl">
       <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="flex items-center justify-center w-16 h-16 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full mb-6 mx-auto text-teal-600 dark:text-[#d9ff00]">
+        <div className="flex items-center justify-center w-16 h-16 bg-teal-600/20 dark:bg-[#8B5CF6]/20 rounded-full mb-6 mx-auto text-teal-600 dark:text-[#C4B5FD]">
           <Sparkles className="w-8 h-8" />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 text-center">علایق خود را انتخاب کنید</h1>
@@ -64,8 +64,8 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
                 onClick={() => toggleTag(tag)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
  isSelected 
- ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black border-teal-600 dark:border-[#d9ff00] shadow-md shadow-teal-600/20 dark:shadow-[#d9ff00]/20' 
- : 'glass text-gray-700 dark:text-gray-200 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:bg-teal-600/10 dark:hover:bg-[#d9ff00]/10'
+ ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white border-teal-600 dark:border-[#A78BFA] shadow-md shadow-teal-600/20 dark:shadow-[#8B5CF6]/20' 
+ : 'glass text-gray-700 dark:text-gray-200 border-gray-300 dark:border-white/20 hover:border-teal-600/50 dark:hover:border-[#8B5CF6]/50 hover:bg-teal-600/10 dark:hover:bg-[#8B5CF6]/10'
  }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -82,7 +82,7 @@ export default function Onboarding({ userId, onComplete }: { userId: number, onC
         <button
           onClick={handleSave}
           disabled={loading || selectedTags.length === 0}
-          className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-lg disabled:opacity-50"
+          className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors shadow-lg disabled:opacity-50"
         >
           {loading ? 'در حال ذخیره...' : 'ذخیره و شروع کشف رویدادها'}
         </button>

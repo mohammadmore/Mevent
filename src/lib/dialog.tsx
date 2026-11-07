@@ -86,7 +86,7 @@ export function DialogHost() {
         onSubmit={(e) => { e.preventDefault(); if (canSubmit) close(true); }}
       >
         <div className="flex items-start gap-3 mb-4">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${opts.danger ? 'bg-red-100 text-red-600 dark:bg-red-500/20' : 'bg-teal-600/10 text-teal-600 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]'}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${opts.danger ? 'bg-red-100 text-red-600 dark:bg-red-500/20' : 'bg-teal-600/10 text-teal-600 dark:bg-[#8B5CF6]/10 dark:text-[#C4B5FD]'}`}>
             {opts.danger ? <AlertTriangle className="w-5 h-5" /> : <HelpCircle className="w-5 h-5" />}
           </div>
           <div className="flex-1">
@@ -107,7 +107,7 @@ export function DialogHost() {
                     type="button"
                     key={c}
                     onClick={() => setValue(c)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${value === c ? 'bg-teal-600 text-white border-teal-600 dark:bg-[#d9ff00] dark:text-black dark:border-[#d9ff00]' : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${value === c ? 'bg-teal-600 text-white border-teal-600 dark:bg-[#7C3AED] dark:text-white dark:border-[#A78BFA]' : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}
                   >
                     {c}
                   </button>
@@ -121,7 +121,7 @@ export function DialogHost() {
                 onChange={(e) => setValue(e.target.value)}
                 placeholder={current.opts.placeholder}
                 rows={4}
-                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#8B5CF6]/40"
               />
             ) : (
               <input
@@ -129,7 +129,7 @@ export function DialogHost() {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder={current.opts.placeholder}
-                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#8B5CF6]/40"
               />
             )}
             {minLength > 1 && value.trim().length < minLength && (
@@ -142,7 +142,7 @@ export function DialogHost() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className={`flex-1 py-3 rounded-xl font-bold text-sm transition-colors disabled:opacity-50 ${opts.danger ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-teal-600 text-white hover:bg-teal-700 dark:bg-[#d9ff00] dark:text-black dark:hover:bg-[#c6eb00]'}`}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm transition-colors disabled:opacity-50 ${opts.danger ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-teal-600 text-white hover:bg-teal-700 dark:bg-[#7C3AED] dark:text-white dark:hover:bg-[#6D28D9]'}`}
           >
             {opts.confirmText || 'تأیید'}
           </button>

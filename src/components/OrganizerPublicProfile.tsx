@@ -59,7 +59,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
   if (loading) {
     return (
       <div className="fixed inset-0 liquid-bg z-[120] flex items-center justify-center animate-in fade-in">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-[#d9ff00]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-[#A78BFA]"></div>
       </div>
     );
   }
@@ -124,7 +124,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
               )}
 
               {organizer?.website && (
-                <a href={organizer.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-teal-600 dark:text-[#d9ff00] hover:underline">
+                <a href={organizer.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-teal-600 dark:text-[#C4B5FD] hover:underline">
                   <ExternalLink className="w-4 h-4" /> وب‌سایت
                 </a>
               )}
@@ -135,17 +135,17 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
         <div className="flex gap-4 border-b border-gray-200 dark:border-white/10 mb-6">
           <button 
             onClick={() => setActiveTab('ongoing')}
-            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'ongoing' ? 'text-teal-600 dark:text-[#d9ff00]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
+            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'ongoing' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
           >
             رویدادهای جاری ({ongoingEvents.length})
-            {activeTab === 'ongoing' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#d9ff00] rounded-t-full"></div>}
+            {activeTab === 'ongoing' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#7C3AED] rounded-t-full"></div>}
           </button>
           <button 
             onClick={() => setActiveTab('past')}
-            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'past' ? 'text-teal-600 dark:text-[#d9ff00]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
+            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'past' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
           >
             رویدادهای تمام‌شده ({pastEvents.length})
-            {activeTab === 'past' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#d9ff00] rounded-t-full"></div>}
+            {activeTab === 'past' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#7C3AED] rounded-t-full"></div>}
           </button>
         </div>
 
@@ -161,7 +161,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
               <div 
                 key={event.id}
                 onClick={() => onEventClick(event)}
-                className="group break-inside-avoid rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 transition-all duration-300 cursor-pointer overflow-hidden relative"
+                className="group break-inside-avoid rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-600/50 dark:hover:border-[#8B5CF6]/50 transition-all duration-300 cursor-pointer overflow-hidden relative"
               >
                 {getEventBackgroundIcon(event.bgIcon, event.tags || [], false)}
                 {event.imageUrl && (
@@ -170,7 +170,7 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
                   </div>
                 )}
                 <div className="p-4 relative z-10">
-                  <h3 className="font-bold text-lg mb-2 text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{event.title}</h3>
+                  <h3 className="font-bold text-lg mb-2 text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#C4B5FD] transition-colors">{event.title}</h3>
                   <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-gray-400 mb-3">
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 shrink-0" />

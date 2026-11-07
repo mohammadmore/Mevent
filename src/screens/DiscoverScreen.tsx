@@ -139,7 +139,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
   }, [hasMore, loading, events.length, params]);
 
   const filtersActive = price !== 'all' || date !== 'all';
-  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#d9ff00] text-white dark:text-black' : 'glass border text-gray-700 dark:text-gray-300'}`;
+  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#7C3AED] text-white dark:text-white' : 'glass border text-gray-700 dark:text-gray-300'}`;
 
   const searchBox = (
       <div className="relative">
@@ -149,7 +149,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           inputMode="search"
           aria-label="جستجو"
           placeholder="جستجوی رویداد، پاتوق، دسته‌بندی..."
-          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pr-10 pl-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30"
+          className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pr-10 pl-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#8B5CF6]/30"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -174,15 +174,15 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {!q && <DiscoveryHeader city={city === 'all' ? undefined : city} onFlowSelect={onOpenFlow} onVibeSelect={onOpenVibe} onChainSelect={onOpenChain} />}
 
       {!q && (
-        <div className="bg-gradient-to-br from-[#3B4FD8]/90 via-[#7A24BE]/88 to-[#B01C82]/90 dark:from-[#d9ff00]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#d9ff00]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="bg-gradient-to-br from-[#3B4FD8]/90 via-[#7A24BE]/88 to-[#B01C82]/90 dark:from-[#8B5CF6]/15 dark:via-emerald-500/10 dark:to-teal-500/15 border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.22)] dark:shadow-none dark:border-[#8B5CF6]/30 rounded-2xl p-4 text-white dark:text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-[#d9ff00]/20 flex items-center justify-center shrink-0"><Plane className="w-5 h-5" /></div>
+            <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-[#8B5CF6]/20 flex items-center justify-center shrink-0"><Plane className="w-5 h-5" /></div>
             <div>
               <h3 className="font-bold text-base">برنامه‌ریزی هوشمند سفر</h3>
               <p className="text-xs text-teal-100 dark:text-gray-300 mt-0.5">شهر، تاریخ و علایقت رو بگو؛ پکیج رویدادها و پاتوق‌ها رو یکجا تحویل بگیر!</p>
             </div>
           </div>
-          <button onClick={onPlanTrip} className="w-full sm:w-auto bg-white text-teal-900 dark:bg-[#d9ff00] dark:text-black font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm">
+          <button onClick={onPlanTrip} className="w-full sm:w-auto bg-white text-teal-900 dark:bg-[#7C3AED] dark:text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm">
             <Sparkles className="w-4 h-4" /> چیدن پکیج سفر
           </button>
         </div>
@@ -193,7 +193,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
         {q && (
           <div className="flex gap-2" role="tablist">
             {([['all', 'همه نتایج'], ['events', 'رویدادها'], ['places', 'پاتوق‌ها']] as const).map(([key, label]) => (
-              <button key={key} role="tab" aria-selected={type === key} onClick={() => setParam({ type: key })} className={`px-3 py-1 rounded-full text-xs ${type === key ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>{label}</button>
+              <button key={key} role="tab" aria-selected={type === key} onClick={() => setParam({ type: key })} className={`px-3 py-1 rounded-full text-xs ${type === key ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>{label}</button>
             ))}
           </div>
         )}
@@ -206,7 +206,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           </h2>
           <div className="flex items-center gap-2">
             {userLocation ? (
-              <span className="text-xs font-bold text-teal-600 dark:text-[#d9ff00] flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> اطراف شما</span>
+              <span className="text-xs font-bold text-teal-600 dark:text-[#C4B5FD] flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> اطراف شما</span>
             ) : (
               <select
                 aria-label="شهر"
@@ -218,10 +218,10 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
                 {[...new Set([profile?.city, ...CITIES].filter(Boolean) as string[])].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             )}
-            <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-bold border ${showFilters || filtersActive ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/30 dark:border-[#d9ff00]/30 text-teal-600 dark:text-[#d9ff00]' : 'glass text-gray-700 dark:text-gray-300'}`}>
+            <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-bold border ${showFilters || filtersActive ? 'bg-teal-600/10 dark:bg-[#8B5CF6]/10 border-teal-600/30 dark:border-[#8B5CF6]/30 text-teal-600 dark:text-[#C4B5FD]' : 'glass text-gray-700 dark:text-gray-300'}`}>
               <Filter className="w-3.5 h-3.5" /> فیلترها{filtersActive ? ' •' : ''}
             </button>
-            <button onClick={() => navigate('/map')} className="flex items-center gap-1.5 text-xs font-bold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-3 py-2.5 rounded-full">
+            <button onClick={() => navigate('/map')} className="flex items-center gap-1.5 text-xs font-bold text-teal-600 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10 px-3 py-2.5 rounded-full">
               <MapPin className="w-3.5 h-3.5" /> نقشه
             </button>
           </div>
@@ -263,8 +263,8 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           <ScrollRow className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
             {['all', ...categories].map(cat => (
               <button key={cat} onClick={() => setParam({ cat })} className="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium outline-none group" aria-pressed={category === cat}>
-                {category === cat && <motion.div layoutId="active-category" className="absolute inset-0 bg-teal-600 dark:bg-[#d9ff00] rounded-full z-0 shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
-                <span className={`relative z-10 ${category === cat ? 'text-white dark:text-black font-bold' : 'text-gray-700 dark:text-gray-300'}`}>{cat === 'all' ? 'همه' : cat}</span>
+                {category === cat && <motion.div layoutId="active-category" className="absolute inset-0 bg-teal-600 dark:bg-[#7C3AED] rounded-full z-0 shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span className={`relative z-10 ${category === cat ? 'text-white font-bold' : 'text-gray-700 dark:text-gray-300'}`}>{cat === 'all' ? 'همه' : cat}</span>
               </button>
             ))}
           </ScrollRow>
@@ -306,7 +306,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       {error && (
         <div className="py-10 text-center">
           <p className="text-gray-600 dark:text-gray-400 mb-3">دریافت رویدادها با خطا مواجه شد.</p>
-          <button onClick={() => load(0)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">تلاش دوباره</button>
+          <button onClick={() => load(0)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold">تلاش دوباره</button>
         </div>
       )}
 
@@ -321,7 +321,7 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
             {(filtersActive || category !== 'all' || city !== 'all' || q) && (
               <button onClick={() => { setSearchInput(''); navigate(`/?city=all`, { replace: true }); }} className="px-3 py-2 rounded-xl glass-soft text-sm font-bold text-gray-800 dark:text-gray-200">همه‌ی برنامه‌ها</button>
             )}
-            <button onClick={() => navigate('/bored')} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">یه چیزی پیشنهاد بده</button>
+            <button onClick={() => navigate('/bored')} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold">یه چیزی پیشنهاد بده</button>
             <button onClick={() => navigate('/free')} className="px-3 py-2 rounded-xl glass-soft text-sm font-bold text-gray-800 dark:text-gray-200">بدون خرج</button>
           </div>
         </div>

@@ -305,7 +305,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
             onClick={() => galleryInputRef.current?.click()}
           >
             {galleryFiles.length > 0 ? (
-              <div className="text-sm text-teal-600 dark:text-[#d9ff00] font-medium">{galleryFiles.length} تصویر انتخاب شده</div>
+              <div className="text-sm text-teal-600 dark:text-[#C4B5FD] font-medium">{galleryFiles.length} تصویر انتخاب شده</div>
             ) : (
               <>
                 <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
@@ -341,7 +341,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
 
       <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
         <label className="block text-sm text-gray-400 mb-4 flex items-center gap-2 font-bold">
-          <Store className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+          <Store className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
           امکانات و ویژگی‌ها
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -355,14 +355,14 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
                 onClick={() => toggleFeature(feature.id)}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
                   isSelected 
-                    ? 'bg-teal-600/10 border-teal-600/50 text-teal-600 dark:bg-[#d9ff00]/10 dark:border-[#d9ff00]/50 dark:text-[#d9ff00]' 
+                    ? 'bg-teal-600/10 border-teal-600/50 text-teal-600 dark:bg-[#8B5CF6]/10 dark:border-[#8B5CF6]/50 dark:text-[#C4B5FD]' 
                     : 'bg-white/5 border-white/10 text-gray-500 hover:bg-white/10'
                 }`}
               >
                 <div className="relative mb-2">
                   <Icon className="w-6 h-6" />
                   {isSelected && (
-                    <div className="absolute -top-1 -right-1 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black rounded-full p-0.5">
+                    <div className="absolute -top-1 -right-1 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white rounded-full p-0.5">
                       <Check className="w-3 h-3" />
                     </div>
                   )}
@@ -377,21 +377,21 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
       <div className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl glass-soft">
         <div className="flex items-center justify-between mb-4">
           <label className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
-            <Clock className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+            <Clock className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
             ساعات کاری
           </label>
           <div className="flex items-center bg-gray-200 dark:bg-white/10 rounded-lg p-1">
             <button
               type="button"
               onClick={() => setScheduleType('regular')}
-              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${scheduleType === 'regular' ? 'bg-white dark:bg-black/40 text-teal-600 dark:text-[#d9ff00] font-bold shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${scheduleType === 'regular' ? 'bg-white dark:bg-black/40 text-teal-600 dark:text-[#C4B5FD] font-bold shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
             >
               پیوسته
             </button>
             <button
               type="button"
               onClick={() => setScheduleType('variable')}
-              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${scheduleType === 'variable' ? 'bg-white dark:bg-black/40 text-teal-600 dark:text-[#d9ff00] font-bold shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${scheduleType === 'variable' ? 'bg-white dark:bg-black/40 text-teal-600 dark:text-[#C4B5FD] font-bold shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
             >
               متغیر (هفتگی)
             </button>
@@ -403,7 +403,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">بازه زمانی فعالیت</span>
-                <button type="button" onClick={addRegularTimeSlot} className="flex items-center gap-1 text-xs bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-[#d9ff00] px-2 py-1 rounded-lg">
+                <button type="button" onClick={addRegularTimeSlot} className="flex items-center gap-1 text-xs bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-[#C4B5FD] px-2 py-1 rounded-lg">
                   <Plus className="w-3 h-3" />
                   افزودن بازه جدید
                 </button>
@@ -472,7 +472,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
                     </label>
                   </div>
                   {!sch.isClosed && (
-                    <button type="button" onClick={() => addVariableTimeSlot(dayIndex)} className="text-xs text-teal-600 dark:text-[#d9ff00] hover:underline flex items-center gap-1">
+                    <button type="button" onClick={() => addVariableTimeSlot(dayIndex)} className="text-xs text-teal-600 dark:text-[#C4B5FD] hover:underline flex items-center gap-1">
                       <Plus className="w-3 h-3" />
                       افزودن بازه
                     </button>
@@ -513,7 +513,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
 
       <div>
         <label className="block text-sm text-gray-400 mb-2 flex items-center gap-2 font-bold">
-          <MapPin className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+          <MapPin className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
           موقعیت مکانی دقیق روی نقشه
         </label>
         <div className="h-64 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-sm">
@@ -532,7 +532,7 @@ export default function PlaceForm({ onSuccess, initialData, isAdmin }: any) {
       <button 
         type="submit" 
         disabled={loading}
-        className="w-full bg-teal-600 hover:bg-teal-700 text-white dark:bg-[#d9ff00] dark:text-gray-900 dark:hover:bg-[#c6eb00] py-3 rounded-xl font-bold disabled:opacity-50 transition-colors"
+        className="w-full bg-teal-600 hover:bg-teal-700 text-white dark:bg-[#7C3AED] dark:text-white dark:hover:bg-[#6D28D9] py-3 rounded-xl font-bold disabled:opacity-50 transition-colors"
       >
         {loading ? 'در حال ذخیره...' : 'ذخیره پاتوق'}
       </button>

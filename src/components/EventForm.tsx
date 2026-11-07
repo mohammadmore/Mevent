@@ -400,11 +400,11 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
               {importMode === 'single' && (
                  <motion.div
                     layoutId="import-mode"
-                    className="absolute inset-0 bg-teal-600 dark:bg-[#d9ff00] rounded-full z-0 shadow-sm"
+                    className="absolute inset-0 bg-teal-600 dark:bg-[#7C3AED] rounded-full z-0 shadow-sm"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                  />
               )}
-              <span className={`relative z-10 ${importMode === 'single' ? 'text-white dark:text-black font-bold' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}`}>تکی</span>
+              <span className={`relative z-10 ${importMode === 'single' ? 'text-white font-bold' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}`}>تکی</span>
             </button>
             <button 
               type="button"
@@ -414,11 +414,11 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
               {importMode === 'batch' && (
                  <motion.div
                     layoutId="import-mode"
-                    className="absolute inset-0 bg-teal-600 dark:bg-[#d9ff00] rounded-full z-0 shadow-sm"
+                    className="absolute inset-0 bg-teal-600 dark:bg-[#7C3AED] rounded-full z-0 shadow-sm"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                  />
               )}
-              <span className={`relative z-10 ${importMode === 'batch' ? 'text-white dark:text-black font-bold' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}`}>ورود گروهی (اکسل)</span>
+              <span className={`relative z-10 ${importMode === 'batch' ? 'text-white font-bold' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}`}>ورود گروهی (اکسل)</span>
             </button>
           </div>
         </div>
@@ -491,7 +491,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                 <button 
                   type="button"
                   onClick={onSuccess}
-                  className="mt-4 bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] px-4 py-2 rounded-lg font-medium text-sm hover:bg-teal-600/30 dark:bg-[#d9ff00]/30 transition-colors"
+                  className="mt-4 bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD] px-4 py-2 rounded-lg font-medium text-sm hover:bg-teal-600/30 dark:bg-[#8B5CF6]/30 transition-colors"
                 >
                   بازگشت به لیست رویدادها
                 </button>
@@ -503,7 +503,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             <button
               type="submit"
               disabled={loading || !excelFile}
-              className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3 px-4 rounded-xl hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-md disabled:opacity-70 flex justify-center"
+              className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors shadow-md disabled:opacity-70 flex justify-center"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -521,7 +521,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <form onSubmit={handleSubmit} className="space-y-4 text-right" dir="rtl">
       {isAdmin && (
         <div className="bg-teal-50 dark:bg-white/5 border border-teal-200 dark:border-white/10 p-4 rounded-xl mb-6">
-          <label className="block text-sm font-bold text-teal-800 dark:text-[#d9ff00] mb-3">شاخه اصلی (فقط مدیر)</label>
+          <label className="block text-sm font-bold text-teal-800 dark:text-[#C4B5FD] mb-3">شاخه اصلی (فقط مدیر)</label>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input 
@@ -560,7 +560,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           onClick={() => fileInputRef.current?.click()}
         >
           {imageFile ? (
-            <div className="text-sm text-teal-600 dark:text-[#d9ff00] font-medium">{imageFile.name}</div>
+            <div className="text-sm text-teal-600 dark:text-[#C4B5FD] font-medium">{imageFile.name}</div>
           ) : (
             <>
               <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
@@ -590,7 +590,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             required
             type="text"
-            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             placeholder="مثلا: تهران"
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -604,7 +604,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             required
             type="text"
-            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             placeholder="مثلا: شب شعر یلدا"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -617,7 +617,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
         <div className="relative">
           <textarea rows={3}
-            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all resize-none bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all resize-none bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             placeholder="درباره رویداد بنویسید..."
             value={formData.description || ''}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -653,7 +653,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                        disabled={fuzzyType !== 'none'}
                        onClick={fuzzyType === 'none' ? openCalendar : undefined}
                        value={value}
-                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
+                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#8B5CF6]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] bg-teal-600/10 dark:bg-[#8B5CF6]/10 cursor-pointer text-gray-900 dark:text-white'}`}
                        dir="rtl"
                        placeholder="انتخاب تاریخ و ساعت"
                      />
@@ -683,7 +683,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                        disabled={fuzzyType !== 'none'}
                        onClick={fuzzyType === 'none' ? openCalendar : undefined}
                        value={value}
-                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#d9ff00]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 cursor-pointer text-gray-900 dark:text-white'}`}
+                       className={`w-full pl-3 pr-10 py-2.5 border-2 rounded-xl focus:outline-none transition-all text-right font-sans ${fuzzyType !== 'none' ? 'glass-soft border-gray-200 dark:border-white/5 text-gray-400 cursor-not-allowed' : 'border-teal-600/20 dark:border-[#8B5CF6]/20 focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] bg-teal-600/10 dark:bg-[#8B5CF6]/10 cursor-pointer text-gray-900 dark:text-white'}`}
                        dir="rtl"
                        placeholder="انتخاب تاریخ و ساعت"
                      />
@@ -719,9 +719,9 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                </p>
                
                <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
-                 <button type="button" onClick={() => setFuzzyType('year')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'year' ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>سال</button>
-                 <button type="button" onClick={() => setFuzzyType('season')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'season' ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>فصل</button>
-                 <button type="button" onClick={() => setFuzzyType('month')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'month' ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>ماه</button>
+                 <button type="button" onClick={() => setFuzzyType('year')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'year' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>سال</button>
+                 <button type="button" onClick={() => setFuzzyType('season')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'season' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>فصل</button>
+                 <button type="button" onClick={() => setFuzzyType('month')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'month' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>ماه</button>
                </div>
 
                <div className="flex gap-3">
@@ -771,7 +771,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             required
             type="text"
-            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             placeholder="نام مکان یا آدرس..."
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -788,7 +788,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             type="url"
             dir="ltr"
-            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             value={formData.website}
             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
             placeholder="https://..."
@@ -799,7 +799,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             type="text"
             dir="ltr"
-            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             value={formData.instagram}
             onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
             placeholder="@username"
@@ -810,7 +810,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             type="text"
             dir="ltr"
-            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             value={formData.telegram}
             onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
             placeholder="@username"
@@ -821,7 +821,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           <input
             type="text"
             dir="ltr"
-            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             value={formData.twitter}
             onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
             placeholder="@username"
@@ -834,7 +834,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <label className="block text-sm font-medium text-gray-700 mb-1">برگزارکننده اصلی (اجباری)</label>
         <div className="relative mb-3">
           <select
-            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all appearance-none bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+            className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all appearance-none bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
             value={formData.organizerId}
             onChange={(e) => setFormData({ ...formData, organizerId: Number(e.target.value) })}
           >
@@ -851,7 +851,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <div className="relative mb-3">
           <select
             multiple
-            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
+            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#A78BFA] transition-all"
             value={formData.coOrganizerIds.map(String)}
             onChange={(e) => {
               const options = Array.from(e.target.selectedOptions, (option: any) => Number(option.value));
@@ -870,7 +870,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <div className="relative mb-3">
           <select
             multiple
-            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#d9ff00] transition-all"
+            className="w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-600 dark:border-[#A78BFA] transition-all"
             value={formData.hubIds.map(String)}
             onChange={(e) => {
               const options = Array.from(e.target.selectedOptions, (option: any) => Number(option.value));
@@ -889,7 +889,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <div className="relative mb-3">
           <textarea
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all resize-none"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all resize-none"
             placeholder="لینک تصاویر گالری را وارد کنید..."
             value={formData.galleryUrls.join(', ')}
             onChange={(e) => {
@@ -903,7 +903,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           onClick={() => galleryInputRef.current?.click()}
         >
           {galleryFiles.length > 0 ? (
-            <div className="text-sm text-teal-600 dark:text-[#d9ff00] font-medium">{galleryFiles.length} تصویر انتخاب شده</div>
+            <div className="text-sm text-teal-600 dark:text-[#C4B5FD] font-medium">{galleryFiles.length} تصویر انتخاب شده</div>
           ) : (
             <>
               <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
@@ -930,13 +930,13 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       <div className="relative">
         <label className="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی‌ها (تایپ کنید و انتخاب کنید)</label>
         <div 
-          className="relative mb-3 flex flex-wrap gap-2 p-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+          className="relative mb-3 flex flex-wrap gap-2 p-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
           onClick={() => setShowTagDropdown(true)}
         >
           {selectedTags.map(cat => (
             <span
               key={cat}
-              className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"
+              className="bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"
             >
               {cat}
               <button
@@ -1000,7 +1000,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                 onClick={() => setFormData({ ...formData, bgIcon: formData.bgIcon === iconDef.icon ? 'none' : iconDef.icon })}
                 className={`p-3 flex items-center justify-center rounded-xl border-2 transition-all ${
  formData.bgIcon === iconDef.icon
- ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
+ ? 'border-teal-600 bg-teal-50 dark:border-[#A78BFA] dark:bg-[#8B5CF6]/10 text-teal-600 dark:text-[#C4B5FD]'
  : ' text-gray-500 hover:border-teal-300 dark:hover:border-white/20 glass'
  }`}
                 title={iconDef.icon + ' - ' + iconDef.tags.join(', ')}
@@ -1013,7 +1013,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
              <button
               type="button"
               onClick={() => setShowAllIcons(true)}
-              className="p-3 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 text-gray-500 hover:border-teal-500 dark:hover:border-[#d9ff00] hover:text-teal-600 dark:hover:text-[#d9ff00] transition-all glass"
+              className="p-3 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 text-gray-500 hover:border-teal-500 dark:hover:border-[#A78BFA] hover:text-teal-600 dark:hover:text-[#C4B5FD] transition-all glass"
               title="بیشتر"
              >
                <MoreHorizontal className="w-6 h-6" />
@@ -1041,7 +1041,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                       onClick={() => setFormData({ ...formData, bgIcon: formData.bgIcon === iconDef.icon ? 'none' : iconDef.icon })}
                       className={`p-4 flex flex-col items-center gap-2 justify-center rounded-xl border-2 transition-all ${
  formData.bgIcon === iconDef.icon
- ? 'border-teal-600 bg-teal-50 dark:border-[#d9ff00] dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]'
+ ? 'border-teal-600 bg-teal-50 dark:border-[#A78BFA] dark:bg-[#8B5CF6]/10 text-teal-600 dark:text-[#C4B5FD]'
  : ' text-gray-500 hover:border-teal-300 dark:hover:border-white/20 glass'
  }`}
                       title={iconDef.icon + ' - ' + iconDef.tags.join(', ')}
@@ -1079,7 +1079,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             <input
               type="number"
               min="0"
-              className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#d9ff00]/10 text-gray-900 dark:text-white"
+              className="w-full pl-3 pr-10 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none transition-all text-left bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-gray-900 dark:text-white"
               dir="ltr"
               placeholder="0 برای رایگان"
               value={formData.cost}
@@ -1091,7 +1091,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
             <select
               value={formData.currency}
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-32 px-3 py-2 border-2 border-teal-600/20 dark:border-[#d9ff00]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] outline-none glass text-gray-900 dark:text-white"
+              className="w-32 px-3 py-2 border-2 border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] outline-none glass text-gray-900 dark:text-white"
             >
               <option value="USD">دلار (USD)</option>
               <option value="EUR">یورو (EUR)</option>
@@ -1112,8 +1112,8 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
           onClick={() => setShowAdvancedDetailsModal(true)}
           className="w-full flex items-center justify-between px-4 py-3 glass-soft border border-gray-200 dark:border-white/10 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
         >
-          <span className="font-bold text-teal-700 dark:text-[#d9ff00]">توضیحات تخصصی رویداد (اختیاری)</span>
-          <span className="text-xs bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-2 py-1 rounded-lg">
+          <span className="font-bold text-teal-700 dark:text-[#C4B5FD]">توضیحات تخصصی رویداد (اختیاری)</span>
+          <span className="text-xs bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-teal-700 dark:text-[#C4B5FD] px-2 py-1 rounded-lg">
             {Object.values(formData.advancedDetails as any || {}).filter((v: any) => v && typeof v === "object" && v.hasFeature !== undefined).length} مورد پر شده
           </span>
         </button>
@@ -1122,7 +1122,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
       
       {selectedTags.includes('سینما') && (
         <div className="glass-soft p-5 rounded-2xl border border-teal-200 dark:border-teal-900/50 mt-6 shadow-sm">
-          <h3 className="font-bold text-teal-800 dark:text-[#d9ff00] mb-2 flex items-center gap-2">
+          <h3 className="font-bold text-teal-800 dark:text-[#C4B5FD] mb-2 flex items-center gap-2">
             <Ticket className="w-5 h-5" />
             سینماها و سانس‌های اکران
           </h3>
@@ -1149,7 +1149,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                   {cinema.showtimes.map((st: any, sIdx: number) => (
                     <div key={sIdx} className="glass-soft px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs border border-gray-200 dark:border-white/5">
                       <span className="text-gray-600 dark:text-gray-400">{st.date}</span>
-                      <strong className="text-teal-700 dark:text-[#d9ff00]">{st.time}</strong>
+                      <strong className="text-teal-700 dark:text-[#C4B5FD]">{st.time}</strong>
                       <button 
                         type="button"
                         onClick={() => {
@@ -1187,7 +1187,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                       setFormData({...formData, advancedDetails: { ...formData.advancedDetails, cinemas: newCinemas }});
                       setNewShowtimeDate(''); setNewShowtimeTime(''); setNewShowtimeTicketUrl('');
                     }}
-                    className="bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-teal-700 transition-colors"
+                    className="bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-teal-700 transition-colors"
                   >
                     افزودن
                   </button>
@@ -1228,7 +1228,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
         <button
           type="submit"
           disabled={loading}
-          className="w-2/3 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3 px-4 rounded-xl hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-md disabled:opacity-70 flex justify-center"
+          className="w-2/3 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold py-3 px-4 rounded-xl hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors shadow-md disabled:opacity-70 flex justify-center"
         >
           {loading ? (
             <span className="flex items-center gap-2">
@@ -1316,10 +1316,10 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                     </div>
 
                     {hasFeature === true && (
-                      <div className="mt-3 pr-2 sm:pr-4 border-r-2 border-teal-600/30 dark:border-[#d9ff00]/30 space-y-3">
+                      <div className="mt-3 pr-2 sm:pr-4 border-r-2 border-teal-600/30 dark:border-[#8B5CF6]/30 space-y-3">
                         <div className="flex flex-wrap gap-2">
                           {field.options.map(opt => (
-                            <label key={opt} className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === opt ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
+                            <label key={opt} className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === opt ? 'bg-teal-100 dark:bg-[#8B5CF6]/20 text-teal-800 dark:text-[#C4B5FD] font-bold border border-teal-200 dark:border-[#8B5CF6]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                               <input 
                                 type="radio" 
                                 name={`opt-${field.name}`} 
@@ -1331,7 +1331,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                               {opt}
                             </label>
                           ))}
-                          <label className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === 'سایر' ? 'bg-teal-100 dark:bg-[#d9ff00]/20 text-teal-800 dark:text-[#d9ff00] font-bold border border-teal-200 dark:border-[#d9ff00]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
+                          <label className={`flex items-center gap-1.5 text-xs sm:text-sm px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${option === 'سایر' ? 'bg-teal-100 dark:bg-[#8B5CF6]/20 text-teal-800 dark:text-[#C4B5FD] font-bold border border-teal-200 dark:border-[#8B5CF6]/30' : 'glass border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                             <input 
                               type="radio" 
                               name={`opt-${field.name}`} 
@@ -1348,7 +1348,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                           <div className="mt-3">
                             <input
                               type="text"
-                              className="w-full px-3 py-2 text-sm border-2 rounded-xl focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00] focus:border-teal-600 dark:focus:border-[#d9ff00] outline-none transition-all glass text-gray-900 dark:text-white"
+                              className="w-full px-3 py-2 text-sm border-2 rounded-xl focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#A78BFA] focus:border-teal-600 dark:focus:border-[#A78BFA] outline-none transition-all glass text-gray-900 dark:text-white"
                               value={description}
                               onChange={(e) => handleUpdate({ description: e.target.value })}
                               placeholder={option === 'سایر' ? "لطفا جزئیات را بنویسید..." : "توضیحات تکمیلی (اختیاری)"}
@@ -1367,7 +1367,7 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
               <button 
                 type="button"
                 onClick={() => setShowAdvancedDetailsModal(false)}
-                className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3 rounded-xl hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-md"
+                className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold py-3 rounded-xl hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors shadow-md"
               >
                 تایید و بستن
               </button>

@@ -18,7 +18,7 @@ const L = ({ items }: { items: React.ReactNode[] }) => (
   <ul className="list-disc pr-5 space-y-1.5 text-sm leading-7 text-gray-700 dark:text-gray-300">{items.map((x, i) => <li key={i}>{x}</li>)}</ul>
 );
 const A = ({ to, children }: { to: string; children: React.ReactNode }) => (
-  <a href={withBase(to)} onClick={(e) => { e.preventDefault(); navigate(to); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">{children}</a>
+  <a href={withBase(to)} onClick={(e) => { e.preventDefault(); navigate(to); }} className="text-teal-600 dark:text-[#C4B5FD] font-bold">{children}</a>
 );
 
 function owner(info: SiteInfo) {
@@ -132,13 +132,13 @@ function Contact({ info }: { info: SiteInfo }) {
   const { dbUserId } = useAuth();
   const row = (icon: React.ReactNode, label: string, value: React.ReactNode) => (
     <div className="flex items-start gap-3 py-3 border-b border-gray-100 dark:border-white/5">
-      <span className="text-teal-600 dark:text-[#d9ff00] mt-0.5">{icon}</span>
+      <span className="text-teal-600 dark:text-[#C4B5FD] mt-0.5">{icon}</span>
       <div><div className="text-xs text-gray-500">{label}</div><div className="text-sm text-gray-900 dark:text-gray-100">{value}</div></div>
     </div>
   );
   return (
     <>
-      <button onClick={() => navigate(dbUserId ? '/support' : '/login')} className="w-full mb-4 py-3 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold flex items-center justify-center gap-2">
+      <button onClick={() => navigate(dbUserId ? '/support' : '/login')} className="w-full mb-4 py-3 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold flex items-center justify-center gap-2">
         <LifeBuoy className="w-5 h-5" /> ثبت درخواست پشتیبانی
       </button>
       {info.phone && row(<Phone className="w-4 h-4" />, 'تلفن', <a href={`tel:${info.phone}`} dir="ltr">{info.phone}</a>)}

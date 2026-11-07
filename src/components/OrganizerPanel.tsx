@@ -95,7 +95,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-4 border-teal-600 dark:border-[#d9ff00] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-teal-600 dark:border-[#A78BFA] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
         <div>
           <div className="flex gap-2">
             <div className="relative">
-              <button onClick={() => setShowCreateMenu(!showCreateMenu)} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-teal-700 dark:hover:bg-[#c6eb00]">
+              <button onClick={() => setShowCreateMenu(!showCreateMenu)} className="bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-teal-700 dark:hover:bg-[#6D28D9]">
                 ایجاد جدید +
               </button>
               {showCreateMenu && (
@@ -136,7 +136,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
             </div>
           </div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+            <Activity className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
             داشبورد برگزارکننده
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">مدیریت رویدادها و مشاهده آمار</p>
@@ -195,7 +195,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                 <div 
                   key={event.id}
                   onClick={() => setSelectedEventId(event.id)}
-                  className={`relative overflow-hidden p-4 rounded-xl border cursor-pointer transition-all ${selectedEventId === event.id ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 shadow-sm' : 'border-gray-300 dark:border-white/20 glass hover:border-teal-600/50 dark:hover:border-[#d9ff00]/50 hover:shadow-sm'}`}
+                  className={`relative overflow-hidden p-4 rounded-xl border cursor-pointer transition-all ${selectedEventId === event.id ? 'border-teal-600 dark:border-[#A78BFA] bg-teal-600/10 dark:bg-[#8B5CF6]/10 shadow-sm' : 'border-gray-300 dark:border-white/20 glass hover:border-teal-600/50 dark:hover:border-[#8B5CF6]/50 hover:shadow-sm'}`}
                 >
                   <div className="relative z-10">
                   <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{event.title}</h4>
@@ -239,7 +239,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
             {selectedEventId ? (
               <div className="glass rounded-2xl border border-gray-300 dark:border-white/20 p-6 shadow-sm">
                 <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+                  <BarChart3 className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
                   آمار رویداد
                 </h3>
                 {events.find(e => e.id === selectedEventId) && (
@@ -250,15 +250,15 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                 
                 {statsLoading ? (
                   <div className="flex justify-center py-10">
-                    <div className="w-6 h-6 border-2 border-teal-600 dark:border-[#d9ff00] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-teal-600 dark:border-[#A78BFA] border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : stats ? (
                   <div className="space-y-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-teal-600/10 dark:bg-[#d9ff00]/10 rounded-xl p-4 flex flex-col items-center justify-center border border-teal-600/20 dark:border-[#d9ff00]/20">
-                        <Ticket className="w-6 h-6 text-teal-600 dark:text-[#d9ff00] mb-2" />
+                      <div className="bg-teal-600/10 dark:bg-[#8B5CF6]/10 rounded-xl p-4 flex flex-col items-center justify-center border border-teal-600/20 dark:border-[#8B5CF6]/20">
+                        <Ticket className="w-6 h-6 text-teal-600 dark:text-[#C4B5FD] mb-2" />
                         <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.ticketsSold}</span>
-                        <span className="text-xs text-teal-600 dark:text-[#d9ff00] mt-1">بلیت فروخته شده</span>
+                        <span className="text-xs text-teal-600 dark:text-[#C4B5FD] mt-1">بلیت فروخته شده</span>
                       </div>
                       <div className="bg-green-50 rounded-xl p-4 flex flex-col items-center justify-center border border-green-100">
                         <CheckCircle className="w-6 h-6 text-green-600 mb-2" />
@@ -305,7 +305,7 @@ export default function OrganizerPanel({ userId }: OrganizerPanelProps) {
                         >
                           {attendees ? 'بستن لیست' : 'لیست ثبت‌نامی‌ها'}
                         </button>
-                        <button onClick={() => setShowScanner(true)} className="flex-1 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-2.5 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#c6eb00] shadow-md flex items-center justify-center gap-2">
+                        <button onClick={() => setShowScanner(true)} className="flex-1 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-2.5 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#6D28D9] shadow-md flex items-center justify-center gap-2">
                           <QrCode className="w-4 h-4" /> ثبت ورود (QR / کد)
                         </button>
                       </div>

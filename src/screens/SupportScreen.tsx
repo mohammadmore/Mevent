@@ -61,7 +61,7 @@ export function SupportThread({ id, backTo, onBack }: { id: number; backTo: stri
       </div>
       <ol className="space-y-3">
         {data.messages.map((m: any) => (
-          <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${m.isStaff ? 'mr-auto bg-teal-600/10 dark:bg-[#d9ff00]/10' : 'ml-auto glass-soft'}`}>
+          <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${m.isStaff ? 'mr-auto bg-teal-600/10 dark:bg-[#8B5CF6]/10' : 'ml-auto glass-soft'}`}>
             <p className="text-[11px] text-gray-500 mb-1">{m.authorName} · {timeAgo(m.createdAt)}</p>
             {m.body}
           </li>
@@ -72,7 +72,7 @@ export function SupportThread({ id, backTo, onBack }: { id: number; backTo: stri
         <form onSubmit={send} className="space-y-2">
           <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={3} placeholder={isAdmin ? 'پاسخ به کاربر' : 'پیام شما'} aria-label="متن پیام" className={input} />
           <div className="flex gap-2">
-            <button disabled={sending || reply.trim().length < 2} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-50 flex items-center gap-1.5"><Send className="w-4 h-4" /> ارسال</button>
+            <button disabled={sending || reply.trim().length < 2} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold disabled:opacity-50 flex items-center gap-1.5"><Send className="w-4 h-4" /> ارسال</button>
             {t.status !== 'CLOSED' && <button type="button" onClick={close} className="px-4 py-2.5 rounded-xl text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> {isAdmin ? 'بستن درخواست' : 'مشکلم حل شد'}</button>}
           </div>
         </form>
@@ -104,7 +104,7 @@ function NewRequest({ onCreated }: { onCreated: (id: number) => void }) {
         </select></label>
       {f.category === 'PAYMENT' && <label className="block"><span className="block text-xs text-gray-500 mb-1">شماره سفارش (اختیاری)</span><input dir="ltr" inputMode="numeric" className={input} value={f.orderId} onChange={(e) => setF({ ...f, orderId: e.target.value.replace(/\D/g, '') })} /></label>}
       <label className="block"><span className="block text-xs text-gray-500 mb-1">شرح مشکل</span><textarea required minLength={10} rows={4} className={input} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /></label>
-      <button disabled={sending} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-60">{sending ? 'در حال ارسال...' : 'ثبت درخواست'}</button>
+      <button disabled={sending} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold disabled:opacity-60">{sending ? 'در حال ارسال...' : 'ثبت درخواست'}</button>
     </form>
   );
 }
@@ -119,8 +119,8 @@ export function SupportScreen({ ticketId }: { ticketId?: number }) {
       {ticketId ? <SupportThread id={ticketId} backTo="/support" /> : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><LifeBuoy className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> پشتیبانی</h1>
-            {!creating && <button onClick={() => setCreating(true)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold flex items-center gap-1"><Plus className="w-4 h-4" /> درخواست جدید</button>}
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><LifeBuoy className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> پشتیبانی</h1>
+            {!creating && <button onClick={() => setCreating(true)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold flex items-center gap-1"><Plus className="w-4 h-4" /> درخواست جدید</button>}
           </div>
           {creating && <NewRequest onCreated={(id) => navigate(`/support/${id}`)} />}
           {list === null ? <div className="h-24 rounded-2xl glass-soft animate-pulse" /> : list.length === 0 && !creating ? (

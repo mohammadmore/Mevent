@@ -114,7 +114,7 @@ export function KycCard() {
           {kyc.status === 'REJECTED' && kyc.note && <p className="text-xs text-red-600 mt-2">مدارک قبلی تأیید نشد: {kyc.note}</p>}
           {!kyc.phoneVerified && <p className="text-xs text-red-600 mt-2">ابتدا شماره موبایل خود را در صفحه پروفایل به حساب وصل کنید.</p>}
         </div>
-        {!open && <button onClick={() => setOpen(true)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold shrink-0">{kyc.status === 'REJECTED' ? 'اصلاح مدارک' : 'شروع'}</button>}
+        {!open && <button onClick={() => setOpen(true)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold shrink-0">{kyc.status === 'REJECTED' ? 'اصلاح مدارک' : 'شروع'}</button>}
       </div>
 
       {open && (
@@ -122,7 +122,7 @@ export function KycCard() {
           <div className="flex gap-2" role="radiogroup" aria-label="نوع برگزارکننده">
             {(['INDIVIDUAL', 'COMPANY'] as const).map(t => (
               <button type="button" key={t} role="radio" aria-checked={type === t} onClick={() => setType(t)}
-                className={`flex-1 py-2 rounded-xl text-sm font-bold ${type === t ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black' : 'glass-soft border border-gray-200 dark:border-white/10'}`}>
+                className={`flex-1 py-2 rounded-xl text-sm font-bold ${type === t ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white' : 'glass-soft border border-gray-200 dark:border-white/10'}`}>
                 {t === 'INDIVIDUAL' ? 'شخص حقیقی' : 'شرکت / مؤسسه'}
               </button>
             ))}
@@ -150,7 +150,7 @@ export function KycCard() {
 
           <p className="text-[11px] text-gray-500">مدارک فقط برای بررسی مدیران سامانه قابل مشاهده است.</p>
           <div className="flex gap-2">
-            <button disabled={sending || !kyc.phoneVerified} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-50">{sending ? 'در حال ارسال...' : 'ارسال برای بررسی'}</button>
+            <button disabled={sending || !kyc.phoneVerified} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold disabled:opacity-50">{sending ? 'در حال ارسال...' : 'ارسال برای بررسی'}</button>
             <button type="button" onClick={() => setOpen(false)} className="px-4 py-2.5 rounded-xl text-sm text-gray-600">انصراف</button>
           </div>
         </form>

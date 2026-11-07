@@ -22,7 +22,7 @@ type Together = {
 const firstName = (n?: string) => (n || '').trim().split(/\s+/)[0];
 const names = (list: Who[]) => list.length <= 2 ? list.map(w => `«${firstName(w.name)}»`).join(' و ') : `«${firstName(list[0].name)}» و ${pNum(list.length - 1)} دوست دیگه`;
 const btn = 'px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 disabled:opacity-50';
-const primary = `${btn} bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black`;
+const primary = `${btn} bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white`;
 const quiet = `${btn} glass-soft text-gray-800 dark:text-gray-200`;
 
 function Faces({ people }: { people: Who[] }) {
@@ -124,7 +124,7 @@ export function GoTogether({ eventId }: { eventId: number }) {
     <section aria-label="تنها نرو" className="mt-8 rounded-3xl border border-amber-200/70 dark:border-white/10 bg-gradient-to-br from-amber-50 to-orange-50/40 dark:from-white/5 dark:to-transparent p-5 space-y-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><HandHeart className="w-5 h-5 text-orange-500 dark:text-[#d9ff00]" /> تنها نرو</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><HandHeart className="w-5 h-5 text-orange-500 dark:text-[#C4B5FD]" /> تنها نرو</h2>
           <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
             {data.goingCount > 1 ? `${pNum(data.goingCount)} نفر میان` : data.goingCount === 1 ? 'یه نفر میاد' : 'هنوز کسی ثبت‌نام نکرده؛ اولی باش'}
             {data.companionCount > 0 && ` · ${data.companionCount > 1 ? `${pNum(data.companionCount)} نفر دنبال همراه‌ان` : 'یه نفر دنبال همراهه'}`}

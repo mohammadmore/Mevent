@@ -32,16 +32,16 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a; /* zinc-800 */
+  background: #4C1D95;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46; /* zinc-700 */
+  background: #6D28D9;
 }
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #27272a transparent;
+  scrollbar-color: #8B5CF6 transparent;
 }
 @custom-variant dark (&:is(.dark *));
 
@@ -76,13 +76,17 @@
 
 @layer base {
   .dark {
-    --color-teal-50: #f0fdfa;
-    --color-teal-100: #ccfbf1;
-    --color-teal-500: #14b8a6;
-    --color-teal-600: #0d9488;
-    --color-teal-700: #0f766e;
-    --color-teal-800: #115e59;
-    --color-teal-900: #134e4a;
+    /* Dark theme accent: violet, like the light theme (lighter steps read better on dark). */
+    --color-teal-50: #F5F3FF;
+    --color-teal-100: #EDE9FE;
+    --color-teal-200: #DDD6FE;
+    --color-teal-300: #C4B5FD;
+    --color-teal-400: #A78BFA;
+    --color-teal-500: #A78BFA;
+    --color-teal-600: #8B5CF6;
+    --color-teal-700: #7C3AED;
+    --color-teal-800: #4C1D95;
+    --color-teal-900: #3B0764;
     
     --color-blue-50: #faf5ff;
     --color-blue-100: #f3e8ff;
@@ -127,10 +131,10 @@
 }
 .dark {
   --liquid-base: linear-gradient(160deg, #0f0f11 0%, #141417 60%, #101012 100%);
-  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(20, 184, 166, 0.20), transparent 70%),
-              radial-gradient(40% 36% at 78% 70%, rgba(168, 85, 247, 0.18), transparent 70%);
-  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(217, 255, 0, 0.09), transparent 70%),
-              radial-gradient(42% 38% at 26% 78%, rgba(13, 148, 136, 0.14), transparent 70%);
+  --liquid-a: radial-gradient(38% 42% at 22% 28%, rgba(59, 79, 216, 0.24), transparent 70%),
+              radial-gradient(40% 36% at 78% 70%, rgba(168, 85, 247, 0.20), transparent 70%);
+  --liquid-b: radial-gradient(34% 40% at 72% 22%, rgba(192, 38, 211, 0.13), transparent 70%),
+              radial-gradient(42% 38% at 26% 78%, rgba(99, 102, 241, 0.16), transparent 70%);
   --glass-bg: rgba(255, 255, 255, 0.055);
   --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01));
   --glass-border: rgba(255, 255, 255, 0.10);
@@ -215,17 +219,18 @@
   .glass, .glass-soft { background-color: var(--glass-strong-bg); }
 }
 
-/* Light theme: primary buttons and badges run from blue into a red-leaning purple (plum/magenta),
-   so the two ends contrast, drifting very slowly. White text stays above 5:1 on every stop.
-   The dark theme keeps its own accent. */
+/* Primary buttons and badges, in both themes: blue into a red-leaning purple (plum/magenta), so
+   the two ends contrast, drifting very slowly. White text stays above 6:1 on every stop. */
 html:not(.dark) .bg-teal-600,
 html:not(.dark) .bg-teal-500,
-html:not(.dark) .btn-gradient {
+.btn-gradient,
+.dark .dark\:bg-\[\#7C3AED\] {
   background-image: linear-gradient(120deg, #3B4FD8 0%, #6A2BC9 28%, #9420B0 55%, #B01C82 80%, #9420B0 100%);
   background-size: 220% 100%;
   animation: btn-flow 9s ease-in-out infinite alternate;
 }
-html:not(.dark) .hover\:bg-teal-700:hover {
+html:not(.dark) .hover\:bg-teal-700:hover,
+.dark .dark\:hover\:bg-\[\#6D28D9\]:hover {
   background-image: linear-gradient(120deg, #3341C2 0%, #5B21B6 28%, #7E1A99 55%, #96186F 80%, #7E1A99 100%);
 }
 @keyframes btn-flow {
@@ -233,7 +238,7 @@ html:not(.dark) .hover\:bg-teal-700:hover {
   to   { background-position: 100% 50%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html:not(.dark) .bg-teal-600, html:not(.dark) .bg-teal-500, html:not(.dark) .btn-gradient { animation: none; }
+  html:not(.dark) .bg-teal-600, html:not(.dark) .bg-teal-500, .btn-gradient, .dark .dark\:bg-\[\#7C3AED\] { animation: none; }
 }
 
 /* Horizontal rows (ScrollRow): fade the edge where the row continues (RTL: it continues leftwards). */

@@ -29,7 +29,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
     <article
       className={`group break-inside-avoid rounded-2xl border-2 transition-all duration-300 relative overflow-hidden cursor-pointer mb-4 ${
  going
- ? 'bg-violet-50/85 dark:bg-[#d9ff00]/10 border-violet-400 dark:border-[#d9ff00]/50 dark:shadow-[0_0_15px_rgba(217,255,0,0.15)]'
+ ? 'bg-violet-50/85 dark:bg-[#8B5CF6]/10 border-violet-400 dark:border-[#8B5CF6]/50 dark:shadow-[0_0_15px_rgba(139,92,246,0.15)]'
  : saved
  ? 'bg-sky-50/85 dark:bg-blue-500/10 border-sky-400 dark:border-blue-500/50'
  : 'glass border-gray-300 dark:border-white/20'
@@ -50,7 +50,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
           <div className="flex gap-3 min-w-0">
             <GeneratedAvatar seed={event.organizerId || event.title} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 shrink-0 glass-soft" />
             <div className="min-w-0">
-              <h3 className="font-bold text-lg mb-1 transition-colors text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</h3>
+              <h3 className="font-bold text-lg mb-1 transition-colors text-[#4C1D95] dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-[#C4B5FD]">{event.title}</h3>
               {event.organizer?.name && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{event.organizer.name}</p>}
               {event.description && <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400 line-clamp-3">{event.description}</p>}
             </div>
@@ -64,7 +64,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
         </div>
 
         {event.reason && (
-          <p className="text-xs font-medium text-teal-700 dark:text-[#d9ff00] mb-3 flex items-start gap-1.5"><Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {event.reason}</p>
+          <p className="text-xs font-medium text-teal-700 dark:text-[#C4B5FD] mb-3 flex items-start gap-1.5"><Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {event.reason}</p>
         )}
         <VibeChips vibes={event.vibes} className="mb-3" />
 
@@ -76,7 +76,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
           <div className="flex items-center gap-1.5">
             <MapPin className="w-4 h-4 shrink-0" />
             <span dir="auto" className="truncate text-right">{event.location?.address || (event as any).address || event.city || 'مکان نامشخص'}</span>
-            {formatDistance(distance) && <span className="font-bold text-teal-600 dark:text-[#d9ff00] shrink-0">• {formatDistance(distance)}</span>}
+            {formatDistance(distance) && <span className="font-bold text-teal-600 dark:text-[#C4B5FD] shrink-0">• {formatDistance(distance)}</span>}
           </div>
           <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-500 font-normal">
             <Wallet className="w-4 h-4 shrink-0" />
@@ -113,7 +113,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
           {event.cost > 0 || event.ticketUrl ? (
             <button
               onClick={(e) => { e.stopPropagation(); attend(event); }}
-              className="flex items-center gap-2 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors shadow-sm"
+              className="flex items-center gap-2 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors shadow-sm"
             >
               {event.ticketUrl ? <ExternalLink className="w-4 h-4" /> : going ? <CheckCircle className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
               {event.ticketUrl ? 'سایت رسمی' : going ? 'بلیت دارم' : 'می‌خوام برم'}
@@ -122,7 +122,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
             <button
               onClick={(e) => { e.stopPropagation(); attend(event); }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm ${
-                going ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00]' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black hover:bg-teal-700 dark:hover:bg-[#c6eb00]'
+                going ? 'bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD]' : 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white hover:bg-teal-700 dark:hover:bg-[#6D28D9]'
               }`}
             >
               <CheckCircle className="w-4 h-4" /> {going ? 'میام ✓' : 'منم میام'}

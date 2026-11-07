@@ -116,7 +116,7 @@ export function TicketsScreen() {
             <div key={t.id} className="rounded-2xl border border-teal-600/30 bg-teal-600/5 p-4 flex items-center justify-between gap-3 flex-wrap">
               <p className="text-sm"><Gift className="w-4 h-4 inline ml-1 text-teal-600" /> <b>{t.fromName}</b> بلیت «{t.eventTitle}» را برایتان فرستاده است.</p>
               <div className="flex gap-2">
-                <button onClick={() => respond(t.id, 'accept')} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">پذیرفتن</button>
+                <button onClick={() => respond(t.id, 'accept')} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold">پذیرفتن</button>
                 <button onClick={() => respond(t.id, 'decline')} className="px-4 py-2 rounded-xl glass-soft text-sm">رد</button>
               </div>
             </div>
@@ -134,12 +134,12 @@ export function TicketsScreen() {
           <div className="flex flex-col items-center justify-center py-10">
             <CreditCard className="w-14 h-14 text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-600 dark:text-gray-400 font-medium">بلیت فعالی ندارید.</p>
-            <button onClick={() => navigate('/')} className="mt-3 px-4 py-2.5 rounded-xl text-sm font-bold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10">یه برنامه پیدا کن</button>
+            <button onClick={() => navigate('/')} className="mt-3 px-4 py-2.5 rounded-xl text-sm font-bold text-teal-600 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10">یه برنامه پیدا کن</button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {active.map(row => (
-              <div key={row.tickets.id} className="bg-teal-600/10 dark:bg-[#d9ff00]/10 rounded-2xl border border-teal-600/20 dark:border-[#d9ff00]/20 p-4 flex gap-4">
+              <div key={row.tickets.id} className="bg-teal-600/10 dark:bg-[#8B5CF6]/10 rounded-2xl border border-teal-600/20 dark:border-[#8B5CF6]/20 p-4 flex gap-4">
                 {row.tickets.status === 'ACTIVE' ? <TicketQr code={row.tickets.code} /> : (
                   <div className="w-32 h-32 rounded-lg bg-white/60 dark:bg-white/5 flex flex-col items-center justify-center text-xs text-gray-600 gap-2"><Clock className="w-6 h-6" /> در انتظار پرداخت</div>
                 )}
@@ -154,11 +154,11 @@ export function TicketsScreen() {
                   {(() => {
                     const pending = transfers.outgoing.find(t => t.ticketId === row.tickets.id);
                     if (pending) return (
-                      <p className="mt-3 text-xs text-teal-700 dark:text-[#d9ff00]">در انتظار پذیرش <span dir="ltr">{pending.toPhone}</span> · <button onClick={() => respond(pending.id, 'cancel')} className="underline">لغو انتقال</button></p>
+                      <p className="mt-3 text-xs text-teal-700 dark:text-[#C4B5FD]">در انتظار پذیرش <span dir="ltr">{pending.toPhone}</span> · <button onClick={() => respond(pending.id, 'cancel')} className="underline">لغو انتقال</button></p>
                     );
                     return (
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {row.canTransfer && <button onClick={() => transfer(row)} className="whitespace-nowrap min-h-[44px] text-sm font-bold text-teal-700 dark:text-[#d9ff00] px-4 rounded-xl bg-teal-600/10 dark:bg-[#d9ff00]/15">انتقال به دیگری</button>}
+                        {row.canTransfer && <button onClick={() => transfer(row)} className="whitespace-nowrap min-h-[44px] text-sm font-bold text-teal-700 dark:text-[#C4B5FD] px-4 rounded-xl bg-teal-600/10 dark:bg-[#8B5CF6]/15">انتقال به دیگری</button>}
                         {row.canCancel && <button onClick={() => cancel(row)} className="whitespace-nowrap min-h-[44px] text-sm font-bold text-red-700 dark:text-red-300 px-4 rounded-xl bg-red-50 dark:bg-red-500/15 border border-red-200 dark:border-red-400/30">لغو بلیت</button>}
                       </div>
                     );

@@ -98,16 +98,16 @@ export default function GamificationPanel() {
             {leaderboard.map((u, i) => {
               const me = u.id === dbUserId;
               return (
-                <li key={u.id} className={`flex items-center justify-between p-3 rounded-2xl border ${me ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/20' : 'glass-soft border-transparent'}`}>
+                <li key={u.id} className={`flex items-center justify-between p-3 rounded-2xl border ${me ? 'bg-teal-600/10 dark:bg-[#8B5CF6]/10 border-teal-600/20' : 'glass-soft border-transparent'}`}>
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${i === 0 ? 'bg-yellow-500/20 text-yellow-600' : i === 2 ? 'bg-orange-500/20 text-orange-500' : 'bg-gray-200 dark:bg-white/5 text-gray-600 dark:text-gray-400'}`}>{pNum(i + 1)}</span>
-                    <span className="w-10 h-10 rounded-full bg-teal-600/15 flex items-center justify-center text-teal-600 dark:text-[#d9ff00] font-bold">{u.name?.charAt(0) || 'U'}</span>
+                    <span className="w-10 h-10 rounded-full bg-teal-600/15 flex items-center justify-center text-teal-600 dark:text-[#C4B5FD] font-bold">{u.name?.charAt(0) || 'U'}</span>
                     <span>
                       <span className="block font-bold text-sm text-gray-900 dark:text-gray-100">{u.name} {me && <span className="text-xs bg-teal-600 text-white px-1.5 py-0.5 rounded mr-1">شما</span>}</span>
                       <span className="flex items-center gap-1 mt-0.5 text-xs text-gray-600 dark:text-gray-400"><Award className="w-3 h-3" /> {u.level?.name}</span>
                     </span>
                   </div>
-                  <span className="font-bold text-teal-600 dark:text-[#d9ff00]">{pNum(u.points)} <span className="text-[10px] text-gray-400 font-normal">امتیاز</span></span>
+                  <span className="font-bold text-teal-600 dark:text-[#C4B5FD]">{pNum(u.points)} <span className="text-[10px] text-gray-400 font-normal">امتیاز</span></span>
                 </li>
               );
             })}

@@ -48,7 +48,7 @@ export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
   return (
     <div className="space-y-6" dir="rtl">
       <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100 mb-6 flex items-center gap-2">
-        <Sparkles className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" />
+        <Sparkles className="w-6 h-6 text-teal-600 dark:text-[#C4B5FD]" />
         {initialData ? 'ویرایش جریان' : 'ایجاد جریان جدید'}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,7 +68,7 @@ export default function FlowForm({ onSuccess, initialData, isAdmin }: any) {
           <label className="block text-sm text-gray-400 mb-1">آدرس تصویر کاور</label>
           <input type="url" value={formData.coverImage} onChange={e => setFormData({ ...formData, coverImage: e.target.value })} className="w-full px-3 py-2 border border-gray-200 dark:border-white/10 rounded-xl bg-white/50 dark:bg-black/50 text-gray-800 dark:text-gray-100 text-left" dir="ltr" />
         </div>
-        <button type="submit" disabled={loading} className="w-full py-3 bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-gray-900 rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors disabled:opacity-50">
+        <button type="submit" disabled={loading} className="w-full py-3 bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors disabled:opacity-50">
           {loading ? 'در حال ثبت...' : 'ثبت جریان'}
         </button>
       </form>

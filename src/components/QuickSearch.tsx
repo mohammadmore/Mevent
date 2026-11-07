@@ -64,12 +64,12 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
 
   const open = (e: Event) => { onClose(); navigate(`/events/${e.id}`); };
   const f = result?.filters;
-  const pill = 'inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00]';
+  const pill = 'inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-teal-700 dark:text-[#C4B5FD]';
 
   return (
     <div className="flex flex-col h-full text-right" dir="rtl" role="dialog" aria-modal="true" aria-label="جستجوی سریع">
       <form onSubmit={(e) => { e.preventDefault(); search(); }} className="p-4 glass border-b flex items-center gap-2">
-        <div className="flex-1 flex items-center gap-2 glass-soft rounded-full px-4 py-2.5 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-[#d9ff00]/50">
+        <div className="flex-1 flex items-center gap-2 glass-soft rounded-full px-4 py-2.5 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-[#8B5CF6]/50">
           <Search className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             ref={inputRef}
@@ -81,7 +81,7 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
             onChange={e => setInput(e.target.value)}
             className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
           />
-          {loading && <span className="w-4 h-4 rounded-full border-2 border-teal-600 dark:border-[#d9ff00] border-t-transparent animate-spin shrink-0" />}
+          {loading && <span className="w-4 h-4 rounded-full border-2 border-teal-600 dark:border-[#A78BFA] border-t-transparent animate-spin shrink-0" />}
         </div>
         <button type="button" onClick={onClose} aria-label="بستن" className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 shrink-0">
           <X className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function QuickSearch({ onClose }: { onClose: () => void }) {
                 <SearchX className="w-10 h-10 mx-auto opacity-60" />
                 <p>چیزی پیدا نشد.</p>
                 <div className="flex justify-center gap-2 pt-2">
-                  <button type="button" onClick={() => { onClose(); navigate('/bored'); }} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">یه چیزی پیشنهاد بده</button>
+                  <button type="button" onClick={() => { onClose(); navigate('/bored'); }} className="px-3 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold">یه چیزی پیشنهاد بده</button>
                   <button type="button" onClick={() => { onClose(); navigate('/free'); }} className="px-3 py-2 rounded-xl bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-sm font-bold text-gray-800 dark:text-gray-200">بدون خرج</button>
                 </div>
               </div>

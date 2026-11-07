@@ -206,7 +206,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
           {cameraOn ? (
             <video ref={videoRef} className="w-full rounded-xl bg-black aspect-square object-cover" muted playsInline />
           ) : canScan ? (
-            <button onClick={() => { lastScanned.current = ''; setCameraOn(true); }} className="w-full aspect-[2/1] border-2 border-dashed border-teal-600 dark:border-[#d9ff00] rounded-2xl flex flex-col items-center justify-center gap-2 text-teal-700 dark:text-[#d9ff00]">
+            <button onClick={() => { lastScanned.current = ''; setCameraOn(true); }} className="w-full aspect-[2/1] border-2 border-dashed border-teal-600 dark:border-[#A78BFA] rounded-2xl flex flex-col items-center justify-center gap-2 text-teal-700 dark:text-[#C4B5FD]">
               <Camera className="w-10 h-10" /> <span className="text-sm font-bold">اسکن QR با دوربین</span>
             </button>
           ) : (
@@ -222,7 +222,7 @@ export function CheckInModal({ eventId, eventTitle, onClose, onCheckedIn }: { ev
               autoFocus={!canScan}
               className="flex-1 font-mono tracking-widest glass border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600"
             />
-            <button type="submit" disabled={busy || !code.trim()} className="px-4 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-50">ثبت ورود</button>
+            <button type="submit" disabled={busy || !code.trim()} className="px-4 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold disabled:opacity-50">ثبت ورود</button>
           </form>
 
           {result && (

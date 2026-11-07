@@ -57,7 +57,7 @@ export function ChainDetail({ chain, onBack, onEventClick }: ChainDetailProps) {
         {c.events && c.events.length > 0 && (
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Calendar className="text-teal-600 dark:text-[#d9ff00]" /> رویدادهای این زنجیره
+              <Calendar className="text-teal-600 dark:text-[#C4B5FD]" /> رویدادهای این زنجیره
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {c.events.map((ev: Event) => (

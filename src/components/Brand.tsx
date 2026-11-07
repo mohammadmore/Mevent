@@ -1,11 +1,28 @@
-// The logotype: the Persian name with the Latin one beside it. One place to swap in a logo file later.
+import logo160 from '../assets/brand/logotype-160.webp';
+import logo320 from '../assets/brand/logotype-320.webp';
+import logo480 from '../assets/brand/logotype-480.webp';
+import logo720 from '../assets/brand/logotype-720.webp';
+
+// The logotype (Latin "MEVENT" artwork) with the Persian name beside it. The browser picks the
+// smallest file that is sharp on the screen: about 6 KB in the header on a normal screen,
+// 15 KB on a phone, never the large one unless it is shown large.
+const SRCSET = `${logo160} 160w, ${logo320} 320w, ${logo480} 480w, ${logo720} 720w`;
+
 export default function Brand({ size = 'md' }: { size?: 'md' | 'lg' }) {
-  const fa = size === 'lg' ? 'text-3xl' : 'text-2xl';
-  const en = size === 'lg' ? 'text-base' : 'text-xs';
+  if (size === 'lg') {
+    return (
+      <span className="flex flex-col items-center gap-2 leading-none">
+        <img src={logo480} srcSet={SRCSET} sizes="(max-width: 400px) 230px, 260px" width={260} height={81}
+          alt="Mevent" className="w-[230px] sm:w-[260px] h-auto select-none" draggable={false} />
+        <span className="text-2xl font-bold text-[#4C1D95] dark:text-violet-200">می‌ونت</span>
+      </span>
+    );
+  }
   return (
-    <span className="inline-flex items-baseline gap-2 leading-none">
-      <span className={`${fa} font-bold text-[#4C1D95] dark:text-gray-100`}>می‌ونت</span>
-      <span dir="ltr" lang="en" className={`${en} font-semibold tracking-[0.18em] uppercase text-gray-500 dark:text-gray-400`}>Mevent</span>
+    <span className="inline-flex items-center gap-2.5 leading-none">
+      <span className="text-2xl font-bold text-[#4C1D95] dark:text-violet-200">می‌ونت</span>
+      <img src={logo320} srcSet={SRCSET} sizes="104px" width={104} height={33}
+        alt="Mevent" className="w-[104px] h-auto select-none" draggable={false} />
     </span>
   );
 }

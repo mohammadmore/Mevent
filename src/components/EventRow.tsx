@@ -12,20 +12,20 @@ export function EventRow({ event, onSelect }: { event: Event; onSelect?: (e: Eve
     <button
       type="button"
       onClick={() => onSelect?.(event)}
-      className="w-full text-right glass border hover:border-teal-500 dark:hover:border-[#d9ff00] p-3 rounded-2xl transition-colors flex items-center gap-3 group"
+      className="w-full text-right glass border hover:border-teal-500 dark:hover:border-[#A78BFA] p-3 rounded-2xl transition-colors flex items-center gap-3 group"
     >
       {event.imageUrl ? (
         <img src={event.imageUrl} alt="" loading="lazy" className="w-16 h-16 rounded-xl object-cover shrink-0" />
       ) : (
-        <span className="w-16 h-16 rounded-xl bg-teal-50 dark:bg-white/5 flex items-center justify-center text-teal-600 dark:text-[#d9ff00] shrink-0">
+        <span className="w-16 h-16 rounded-xl bg-teal-50 dark:bg-white/5 flex items-center justify-center text-teal-600 dark:text-[#C4B5FD] shrink-0">
           <Ticket className="w-7 h-7" />
         </span>
       )}
       <span className="flex-1 min-w-0 space-y-1">
-        <span className="block font-bold text-gray-900 dark:text-gray-100 text-sm truncate group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{event.title}</span>
+        <span className="block font-bold text-gray-900 dark:text-gray-100 text-sm truncate group-hover:text-teal-600 dark:group-hover:text-[#C4B5FD]">{event.title}</span>
         <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 truncate"><Clock className="w-3 h-3 shrink-0" />{eventTimeLabel(event as any)}</span>
         {address && <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 truncate"><MapPin className="w-3 h-3 shrink-0" />{address}</span>}
-        <PriceWidget cost={event.cost} className="text-teal-600 dark:text-[#d9ff00] text-xs" />
+        <PriceWidget cost={event.cost} className="text-teal-600 dark:text-[#C4B5FD] text-xs" />
       </span>
       <ChevronLeft className="w-5 h-5 text-gray-400 shrink-0" />
     </button>

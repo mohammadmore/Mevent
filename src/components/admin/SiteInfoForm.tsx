@@ -42,7 +42,7 @@ export function SiteInfoForm() {
 
   return (
     <form onSubmit={save} className="space-y-4">
-      <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Building2 className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> اطلاعات کسب‌وکار و اینماد</h3>
+      <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Building2 className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> اطلاعات کسب‌وکار و اینماد</h3>
       <p className="text-xs text-gray-500">در صفحات «تماس با ما»، «قوانین» و پایین سایت نمایش داده می‌شود. اینماد این اطلاعات را بررسی می‌کند.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {FIELDS.map(f => (
@@ -61,7 +61,7 @@ export function SiteInfoForm() {
       {form.enamadId && form.enamadCode && (
         <div className="flex items-center gap-3 text-xs text-gray-500">پیش‌نمایش نماد: <EnamadSeal id={String(form.enamadId)} code={String(form.enamadCode)} /></div>
       )}
-      <button disabled={saving} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold text-sm disabled:opacity-60">
+      <button disabled={saving} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold text-sm disabled:opacity-60">
         {saving ? 'در حال ذخیره...' : 'ذخیره اطلاعات سایت'}
       </button>
     </form>

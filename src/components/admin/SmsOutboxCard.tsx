@@ -42,7 +42,7 @@ export function SmsOutboxCard() {
             ))}
           </ul>
           {data.problems.some(p => p.status === 'FAILED') && (
-            <button onClick={retryAll} className="text-xs font-bold text-teal-600 dark:text-[#d9ff00]">ارسال دوباره ناموفق‌ها</button>
+            <button onClick={retryAll} className="text-xs font-bold text-teal-600 dark:text-[#C4B5FD]">ارسال دوباره ناموفق‌ها</button>
           )}
         </>
       )}

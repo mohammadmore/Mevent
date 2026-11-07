@@ -59,7 +59,7 @@ export default function MapComponent({ events, userLocation, onEventSelect, onPl
                   <div className="text-right" dir="rtl">
                     <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{event.title}</h3>
                     <p className="text-xs text-gray-400 leading-relaxed">{event.location.address}</p>
-                    <div className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] mt-2">
+                    <div className="text-xs font-semibold text-teal-600 dark:text-[#C4B5FD] mt-2">
                       <PriceWidget cost={event.cost} />
                     </div>
                     {onEventSelect && <button className="mt-2 text-xs bg-teal-600 text-white px-2 py-1 rounded w-full" onClick={() => onEventSelect(event)}>جزئیات</button>}

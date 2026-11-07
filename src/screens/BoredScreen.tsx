@@ -81,14 +81,14 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => (step === 0 ? navigate('/') : history.back())} className="text-sm text-gray-500 flex items-center gap-1 py-2.5 -my-2"><ArrowRight className="w-4 h-4" /> {step === 0 ? 'خانه' : 'قبلی'}</button>
           <div className="flex gap-1.5" aria-label={`سؤال ${step + 1} از ${STEPS.length}`}>
-            {STEPS.map((_, i) => <span key={i} className={`h-1.5 rounded-full transition-all ${i <= step ? 'w-6 bg-teal-600 dark:bg-[#d9ff00]' : 'w-3 bg-gray-200 dark:bg-white/10'}`} />)}
+            {STEPS.map((_, i) => <span key={i} className={`h-1.5 rounded-full transition-all ${i <= step ? 'w-6 bg-teal-600 dark:bg-[#7C3AED]' : 'w-3 bg-gray-200 dark:bg-white/10'}`} />)}
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-5">{s.question}</h1>
         <div className="grid grid-cols-2 gap-3" role="list">
           {s.options.map(o => (
             <button key={o.key} role="listitem" onClick={() => answer(s.param, o.key)}
-              className="rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-500 dark:hover:border-[#d9ff00]/60 px-3 py-4 text-sm font-bold text-gray-800 dark:text-gray-100 flex flex-col items-center gap-2">
+              className="rounded-2xl border border-gray-200 dark:border-white/10 glass-soft hover:border-teal-500 dark:hover:border-[#8B5CF6]/60 px-3 py-4 text-sm font-bold text-gray-800 dark:text-gray-100 flex flex-col items-center gap-2">
               {o.emoji && <span className="text-2xl" aria-hidden>{o.emoji}</span>}
               {o.label}
             </button>
@@ -115,7 +115,7 @@ export function BoredScreen({ userLocation }: { userLocation: { lat: number; lng
       {error && (
         <div className="text-center py-8">
           <p className="text-gray-600 dark:text-gray-400 mb-3">الان نتونستیم پیشنهاد بیاریم.</p>
-          <button onClick={() => load(false)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold">دوباره</button>
+          <button onClick={() => load(false)} className="px-4 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold">دوباره</button>
         </div>
       )}
       {picks && picks.length > 0 && <div className="space-y-3">{picks.map(p => <PickCard key={`${p.kind}:${p.id}`} pick={p} />)}</div>}

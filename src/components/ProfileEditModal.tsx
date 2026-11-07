@@ -51,7 +51,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 required
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
               />
             </div>
             
@@ -60,7 +60,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
               <select
                 value={formData.city}
                 onChange={e => setFormData({ ...formData, city: e.target.value })}
-                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
               >
                 {[...new Set([formData.city, ...CITIES])].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -73,7 +73,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 <select
                   value={formData.organizerType}
                   onChange={e => setFormData({ ...formData, organizerType: e.target.value as 'INDIVIDUAL' | 'CORPORATE' })}
-                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
                 >
                   <option value="INDIVIDUAL">حقیقی (شخص)</option>
                   <option value="CORPORATE">حقوقی (موسسه / گالری / سالن)</option>
@@ -89,7 +89,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                 onChange={e => setFormData({ ...formData, bio: e.target.value })}
                 rows={3}
                 placeholder="توضیحاتی در مورد فعالیت‌های شما..."
-                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors resize-none dark:text-white"
+                className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors resize-none dark:text-white"
               />
             </div>
 
@@ -101,7 +101,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   placeholder="https://example.com/cover.jpg"
                   value={formData.coverImage}
                   onChange={e => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
                   dir="ltr"
                 />
                 <ImageIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
@@ -115,7 +115,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   type="url"
                   value={formData.website}
                   onChange={e => setFormData({ ...formData, website: e.target.value })}
-                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
                   dir="ltr"
                 />
               </div>
@@ -125,7 +125,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
                   type="text"
                   value={formData.instagram}
                   onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#d9ff00] transition-colors dark:text-white"
+                  className="w-full glass-soft border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-teal-600 dark:focus:border-[#A78BFA] transition-colors dark:text-white"
                   dir="ltr"
                 />
               </div>
@@ -138,7 +138,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
             type="submit"
             form="profile-edit-form"
             disabled={loading}
-            className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-3 rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-[#c6eb00] transition-colors disabled:opacity-50"
+            className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-3 rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-[#6D28D9] transition-colors disabled:opacity-50"
           >
             {loading ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
           </button>

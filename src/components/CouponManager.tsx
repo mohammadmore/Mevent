@@ -59,8 +59,8 @@ export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: b
   return (
     <section className="glass rounded-2xl border p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><TicketPercent className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> کدهای تخفیف</h3>
-        <button onClick={() => setOpen(!open)} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00] flex items-center gap-1 px-2 py-2.5 -my-2">{open ? <><X className="w-4 h-4" /> بستن</> : <><Plus className="w-4 h-4" /> کد جدید</>}</button>
+        <h3 className="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><TicketPercent className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> کدهای تخفیف</h3>
+        <button onClick={() => setOpen(!open)} className="text-sm font-bold text-teal-600 dark:text-[#C4B5FD] flex items-center gap-1 px-2 py-2.5 -my-2">{open ? <><X className="w-4 h-4" /> بستن</> : <><Plus className="w-4 h-4" /> کد جدید</>}</button>
       </div>
 
       {open && (
@@ -80,7 +80,7 @@ export function CouponManager({ events, isAdmin }: { events: Event[]; isAdmin: b
               {isAdmin && <option value="SITE">همه رویدادهای سایت</option>}
               {paidEvents.map(ev => <option key={ev.id} value={ev.id}>فقط «{ev.title}»</option>)}
             </select></label>
-          <div className="col-span-2 sm:col-span-4"><button disabled={saving} className="px-5 py-2 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold disabled:opacity-60">{saving ? 'در حال ساخت...' : 'ساخت کد'}</button></div>
+          <div className="col-span-2 sm:col-span-4"><button disabled={saving} className="px-5 py-2 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold disabled:opacity-60">{saving ? 'در حال ساخت...' : 'ساخت کد'}</button></div>
         </form>
       )}
 

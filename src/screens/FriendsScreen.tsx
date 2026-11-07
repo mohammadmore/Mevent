@@ -14,7 +14,7 @@ type Match = { id: number; event: { id: number; title: string; startTime: string
 
 const card = 'glass border rounded-2xl p-5';
 const input = 'flex-1 min-w-0 px-3 py-2.5 rounded-xl border glass text-sm';
-const primary = 'px-4 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black text-sm font-bold flex items-center gap-1.5 disabled:opacity-50';
+const primary = 'px-4 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white text-sm font-bold flex items-center gap-1.5 disabled:opacity-50';
 
 export function FriendsScreen() {
   const [data, setData] = useState<FriendsData | null>(null);
@@ -56,7 +56,7 @@ export function FriendsScreen() {
 
   return (
     <div className="max-w-2xl mx-auto w-full space-y-5">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><Users className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" /> دوستان و همراه‌ها</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><Users className="w-6 h-6 text-teal-600 dark:text-[#C4B5FD]" /> دوستان و همراه‌ها</h1>
 
       {matches && matches.length > 0 && (
         <section className={card} aria-label="همراه‌هام">
@@ -132,7 +132,7 @@ export function FriendsScreen() {
       {data && (
         <label className={`${card} flex items-center gap-3 cursor-pointer`}>
           <span className="flex-1"><span className="block font-bold text-sm text-gray-900 dark:text-gray-100">دوستام ببینن کجا می‌رم</span><span className="text-xs text-gray-500">اگه خاموش باشه، اسمت توی «دوستات میان» نمیاد.</span></span>
-          <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#d9ff00]" checked={data.shareAttendance} onChange={e => setShare(e.target.checked)} aria-label="دوستام ببینن کجا می‌رم" />
+          <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#A78BFA]" checked={data.shareAttendance} onChange={e => setShare(e.target.checked)} aria-label="دوستام ببینن کجا می‌رم" />
         </label>
       )}
     </div>
@@ -188,7 +188,7 @@ export function TogetherScreen({ id }: { id: number }) {
         <GeneratedAvatar seed={data.other.id} className="w-11 h-11 rounded-full bg-gray-100" />
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-gray-900 dark:text-gray-100">{data.other.name}</h1>
-          <button onClick={() => navigate(`/events/${data.event.id}`)} className="text-xs text-teal-700 dark:text-[#d9ff00] truncate block">با هم: {data.event.title}</button>
+          <button onClick={() => navigate(`/events/${data.event.id}`)} className="text-xs text-teal-700 dark:text-[#C4B5FD] truncate block">با هم: {data.event.title}</button>
         </div>
         {!data.isFriend && data.open && <button onClick={() => act('befriend')} className="text-xs px-3 py-2 rounded-xl glass-soft flex items-center gap-1"><UserPlus className="w-4 h-4" /> دوست شیم</button>}
       </div>
@@ -196,7 +196,7 @@ export function TogetherScreen({ id }: { id: number }) {
       <ol className="space-y-2 min-h-[120px]">
         {data.messages.length === 0 && <li className="text-sm text-gray-500 text-center py-6">سلام کن و قرارتون رو بذارید 👋</li>}
         {data.messages.map((m: any) => (
-          <li key={m.id} className={`max-w-[85%] w-fit rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${m.mine ? 'ml-auto bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black' : 'mr-auto glass-soft text-gray-900 dark:text-gray-100'}`}>
+          <li key={m.id} className={`max-w-[85%] w-fit rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${m.mine ? 'ml-auto bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'mr-auto glass-soft text-gray-900 dark:text-gray-100'}`}>
             {m.body}
             <span className="block text-[10px] opacity-60 mt-1">{timeAgo(m.createdAt)}</span>
           </li>

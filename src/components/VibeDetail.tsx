@@ -61,7 +61,7 @@ export function VibeDetail({ vibe, onBack }: VibeDetailProps) {
           )}
           {v.areaName && (
             <div className="p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5 flex items-center gap-2">
-              <Map className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+              <Map className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">محله / منطقه</p>
                 <p className="font-bold text-gray-900 dark:text-gray-100">{v.areaName}</p>

@@ -213,15 +213,15 @@ export default function JalaliCalendarPicker({
         <div>
           <span className="text-xs text-gray-500 dark:text-gray-400 block font-medium">جدول انتخاب تاریخ رفت و برگشت</span>
           <div className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 mt-0.5">
-            <span className="text-teal-600 dark:text-[#d9ff00]">
+            <span className="text-teal-600 dark:text-[#C4B5FD]">
               {startDateIso ? formatPersianDateString(startDateIso) : 'انتخاب نشده'}
             </span>
             <span className="text-gray-400 font-normal">تا</span>
-            <span className="text-teal-600 dark:text-[#d9ff00]">
+            <span className="text-teal-600 dark:text-[#C4B5FD]">
               {endDateIso ? formatPersianDateString(endDateIso) : 'انتخاب نشده'}
             </span>
             {tripDurationDays > 0 && (
-              <span className="text-xs bg-teal-50 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-2 py-0.5 rounded-full font-semibold border border-teal-200 dark:border-[#d9ff00]/20">
+              <span className="text-xs bg-teal-50 dark:bg-[#8B5CF6]/10 text-teal-700 dark:text-[#C4B5FD] px-2 py-0.5 rounded-full font-semibold border border-teal-200 dark:border-[#8B5CF6]/20">
                 {toPersianDigits(tripDurationDays)} روز سفر
               </span>
             )}
@@ -307,11 +307,11 @@ export default function JalaliCalendarPicker({
               onClick={() => handleDayClick(dayNum)}
               className={`h-9 rounded-xl text-xs font-bold transition-all relative flex items-center justify-center ${
                 selected
-                  ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-md scale-105 z-10'
+                  ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white shadow-md scale-105 z-10'
                   : range
-                  ? 'bg-teal-50 dark:bg-[#d9ff00]/15 text-teal-800 dark:text-[#d9ff00]'
+                  ? 'bg-teal-50 dark:bg-[#8B5CF6]/15 text-teal-800 dark:text-[#C4B5FD]'
                   : todayCell
-                  ? 'border-2 border-teal-600 dark:border-[#d9ff00] text-teal-700 dark:text-[#d9ff00] font-black'
+                  ? 'border-2 border-teal-600 dark:border-[#A78BFA] text-teal-700 dark:text-[#C4B5FD] font-black'
                   : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-gray-200'
               }`}
             >

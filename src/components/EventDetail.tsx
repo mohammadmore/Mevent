@@ -339,7 +339,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
       <div className={`flex-1 px-5 md:px-10 pb-10 relative z-20 max-w-5xl mx-auto w-full ${event.imageUrl ? '-mt-20 pt-2' : 'py-6 md:py-10'}`}>
         <div className="flex flex-wrap gap-2 mb-4">
           {event.tags && event.tags.map((tag, i) => (
-            <span key={i} className="inline-flex items-center gap-1 text-xs font-medium text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-2.5 py-1 rounded-full">
+            <span key={i} className="inline-flex items-center gap-1 text-xs font-medium text-teal-600 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10 px-2.5 py-1 rounded-full">
               <Tag className="w-3 h-3" />
               {tag.replace('#', '')}
             </span>
@@ -372,7 +372,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
           ))}
         </div>
                 {event.city && (
-          <div className="flex items-center gap-1 mb-2 text-teal-600 dark:text-[#d9ff00] font-bold text-sm bg-teal-50 dark:bg-[#d9ff00]/10 w-fit px-3 py-1 rounded-full border border-teal-200 dark:border-[#d9ff00]/20">
+          <div className="flex items-center gap-1 mb-2 text-teal-600 dark:text-[#C4B5FD] font-bold text-sm bg-teal-50 dark:bg-[#8B5CF6]/10 w-fit px-3 py-1 rounded-full border border-teal-200 dark:border-[#8B5CF6]/20">
             <MapPin className="w-4 h-4" />
             {event.city}
           </div>
@@ -393,7 +393,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
 
         <div className="space-y-5 mb-8">
           {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#C4B5FD]">
               <Calendar className="w-6 h-6" />
             </div>
             <div>
@@ -402,7 +402,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </div>
           </div>}
           {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#C4B5FD]">
               <MapPin className="w-6 h-6" />
             </div>
             <div>
@@ -412,7 +412,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                 {((event.location?.lat && event.location?.lng) || ((event as any).lat && (event as any).lng)) && (
                   <button 
                     onClick={() => setIsMapModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 text-teal-700 dark:text-[#d9ff00] px-3 py-2.5 -my-1 rounded-lg transition-colors text-xs font-bold shrink-0 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#8B5CF6]/10 hover:bg-teal-100 dark:hover:bg-[#8B5CF6]/20 text-teal-700 dark:text-[#C4B5FD] px-3 py-2.5 -my-1 rounded-lg transition-colors text-xs font-bold shrink-0 cursor-pointer"
                     title="مشاهده روی نقشه"
                   >
                     <Map className="w-3.5 h-3.5" />
@@ -423,7 +423,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
             </div>
           </div>}
           {!isCinema && <div className="flex items-start gap-4 p-4 rounded-2xl glass-soft border border-gray-200 dark:border-white/10">
-            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#d9ff00]">
+            <div className="w-12 h-12 glass rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-teal-600 dark:text-[#C4B5FD]">
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
@@ -441,7 +441,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
               {(event.website || event.instagram || event.telegram || event.twitter) && (
                 <div className="flex flex-wrap gap-3 w-full glass-soft p-4 rounded-2xl border border-gray-100 dark:border-white/10">
                   {event.website && (
-                    <a href={event.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#d9ff00] transition-colors">
+                    <a href={event.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#C4B5FD] transition-colors">
                       <ExternalLink className="w-4 h-4" />
                       وب‌سایت
                     </a>
@@ -481,7 +481,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         {similarEvents.length > 0 && (
           <section className="mt-8 mb-8" aria-label="اینا هم شاید خوشت بیاد">
             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+              <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
               اینا هم شاید خوشت بیاد
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -497,7 +497,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                       : <span className="absolute inset-0 flex items-center justify-center"><Calendar className="w-6 h-6 text-gray-300 dark:text-gray-600" /></span>}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-[#d9ff00]">{simEvent.title}</span>
+                    <span className="block font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-teal-600 dark:group-hover:text-[#C4B5FD]">{simEvent.title}</span>
                     <span className="block mt-1 text-xs text-gray-500 dark:text-gray-400 truncate">
                       {fuzzyTimeLabel(simEvent.fuzzyTime) || (simEvent.startTime ? formatDetailDate(simEvent.startTime).datePart : 'زمان نامشخص')} · {softPrice(simEvent.cost)}
                     </span>
@@ -511,7 +511,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         {nearbyPlaces.length > 0 && (
           <section className="mt-8 mb-8" aria-label="قبل یا بعدش کجا بریم؟">
             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-orange-500 dark:text-[#d9ff00]" />
+              <MapPin className="w-5 h-5 text-orange-500 dark:text-[#C4B5FD]" />
               قبل یا بعدش کجا بریم؟
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -525,7 +525,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
                       <span className="font-bold text-sm text-gray-800 dark:text-gray-100 truncate">{place.name}</span>
-                      {place.timingTag && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-[#d9ff00]/15 dark:text-[#d9ff00] shrink-0">{place.timingTag}</span>}
+                      {place.timingTag && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-[#8B5CF6]/15 dark:text-[#C4B5FD] shrink-0">{place.timingTag}</span>}
                     </span>
                     <span className="block text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{placeTypeLabel(place.type)}{place.distance != null ? ` · ${pNum(Math.round(place.distance * 10) / 10)} کیلومتر` : ''}</span>
                     <span className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 mt-0.5"><Clock className="w-3.5 h-3.5" /> {hoursLabel(place.workingHours) || 'ساعت کاری نامشخص'}</span>
@@ -539,7 +539,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         {event.advancedDetails && (event.advancedDetails as any).cinemas && (event.advancedDetails as any).cinemas.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2">
-              <Ticket className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+              <Ticket className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
               سینماها و سانس‌های اکران
             </h2>
             <div className="space-y-4">
@@ -565,8 +565,8 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                           className="flex flex-col items-center justify-center p-3 rounded-xl border border-teal-100 dark:border-teal-900/30 bg-teal-50/50 dark:bg-teal-900/10 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:border-teal-300 dark:hover:border-teal-700 transition-all group"
                         >
                           <span className="text-xs text-gray-500 dark:text-gray-400 mb-1">{st.date}</span>
-                          <span className="text-lg font-bold text-teal-700 dark:text-[#d9ff00] mb-2">{st.time}</span>
-                          <span className="text-xs font-bold bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-black px-3 py-1.5 rounded-lg w-full text-center flex items-center justify-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
+                          <span className="text-lg font-bold text-teal-700 dark:text-[#C4B5FD] mb-2">{st.time}</span>
+                          <span className="text-xs font-bold bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white px-3 py-1.5 rounded-lg w-full text-center flex items-center justify-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
                             خرید بلیت
                             <ExternalLink className="w-3 h-3" />
                           </span>
@@ -613,7 +613,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
                 
                 return (
                   <div key={key} className="glass-soft border border-gray-100 dark:border-white/5 p-3 rounded-xl flex items-start gap-3">
-                    <div className="mt-0.5 text-teal-600 dark:text-[#d9ff00] bg-teal-50 dark:bg-white/5 p-1.5 rounded-lg shrink-0">
+                    <div className="mt-0.5 text-teal-600 dark:text-[#C4B5FD] bg-teal-50 dark:bg-white/5 p-1.5 rounded-lg shrink-0">
                       <Info className="w-4 h-4" />
                     </div>
                     <div>
@@ -662,7 +662,7 @@ export function EventDetail({ event, onBack, onBuyTicket, isSaved, onToggleSave,
         <button 
           disabled={soldOut || isCancelled}
           onClick={(e) => event.cost > 0 || event.ticketUrl ? onBuyTicket(e, event) : onRsvp(e, event)}
-          className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] shadow-teal-600/5 dark:shadow-[#d9ff00]/5 hover:bg-teal-600/30 dark:bg-[#d9ff00]/30' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black shadow-teal-600/20 dark:shadow-[#d9ff00]/20 hover:bg-teal-700 dark:hover:bg-[#c6eb00]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
+          className={`w-full disabled:opacity-60 ${isRsvp ? 'bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD] shadow-teal-600/5 dark:shadow-[#8B5CF6]/5 hover:bg-teal-600/30 dark:bg-[#8B5CF6]/30' : 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white shadow-teal-600/20 dark:shadow-[#8B5CF6]/20 hover:bg-teal-700 dark:hover:bg-[#6D28D9]'} font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
         >
           {event.ticketUrl ? <ExternalLink className="w-5 h-5" /> : (isRsvp ? <CheckCircle className="w-5 h-5" /> : <Ticket className="w-5 h-5" />)}
           {isCancelled ? 'رویداد لغو شده است' : event.ticketUrl ? 'تهیه بلیت از سایت رسمی' : soldOut ? 'ظرفیت تکمیل' : (event.cost > 0 ? (isRsvp ? 'یه بلیت دیگه می‌خوام' : 'می‌خوام برم') : (isRsvp ? 'میام ✓ (لغو)' : 'منم میام'))}

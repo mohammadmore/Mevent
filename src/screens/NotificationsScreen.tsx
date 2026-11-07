@@ -51,7 +51,7 @@ export function NotificationsScreen() {
   return (
     <div className="max-w-2xl mx-auto w-full space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Bell className="w-6 h-6 text-teal-600 dark:text-[#d9ff00]" /> اعلانات شما</h2>
+        <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2"><Bell className="w-6 h-6 text-teal-600 dark:text-[#C4B5FD]" /> اعلانات شما</h2>
         {push && push !== 'unsupported' && push !== 'unavailable' && (
           <button onClick={togglePush} disabled={push === 'denied'} className="text-xs font-bold px-3 py-2 rounded-xl glass-soft flex items-center gap-1.5 disabled:opacity-60">
             {push === 'enabled' ? <><BellOff className="w-4 h-4" /> غیرفعال‌سازی اعلان گوشی</> : push === 'denied' ? 'اعلان در مرورگر مسدود است' : <><BellRing className="w-4 h-4" /> فعال‌سازی اعلان گوشی</>}
@@ -72,9 +72,9 @@ export function NotificationsScreen() {
             <li key={n.id}>
               <button
                 onClick={() => n.url && navigate(n.url)}
-                className={`w-full text-right p-4 rounded-xl flex gap-4 border transition-colors ${!n.readAt ? 'bg-teal-600/10 dark:bg-[#d9ff00]/10 border-teal-600/20 dark:border-[#d9ff00]/20' : 'glass-soft border-gray-200 dark:border-white/10'} ${n.url ? 'hover:border-teal-500/50' : 'cursor-default'}`}
+                className={`w-full text-right p-4 rounded-xl flex gap-4 border transition-colors ${!n.readAt ? 'bg-teal-600/10 dark:bg-[#8B5CF6]/10 border-teal-600/20 dark:border-[#8B5CF6]/20' : 'glass-soft border-gray-200 dark:border-white/10'} ${n.url ? 'hover:border-teal-500/50' : 'cursor-default'}`}
               >
-                <span className="w-10 h-10 bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00] rounded-full flex items-center justify-center shrink-0">{ICONS[n.type] || <Users className="w-5 h-5" />}</span>
+                <span className="w-10 h-10 bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD] rounded-full flex items-center justify-center shrink-0">{ICONS[n.type] || <Users className="w-5 h-5" />}</span>
                 <span className="flex-1 min-w-0">
                   <span className="block font-bold text-gray-900 dark:text-white text-sm mb-1">{n.title}</span>
                   {n.body && <span className="block text-xs text-gray-700 dark:text-gray-300 leading-relaxed mb-2">{n.body}</span>}

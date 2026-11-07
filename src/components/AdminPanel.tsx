@@ -301,7 +301,7 @@ export default function AdminPanel() {
 
   if (loading && !stats) {
     return (
-      <div className="flex items-center justify-center p-12 text-[#4C1D95] dark:text-[#d9ff00]">
+      <div className="flex items-center justify-center p-12 text-[#4C1D95] dark:text-[#C4B5FD]">
         <Activity className="w-8 h-8 animate-spin" />
       </div>
     );
@@ -312,7 +312,7 @@ export default function AdminPanel() {
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-l from-[#3B4FD8] via-[#5B21B6] to-[#3B0764] dark:from-[#1f1f23] dark:via-[#1f1f23] dark:to-[#18181b] p-5 sm:p-6 rounded-2xl text-white shadow-md border border-white/10" dir="rtl">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-white/15 dark:bg-[#d9ff00]/20 rounded-xl text-white dark:text-[#d9ff00] shrink-0">
+          <div className="p-3 bg-white/15 dark:bg-[#8B5CF6]/20 rounded-xl text-white dark:text-[#C4B5FD] shrink-0">
             <Shield className="w-6 h-6" />
           </div>
           <div>
@@ -342,7 +342,7 @@ export default function AdminPanel() {
         </div>
 
         <div className="glass border p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-          <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-[#d9ff00] rounded-lg">
+          <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-[#C4B5FD] rounded-lg">
             <Calendar className="w-5 h-5" />
           </div>
           <div>
@@ -378,7 +378,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('moderation')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'moderation'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -390,7 +390,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('users')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'users'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -402,7 +402,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('events')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'events'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -414,7 +414,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('support')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'support'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -426,7 +426,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('metrics')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'metrics'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -438,7 +438,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('places')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'places'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -449,7 +449,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('chains')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'chains'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -460,7 +460,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('vibes')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'vibes'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -471,7 +471,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('flows')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'flows'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -482,7 +482,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('settings')}
           className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'settings'
-              ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
+              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
@@ -580,7 +580,7 @@ export default function AdminPanel() {
             {/* Cache Control & Background Job Trigger */}
             <div className="glass border rounded-2xl p-6 shadow-sm space-y-4">
               <h3 className="font-bold text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Server className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+                <Server className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
                 عملیات کنترل زیرساخت و کارهای پس‌زمینه
               </h3>
               <p className="text-xs text-gray-500">پاکسازی مستقیم کش یا اجرای کارهای سنگین (مانند خزشگر) به صورت کاملا غیرهمزمان در پس‌زمینه.</p>
@@ -618,11 +618,11 @@ export default function AdminPanel() {
                 <div className="mt-4 p-4 bg-slate-100 dark:bg-white/5 rounded-xl space-y-2 text-xs">
                   <div className="flex justify-between font-bold">
                     <span>کد کار پس‌زمینه: {pNum(asyncJob.id)}</span>
-                    <span className="text-teal-600 dark:text-[#d9ff00]">{asyncJob.status === "RUNNING" ? "در حال اجرا" : asyncJob.status === "COMPLETED" ? "پایان یافته" : asyncJob.status === "FAILED" ? "خطا" : asyncJob.status} ({pNum(asyncJob.progress)}٪)</span>
+                    <span className="text-teal-600 dark:text-[#C4B5FD]">{asyncJob.status === "RUNNING" ? "در حال اجرا" : asyncJob.status === "COMPLETED" ? "پایان یافته" : asyncJob.status === "FAILED" ? "خطا" : asyncJob.status} ({pNum(asyncJob.progress)}٪)</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
                     <div
-                      className="bg-teal-600 dark:bg-[#d9ff00] h-full transition-all duration-300"
+                      className="bg-teal-600 dark:bg-[#7C3AED] h-full transition-all duration-300"
                       style={{ width: `${asyncJob.progress}%` }}
                     />
                   </div>
@@ -662,7 +662,7 @@ export default function AdminPanel() {
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                           u.role === 'ADMIN' ? 'bg-red-100 text-red-700' :
-                          u.role === 'ORGANIZER' ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00]' : 'bg-white/5 text-gray-700 dark:text-gray-300'
+                          u.role === 'ORGANIZER' ? 'bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD]' : 'bg-white/5 text-gray-700 dark:text-gray-300'
                         }`}>
                           {u.role === 'ADMIN' ? 'مدیر' : u.role === 'ORGANIZER' ? 'برگزارکننده' : 'کاربر'}
                         </span>
@@ -672,7 +672,7 @@ export default function AdminPanel() {
                           disabled={updating === u.id}
                           value={u.role}
                           onChange={(e) => changeRole(u.id, e.target.value)}
-                          className="glass border border-gray-300 dark:border-white/20 text-gray-700 text-xs rounded-lg focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] block p-1.5"
+                          className="glass border border-gray-300 dark:border-white/20 text-gray-700 text-xs rounded-lg focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] block p-1.5"
                         >
                           <option value="USER">کاربر عادی</option>
                           <option value="ORGANIZER">برگزارکننده</option>
@@ -689,7 +689,7 @@ export default function AdminPanel() {
           <div className="glass border border-gray-300 dark:border-white/20 rounded-xl p-6 shadow-sm space-y-6 text-right" dir="rtl">
             <div>
               <h3 className="font-bold text-[#4C1D95] dark:text-gray-100 mb-2 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+                <Settings className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
                 تنظیمات کلی
               </h3>
 
@@ -747,7 +747,7 @@ export default function AdminPanel() {
                             type="text"
                             value={catInput}
                             onChange={(e) => setCatInput(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#d9ff00] focus:border-teal-600 dark:border-[#d9ff00] outline-none bg-transparent text-sm"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-teal-600 dark:ring-[#A78BFA] focus:border-teal-600 dark:border-[#A78BFA] outline-none bg-transparent text-sm"
                             placeholder="مثلا: ورزشی، فرهنگی، آموزشی"
                           />
                         </div>
@@ -859,7 +859,7 @@ export default function AdminPanel() {
                   <button
                     onClick={updateSettings}
                     disabled={actionLoading}
-                    className="bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 dark:bg-[#d9ff00] dark:hover:bg-[#bce000] dark:disabled:bg-[#d9ff00]/50 text-white dark:text-black font-bold py-2 px-8 rounded-xl transition-all flex items-center gap-2"
+                    className="bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 dark:bg-[#7C3AED] dark:hover:bg-[#bce000] dark:disabled:bg-[#8B5CF6]/50 text-white dark:text-white font-bold py-2 px-8 rounded-xl transition-all flex items-center gap-2"
                   >
                     {actionLoading ? 'در حال ذخیره...' : 'ذخیره تمام تنظیمات'}
                   </button>
@@ -908,7 +908,7 @@ export default function AdminPanel() {
                           <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{e.organizerName || '-'}</td>
                           <td className="px-4 py-3">
                             <span className={`px-2 py-1 rounded-md text-xs font-bold ${
-                              e.status === 'PUBLISHED' ? 'bg-teal-600/20 dark:bg-[#d9ff00]/20 text-teal-600 dark:text-[#d9ff00]' : 'bg-gray-200 dark:bg-white/5 text-gray-700 dark:text-gray-300'
+                              e.status === 'PUBLISHED' ? 'bg-teal-600/20 dark:bg-[#8B5CF6]/20 text-teal-600 dark:text-[#C4B5FD]' : 'bg-gray-200 dark:bg-white/5 text-gray-700 dark:text-gray-300'
                             }`}>
                               {e.status === 'PUBLISHED' ? 'منتشر شده' : 'پیش‌نویس'}
                             </span>
@@ -916,7 +916,7 @@ export default function AdminPanel() {
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={() => setEditingEvent(e)}
-                              className="p-1.5 rounded-lg bg-teal-600/10 text-teal-600 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00] hover:bg-teal-600/20 dark:hover:bg-[#d9ff00]/20 mx-auto" title="ویرایش"
+                              className="p-1.5 rounded-lg bg-teal-600/10 text-teal-600 dark:bg-[#8B5CF6]/10 dark:text-[#C4B5FD] hover:bg-teal-600/20 dark:hover:bg-[#8B5CF6]/20 mx-auto" title="ویرایش"
                             >
                               <Edit className="w-4 h-4" />
                             </button>

@@ -41,7 +41,7 @@ function NotFound({ text }: { text: string }) {
       <SearchX className="w-16 h-16 text-gray-300" />
       <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{text}</h2>
       <p className="text-sm text-gray-500">ممکن است حذف شده یا هنوز منتشر نشده باشد.</p>
-      <button onClick={() => goBack('/')} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold text-sm flex items-center gap-2"><ArrowRight className="w-4 h-4" /> بازگشت</button>
+      <button onClick={() => goBack('/')} className="px-5 py-2.5 rounded-xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold text-sm flex items-center gap-2"><ArrowRight className="w-4 h-4" /> بازگشت</button>
     </div>
   );
 }
@@ -49,7 +49,7 @@ function NotFound({ text }: { text: string }) {
 function Loading() {
   return (
     <div className="fixed inset-0 z-[100] liquid-bg flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 dark:border-[#d9ff00]" />
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 dark:border-[#A78BFA]" />
     </div>
   );
 }

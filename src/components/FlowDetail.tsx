@@ -48,7 +48,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
 
       <div className="p-6 max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-2 mb-4">
-          <ListFilter className="text-teal-600 dark:text-[#d9ff00] w-5 h-5" />
+          <ListFilter className="text-teal-600 dark:text-[#C4B5FD] w-5 h-5" />
           <h3 className="text-xl font-bold text-gray-900 dark:text-white">پیشنهادات این جریان</h3>
         </div>
         
@@ -62,7 +62,7 @@ export function FlowDetail({ flow, onBack, onEventClick }: FlowDetailProps) {
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-900 dark:text-white">{ev.title}</h4>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{ev.description}</p>
-                  <p className="text-xs font-medium text-teal-600 dark:text-[#d9ff00] mt-2">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
+                  <p className="text-xs font-medium text-teal-600 dark:text-[#C4B5FD] mt-2">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
                 </div>
               </div>
             ))}

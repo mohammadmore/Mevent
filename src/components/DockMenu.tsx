@@ -55,16 +55,16 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuic
                 setShowQuickSearch(false);
                 setActiveTab(item.id);
               }}
-              className="relative w-16 h-14 flex flex-col items-center justify-center gap-0.5 outline-none rounded-[1.5rem] touch-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-[#d9ff00]"
+              className="relative w-16 h-14 flex flex-col items-center justify-center gap-0.5 outline-none rounded-[1.5rem] touch-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-[#A78BFA]"
             >
               {isActive && (
                 <motion.div
                   layoutId="active-bg"
-                  className="absolute inset-0 bg-teal-600 dark:bg-[#d9ff00] rounded-[1.5rem] shadow-md shadow-teal-600/30 dark:shadow-[0_8px_20px_rgba(217,255,0,0.25)]"
+                  className="absolute inset-0 bg-teal-600 dark:bg-[#7C3AED] rounded-[1.5rem] shadow-md shadow-teal-600/30 dark:shadow-[0_8px_20px_rgba(139,92,246,0.25)]"
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              <span className={`relative z-10 flex flex-col items-center gap-0.5 transition-colors duration-200 ${isActive ? 'text-white dark:text-black' : 'text-gray-500 dark:text-gray-400'}`}>
+              <span className={`relative z-10 flex flex-col items-center gap-0.5 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
                 {item.icon}
                 <span className="text-[11px] font-bold leading-none">{item.label}</span>
               </span>

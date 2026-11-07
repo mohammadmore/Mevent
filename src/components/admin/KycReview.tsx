@@ -73,7 +73,7 @@ export function KycReview() {
               </dl>
               <div className="flex gap-2">
                 {Object.entries(DOCS).filter(([k]) => u.data?.[k]).map(([k, label]) => (
-                  <button key={k} onClick={() => openDocument(u.data[k])} className="text-xs font-bold text-teal-700 dark:text-[#d9ff00] flex items-center gap-1"><FileText className="w-4 h-4" /> {label}</button>
+                  <button key={k} onClick={() => openDocument(u.data[k])} className="text-xs font-bold text-teal-700 dark:text-[#C4B5FD] flex items-center gap-1"><FileText className="w-4 h-4" /> {label}</button>
                 ))}
               </div>
               <p className="text-[11px] text-gray-500">تطبیق شماره موبایل با کد ملی (شاهکار) را پیش از تأیید بررسی کنید.</p>

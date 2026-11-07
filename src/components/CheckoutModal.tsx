@@ -100,18 +100,18 @@ export function CheckoutModal() {
           <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2 truncate">{event.title}</h4>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600 dark:text-gray-400">قیمت هر بلیت:</span>
-            <span className="font-bold text-teal-600 dark:text-[#d9ff00]">{formatToman(event.cost)}</span>
+            <span className="font-bold text-teal-600 dark:text-[#C4B5FD]">{formatToman(event.cost)}</span>
           </div>
           {typeof event.seatsLeft === 'number' && (
             <p className="text-xs text-gray-500 mt-2">{pNum(event.seatsLeft)} جای خالی باقی مانده</p>
           )}
         </div>
 
-        <label className="flex items-start gap-3 cursor-pointer bg-teal-600/10 dark:bg-[#d9ff00]/10 border border-teal-600/20 dark:border-[#d9ff00]/20 rounded-2xl p-4 mb-3">
+        <label className="flex items-start gap-3 cursor-pointer bg-teal-600/10 dark:bg-[#8B5CF6]/10 border border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-2xl p-4 mb-3">
           <input type="checkbox" className="mt-1 w-5 h-5" checked={plusOne} onChange={(e) => setPlusOne(e.target.checked)} />
           <span>
             <span className="font-bold text-gray-900 dark:text-white flex items-center gap-2"><Users className="w-4 h-4" /> خرید برای دوست (+۱)</span>
-            <span className="block text-xs text-teal-700 dark:text-[#d9ff00] mt-1 leading-relaxed">بلیت دوم {pNum(Math.round((config?.friendDiscount ?? 0.1) * 100))}٪ تخفیف دارد و ۲۰ امتیاز جایزه می‌گیرید.</span>
+            <span className="block text-xs text-teal-700 dark:text-[#C4B5FD] mt-1 leading-relaxed">بلیت دوم {pNum(Math.round((config?.friendDiscount ?? 0.1) * 100))}٪ تخفیف دارد و ۲۰ امتیاز جایزه می‌گیرید.</span>
           </span>
         </label>
 
@@ -167,14 +167,14 @@ export function CheckoutModal() {
         <button
           onClick={pay}
           disabled={submitting || unavailable || !config}
-          className="w-full py-4 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold rounded-xl shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full py-4 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {submitting ? <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <CreditCard className="w-5 h-5" />}
           {submitting ? 'در حال اتصال به درگاه...' : total === 0 ? 'دریافت بلیت' : 'پرداخت آنلاین'}
         </button>
         <p className="text-[11px] text-gray-500 mt-3 flex items-center justify-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5" /> لغو بلیت تا ۲ ساعت پیش از شروع رویداد امکان‌پذیر است؛
-          <a href={withBase('/refund-policy')} onClick={(e) => { e.preventDefault(); closeCheckout(); navigate('/refund-policy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">شرایط بازپرداخت</a>
+          <a href={withBase('/refund-policy')} onClick={(e) => { e.preventDefault(); closeCheckout(); navigate('/refund-policy'); }} className="text-teal-600 dark:text-[#C4B5FD] font-bold">شرایط بازپرداخت</a>
         </p>
       </div>
     </div>

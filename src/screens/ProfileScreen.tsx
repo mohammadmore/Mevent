@@ -97,23 +97,23 @@ export function ProfileScreen() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-4 py-6 border-b border-gray-200 dark:border-white/10">
-        <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#d9ff00] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
+        <div className="w-24 h-24 bg-teal-600/20 dark:bg-[#8B5CF6]/20 rounded-full flex items-center justify-center text-teal-600 dark:text-[#C4B5FD] text-3xl font-bold">{profile.name?.charAt(0) || 'U'}</div>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100">{profile.name}</h2>
-          {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#d9ff00]/10 dark:text-[#d9ff00]">{profile.role === 'ADMIN' ? 'مدیر می‌ونت' : 'برگزارکننده'}</span>}
+          {profile.role !== 'USER' && <span className="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-[#8B5CF6]/10 dark:text-[#C4B5FD]">{profile.role === 'ADMIN' ? 'مدیر می‌ونت' : 'برگزارکننده'}</span>}
           <p className="text-gray-600 dark:text-gray-400">
             {[profile.phone ? <bdi key="p" dir="ltr">{maskMobile(profile.phone)}</bdi> : null, profile.email ? <bdi key="e" dir="ltr">{profile.email}</bdi> : null, profile.city]
               .filter(Boolean).flatMap((part, i) => (i ? [' • ', part] : [part]))}
           </p>
-          <button onClick={() => setEditing(true)} className="mt-1 px-3 py-2 text-sm text-teal-600 dark:text-[#d9ff00] hover:underline inline-flex items-center gap-1"><Edit3 className="w-4 h-4" /> ویرایش پروفایل</button>
+          <button onClick={() => setEditing(true)} className="mt-1 px-3 py-2 text-sm text-teal-600 dark:text-[#C4B5FD] hover:underline inline-flex items-center gap-1"><Edit3 className="w-4 h-4" /> ویرایش پروفایل</button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div className="bg-pink-50/80 dark:bg-orange-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-pink-100 dark:border-orange-500/20">
-          <Star className="w-8 h-8 text-pink-600 dark:text-orange-500 mb-2" />
-          <span className="text-2xl font-bold text-pink-700 dark:text-orange-400">{pNum(profile.points)}</span>
-          <span className="text-sm text-pink-800 dark:text-orange-300">امتیاز • {profile.level?.name}</span>
+        <div className="bg-pink-50/80 dark:bg-pink-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-pink-100 dark:border-pink-400/25">
+          <Star className="w-8 h-8 text-pink-600 dark:text-pink-300 mb-2" />
+          <span className="text-2xl font-bold text-pink-700 dark:text-pink-200">{pNum(profile.points)}</span>
+          <span className="text-sm text-pink-800 dark:text-pink-200">امتیاز • {profile.level?.name}</span>
         </div>
         <button onClick={() => navigate('/tickets')} className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-blue-100 dark:border-blue-500/20">
           <CalendarCheck className="w-8 h-8 text-blue-500 mb-2" />
@@ -130,7 +130,7 @@ export function ProfileScreen() {
           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">بلیت‌ها و ذخیره‌ها</span>
         </button>
         <button onClick={() => navigate('/friends')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
-          <span className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500"><Users className="w-6 h-6" /></span>
+          <span className="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-300"><Users className="w-6 h-6" /></span>
           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">دوستان و همراه‌ها</span>
         </button>
         {isOrganizer && (
@@ -141,7 +141,7 @@ export function ProfileScreen() {
         )}
         {profile.role === 'ADMIN' && (
           <button onClick={() => navigate('/admin')} className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex flex-col items-center gap-3 hover:bg-teal-50 dark:hover:bg-white/5">
-            <span className="w-12 h-12 rounded-full bg-teal-600/10 flex items-center justify-center text-teal-600 dark:text-[#d9ff00]"><Shield className="w-6 h-6" /></span>
+            <span className="w-12 h-12 rounded-full bg-teal-600/10 flex items-center justify-center text-teal-600 dark:text-[#C4B5FD]"><Shield className="w-6 h-6" /></span>
             <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">مدیریت سیستم</span>
           </button>
         )}
@@ -152,19 +152,19 @@ export function ProfileScreen() {
       </div>
 
       {profile.role === 'USER' && (
-        <div className="bg-teal-600/10 dark:bg-[#d9ff00]/10 border border-teal-600/20 dark:border-[#d9ff00]/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="bg-teal-600/10 dark:bg-[#8B5CF6]/10 border border-teal-600/20 dark:border-[#8B5CF6]/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-[#4C1D95] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> خودت برنامه برگزار می‌کنی؟</h3>
+            <h3 className="text-lg font-bold text-[#4C1D95] dark:text-white mb-1 flex items-center gap-2"><Activity className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> خودت برنامه برگزار می‌کنی؟</h3>
             {profile.organizerStatus === 'PENDING' ? (
               <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1"><Clock className="w-4 h-4" /> درخواست شما در حال بررسی است. نتیجه از طریق اعلان‌ها اطلاع داده می‌شود.</p>
             ) : profile.organizerStatus === 'REJECTED' ? (
               <p className="text-sm text-red-600 flex items-center gap-1"><XCircle className="w-4 h-4" /> درخواست قبلی تأیید نشد. می‌توانید با توضیحات کامل‌تر دوباره درخواست دهید.</p>
             ) : (
-              <p className="text-sm text-teal-700 dark:text-[#d9ff00]">با حساب برگزارکننده می‌تونی برنامه‌هات رو ثبت کنی و بلیت بفروشی. درخواستت رو تیم می‌ونت بررسی می‌کنه.</p>
+              <p className="text-sm text-teal-700 dark:text-[#C4B5FD]">با حساب برگزارکننده می‌تونی برنامه‌هات رو ثبت کنی و بلیت بفروشی. درخواستت رو تیم می‌ونت بررسی می‌کنه.</p>
             )}
           </div>
           {profile.organizerStatus !== 'PENDING' && (
-            <button onClick={requestOrganizer} className="whitespace-nowrap px-6 py-2.5 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black rounded-xl font-bold w-full md:w-auto">
+            <button onClick={requestOrganizer} className="whitespace-nowrap px-6 py-2.5 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white rounded-xl font-bold w-full md:w-auto">
               {profile.organizerStatus === 'REJECTED' ? 'درخواست دوباره' : 'ثبت درخواست'}
             </button>
           )}
@@ -172,12 +172,12 @@ export function ProfileScreen() {
       )}
 
       <div className="glass border rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> حریم خصوصی و داده‌های شما</h3>
+        <h3 className="text-lg font-bold text-[#4C1D95] dark:text-gray-100 mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> حریم خصوصی و داده‌های شما</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">برای پیشنهادهای بهتر از علایق و رویدادهایی که دیده‌اید استفاده می‌کنیم. هر زمان بخواهید می‌توانید آن‌ها را تغییر دهید یا پاک کنید.</p>
         <div className="space-y-3">
           {!profile.phone && (
             <button onClick={linkPhone} className="w-full flex items-center gap-3 p-4 rounded-xl border border-teal-600/30 bg-teal-600/5 hover:border-teal-600/60 text-right">
-              <Smartphone className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+              <Smartphone className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
               <span><span className="block font-bold text-gray-900 dark:text-gray-100">اتصال شماره موبایل</span><span className="text-xs text-gray-500">برای ورود با پیامک به این حساب</span></span>
             </button>
           )}
@@ -185,7 +185,7 @@ export function ProfileScreen() {
             <label className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 cursor-pointer">
               <MessageSquare className="w-5 h-5 text-gray-500" />
               <span className="flex-1"><span className="block font-bold text-gray-900 dark:text-gray-100">پیامک یادآوری رویدادها</span><span className="text-xs text-gray-500">یک روز قبل از رویدادهایی که در آن ثبت‌نام کرده‌اید. پیامک بلیت همیشه ارسال می‌شود.</span></span>
-              <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#d9ff00]" checked={(profile as any).smsReminders !== false} onChange={(e) => setSmsReminders(e.target.checked)} aria-label="پیامک یادآوری رویدادها" />
+              <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#A78BFA]" checked={(profile as any).smsReminders !== false} onChange={(e) => setSmsReminders(e.target.checked)} aria-label="پیامک یادآوری رویدادها" />
             </label>
           )}
           {profile.phone && (

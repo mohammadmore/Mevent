@@ -44,7 +44,7 @@ export function PickCard({ pick, size = 'large' }: { pick: Pick; size?: 'large' 
     <button
       onClick={() => navigate(pick.url)}
       data-pick={`${pick.kind}:${pick.id}`}
-      className={`text-right glass border rounded-2xl overflow-hidden flex hover:border-teal-500/50 dark:hover:border-[#d9ff00]/40 transition-colors ${large ? 'w-full gap-4 p-3' : 'w-64 shrink-0 gap-3 p-2.5'}`}
+      className={`text-right glass border rounded-2xl overflow-hidden flex hover:border-teal-500/50 dark:hover:border-[#8B5CF6]/40 transition-colors ${large ? 'w-full gap-4 p-3' : 'w-64 shrink-0 gap-3 p-2.5'}`}
     >
       <div className={`${large ? 'w-24 h-24' : 'w-16 h-16'} rounded-xl overflow-hidden shrink-0 glass-soft`}>
         {pick.imageUrl
@@ -57,7 +57,7 @@ export function PickCard({ pick, size = 'large' }: { pick: Pick; size?: 'large' 
         </span>
         <span className={`font-bold text-gray-900 dark:text-gray-100 ${large ? 'text-base' : 'text-sm truncate'}`}>{pick.title}</span>
         {pick.reason && (
-          <span className={`text-xs text-teal-700 dark:text-[#d9ff00] flex items-start gap-1 ${large ? '' : 'line-clamp-2'}`}>
+          <span className={`text-xs text-teal-700 dark:text-[#C4B5FD] flex items-start gap-1 ${large ? '' : 'line-clamp-2'}`}>
             <Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {pick.reason}
           </span>
         )}

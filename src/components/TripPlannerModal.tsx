@@ -181,7 +181,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
   if (!isOpen) return null;
 
   const chip = (active: boolean) => `px-4 py-2 rounded-xl text-sm font-medium transition-colors ${active
-    ? 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold'
+    ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold'
     : 'glass-soft text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'}`;
   const quickRange = (days: number) => { setStartDate(dayIso(0)); setEndDate(dayIso(days - 1)); };
 
@@ -196,7 +196,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
         >
           <div className="p-5 bg-gradient-to-l from-[#3B4FD8] via-[#6A2BC9] to-[#B01C82] dark:bg-gradient-to-r dark:from-[#18181b] dark:via-[#222226] dark:to-[#18181b] border-b border-white/10 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/10 dark:bg-[#d9ff00]/20 flex items-center justify-center text-white dark:text-[#d9ff00] border border-white/20">
+              <div className="w-11 h-11 rounded-2xl bg-white/10 dark:bg-[#8B5CF6]/20 flex items-center justify-center text-white dark:text-[#C4B5FD] border border-white/20">
                 <Plane className="w-5 h-5" />
               </div>
               <div>
@@ -223,11 +223,11 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
               <div className="space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-teal-50 dark:bg-white/5 border border-teal-100 dark:border-white/10">
                   <div className="space-y-1">
-                    <h3 className="font-black text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2"><MapPin className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />{plan.city}</h3>
+                    <h3 className="font-black text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2"><MapPin className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />{plan.city}</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{rangeLabel(plan)} · {pNum(plan.events.length)} رویداد</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={handleSave} className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold ${isSaved ? 'bg-emerald-600 text-white' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}>
+                    <button onClick={handleSave} className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold ${isSaved ? 'bg-emerald-600 text-white' : 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white'}`}>
                       <Bookmark className="w-4 h-4" /> {isSaved ? 'ذخیره شد' : plan.isOwner === false ? 'ذخیره در سفرهای من' : 'ذخیره'}
                     </button>
                     <button onClick={handleShare} className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium glass border text-gray-700 dark:text-gray-200">
@@ -246,7 +246,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   groupEventsByDay(plan.events, plan.startDate).map(group => (
                     <section key={group.key} className="space-y-2">
                       <h4 className="font-bold text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" /> {group.title}
+                        <Calendar className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" /> {group.title}
                         <span className="text-xs font-normal text-gray-400">({pNum(group.events.length)})</span>
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -264,7 +264,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">سفرهای ذخیره‌شده</h3>
-                  <button onClick={newTrip} className="px-4 py-2 bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black rounded-xl text-sm font-bold flex items-center gap-2">
+                  <button onClick={newTrip} className="px-4 py-2 bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white rounded-xl text-sm font-bold flex items-center gap-2">
                     <PlusCircle className="w-4 h-4" /> سفر جدید
                   </button>
                 </div>
@@ -274,9 +274,9 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {savedPlans.map(saved => (
                       <div key={saved.id} role="button" tabIndex={0} onClick={() => openPlan(saved, true)} onKeyDown={e => e.key === 'Enter' && openPlan(saved, true)}
-                        className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex items-start justify-between gap-3 glass-soft cursor-pointer hover:border-teal-500 dark:hover:border-[#d9ff00]">
+                        className="border border-gray-200 dark:border-white/10 p-4 rounded-2xl flex items-start justify-between gap-3 glass-soft cursor-pointer hover:border-teal-500 dark:hover:border-[#A78BFA]">
                         <div className="space-y-1 min-w-0">
-                          <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100"><MapPin className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" />{saved.city}</div>
+                          <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100"><MapPin className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" />{saved.city}</div>
                           {saved.startDate && saved.endDate && <div className="text-xs text-gray-600 dark:text-gray-400">{rangeLabel(saved)}</div>}
                           <div className="text-xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" /> {pNum((saved.events || []).length)} رویداد</div>
                         </div>
@@ -292,7 +292,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
               <form onSubmit={handleSearch} className="space-y-6">
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" /> شهر مقصد
+                    <MapPin className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" /> شهر مقصد
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {POPULAR_CITIES.map(c => (
@@ -305,13 +305,13 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                     placeholder="یا نام شهر دیگری را بنویسید"
                     value={customCity}
                     onChange={(e) => setCustomCity(e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-[#222226] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-teal-600 dark:focus:border-[#d9ff00]"
+                    className="w-full bg-gray-50 dark:bg-[#222226] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-teal-600 dark:focus:border-[#A78BFA]"
                   />
                 </div>
 
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-teal-600 dark:text-[#d9ff00]" /> تاریخ سفر
+                    <Calendar className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" /> تاریخ سفر
                   </label>
                   <div className="flex flex-wrap gap-2">
                     <button type="button" onClick={() => quickRange(1)} className={chip(false)}>فقط امروز</button>
@@ -324,7 +324,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {isLoading ? <span className="w-5 h-5 rounded-full border-2 border-current border-t-transparent animate-spin" /> : <Search className="w-5 h-5" />}
                   رویدادهای {customCity.trim() || city} را نشان بده

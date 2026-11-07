@@ -102,9 +102,9 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
 
       <div className={`p-6 max-w-3xl mx-auto space-y-8 relative z-20 ${p.imageUrl ? '-mt-20 pt-2' : ''}`}>
         <div>
-          <span className="inline-block bg-teal-100 text-teal-800 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00] px-3 py-1 rounded-full text-xs font-bold mb-4">{placeTypeLabel(p.type)}</span>
+          <span className="inline-block bg-teal-100 text-teal-800 dark:bg-[#8B5CF6]/20 dark:text-[#C4B5FD] px-3 py-1 rounded-full text-xs font-bold mb-4">{placeTypeLabel(p.type)}</span>
                     {p.city && (
-            <div className="flex items-center gap-1 mb-2 text-teal-600 dark:text-[#d9ff00] font-bold text-sm bg-teal-50 dark:bg-[#d9ff00]/10 w-fit px-3 py-1 rounded-full border border-teal-200 dark:border-[#d9ff00]/20">
+            <div className="flex items-center gap-1 mb-2 text-teal-600 dark:text-[#C4B5FD] font-bold text-sm bg-teal-50 dark:bg-[#8B5CF6]/10 w-fit px-3 py-1 rounded-full border border-teal-200 dark:border-[#8B5CF6]/20">
               <MapPin className="w-4 h-4" />
               {p.city}
             </div>
@@ -116,10 +116,10 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div 
             onClick={() => setIsMapModalOpen(true)}
-            className="flex items-center justify-between p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer hover:border-teal-500/50 dark:hover:border-[#d9ff00]/50 transition-colors group"
+            className="flex items-center justify-between p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5 cursor-pointer hover:border-teal-500/50 dark:hover:border-[#8B5CF6]/50 transition-colors group"
           >
             <div className="flex items-center gap-3">
-              <MapPin className="text-teal-600 dark:text-[#d9ff00] w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
+              <MapPin className="text-teal-600 dark:text-[#C4B5FD] w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
               <div>
                 <p className="text-xs text-gray-500 mb-1">آدرس پاتوق</p>
                 <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{p.address || 'ثبت نشده'}</p>
@@ -127,7 +127,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </div>
             <button 
               type="button"
-              className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-3 min-h-[40px] rounded-xl text-xs font-bold shrink-0 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 transition-colors"
+              className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#8B5CF6]/10 text-teal-700 dark:text-[#C4B5FD] px-3 min-h-[40px] rounded-xl text-xs font-bold shrink-0 hover:bg-teal-100 dark:hover:bg-[#8B5CF6]/20 transition-colors"
             >
               <Map className="w-3.5 h-3.5" />
               روی نقشه
@@ -135,7 +135,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
           </div>
 
           <div className="flex items-center gap-3 p-4 glass-soft rounded-2xl border border-gray-100 dark:border-white/5">
-            <Clock className="text-teal-600 dark:text-[#d9ff00] w-6 h-6 shrink-0" />
+            <Clock className="text-teal-600 dark:text-[#C4B5FD] w-6 h-6 shrink-0" />
             <div>
               <p className="text-xs text-gray-500 mb-1">ساعات کاری</p>
               <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{hoursLabel(p.workingHours) || 'ثبت نشده'}</p>
@@ -147,7 +147,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         {p.galleryUrls && p.galleryUrls.length > 0 && (
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Camera className="text-teal-600 dark:text-[#d9ff00]" /> گالری تصاویر
+              <Camera className="text-teal-600 dark:text-[#C4B5FD]" /> گالری تصاویر
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {p.galleryUrls.map((url: string, i: number) => (
@@ -167,7 +167,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         {p.events && p.events.length > 0 && (
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Calendar className="text-teal-600 dark:text-[#d9ff00]" /> رویدادهای پیش رو در این مکان
+              <Calendar className="text-teal-600 dark:text-[#C4B5FD]" /> رویدادهای پیش رو در این مکان
             </h3>
             <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {p.events.map((ev: Event) => (
@@ -175,8 +175,8 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
-                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#8B5CF6]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#C4B5FD]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-4">
@@ -192,7 +192,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         {nearbyEvents && nearbyEvents.length > 0 && (
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Calendar className="text-teal-600 dark:text-[#d9ff00]" /> رویدادهای نزدیک
+              <Calendar className="text-teal-600 dark:text-[#C4B5FD]" /> رویدادهای نزدیک
             </h3>
             <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {nearbyEvents.map((ev: Event) => (
@@ -200,8 +200,8 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
-                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#8B5CF6]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#C4B5FD]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-4">
@@ -217,24 +217,24 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
         {nearbyPlaces && nearbyPlaces.length > 0 && (
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <MapPin className="text-teal-600 dark:text-[#d9ff00]" /> پاتوق‌های نزدیک
+              <MapPin className="text-teal-600 dark:text-[#C4B5FD]" /> پاتوق‌های نزدیک
             </h3>
             <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {nearbyPlaces.map((np: any) => (
                 <div 
                   key={np.id} 
                   onClick={() => onPlaceClick?.(np)}
-                  className="min-w-[200px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 dark:hover:border-[#d9ff00] transition-colors"
+                  className="min-w-[200px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 dark:hover:border-[#A78BFA] transition-colors"
                 >
                   {np.imageUrl ? (
                     <img loading="lazy" src={np.imageUrl} alt={np.name} className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
-                      <MapPin aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#8B5CF6]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <MapPin aria-hidden className="text-violet-500/70 dark:text-[#C4B5FD]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-3">
-                    <h4 className="font-bold text-gray-800 dark:text-gray-100 text-sm truncate group-hover:text-teal-600 dark:group-hover:text-[#d9ff00] transition-colors">{np.name}</h4>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-100 text-sm truncate group-hover:text-teal-600 dark:group-hover:text-[#C4B5FD] transition-colors">{np.name}</h4>
                     <p className="text-xs text-gray-500 mt-1 truncate">{placeTypeLabel(np.type)}</p>
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
           <div className="glass-strong rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10">
               <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+                <MapPin className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
                 <h3 className="font-bold text-gray-900 dark:text-gray-100">{p.name} - نقشه و مسیریابی</h3>
               </div>
               <button 

@@ -63,14 +63,14 @@ export function BackupsCard() {
     <div className={card}>
       <div className="flex items-center justify-between">
         <p className="text-sm font-bold text-gray-500 flex items-center gap-2"><DatabaseBackup className="w-4 h-4 text-indigo-500" /> پشتیبان‌گیری پایگاه داده</p>
-        <button disabled={busy} onClick={runNow} className="text-xs font-bold text-teal-600 dark:text-[#d9ff00] disabled:opacity-50">{busy ? 'در حال گرفتن...' : 'همین حالا'}</button>
+        <button disabled={busy} onClick={runNow} className="text-xs font-bold text-teal-600 dark:text-[#C4B5FD] disabled:opacity-50">{busy ? 'در حال گرفتن...' : 'همین حالا'}</button>
       </div>
       <p className="text-xs text-gray-500">{data?.enabled === false ? 'پشتیبان‌گیری خودکار خاموش است.' : last ? `آخرین نسخه سالم: ${timeAgo(last.finishedAt)} (${last.location === 'local' ? 'فقط روی سرور' : 'روی سرور و فضای ابری'})` : 'هنوز نسخه‌ای گرفته نشده است.'}</p>
       <ul className="space-y-1 text-xs max-h-48 overflow-y-auto">
         {data?.backups.slice(0, 8).map(b => (
           <li key={b.id} className="flex items-center justify-between gap-2" title={b.error || ''}>
             <span className={b.status === 'FAILED' ? 'text-rose-600' : ''}>{timeAgo(b.startedAt)} · {b.kind === 'MANUAL' ? 'دستی' : 'خودکار'} · {b.status === 'DONE' ? size(b.sizeBytes) : b.status === 'FAILED' ? `ناموفق: ${String(b.error).slice(0, 60)}` : b.status === 'EXPIRED' ? 'حذف‌شده (قدیمی)' : 'در حال انجام'}</span>
-            {b.status === 'DONE' && <button onClick={() => download(b)} className="text-teal-600 dark:text-[#d9ff00]" aria-label="دانلود"><Download className="w-4 h-4" /></button>}
+            {b.status === 'DONE' && <button onClick={() => download(b)} className="text-teal-600 dark:text-[#C4B5FD]" aria-label="دانلود"><Download className="w-4 h-4" /></button>}
           </li>
         ))}
       </ul>

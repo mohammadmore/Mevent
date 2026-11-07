@@ -108,7 +108,7 @@ export function PhoneLogin() {
     if (code.length === codeLength) submitCode(code);
   }, [code]);
 
-  const input = 'w-full glass border rounded-xl px-4 py-3.5 text-lg outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/40 text-center tracking-widest';
+  const input = 'w-full glass border rounded-xl px-4 py-3.5 text-lg outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#8B5CF6]/40 text-center tracking-widest';
 
   if (step === 'phone') {
     return (
@@ -130,7 +130,7 @@ export function PhoneLogin() {
           aria-describedby="phone-error"
         />
         {error && <p id="phone-error" className="text-sm text-red-600" role="alert">{error}</p>}
-        <button type="submit" disabled={busy || !phoneInput.trim()} className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-3.5 rounded-xl font-bold disabled:opacity-50">
+        <button type="submit" disabled={busy || !phoneInput.trim()} className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-3.5 rounded-xl font-bold disabled:opacity-50">
           {busy ? 'در حال ارسال...' : 'دریافت کد تأیید'}
         </button>
         <p className="text-xs text-gray-500 leading-relaxed">کد ورود با پیامک ارسال می‌شود. اگر حساب نداشته باشید، با همین شماره ساخته می‌شود.</p>
@@ -163,14 +163,14 @@ export function PhoneLogin() {
       />
       {devCode && <p className="text-xs text-amber-600">محیط توسعه — کد: <span dir="ltr" className="font-mono">{devCode}</span></p>}
       {error && <p id="otp-error" className="text-sm text-red-600" role="alert">{error}</p>}
-      <button type="submit" disabled={busy || code.length !== codeLength} className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black py-3.5 rounded-xl font-bold disabled:opacity-50">
+      <button type="submit" disabled={busy || code.length !== codeLength} className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white py-3.5 rounded-xl font-bold disabled:opacity-50">
         {busy ? 'در حال بررسی...' : 'ورود'}
       </button>
       <div className="text-center text-sm">
         {resendIn > 0 ? (
           <span className="text-gray-500">ارسال دوباره کد تا {pNum(resendIn)} ثانیه دیگر</span>
         ) : (
-          <button type="button" disabled={busy} onClick={() => phone && sendCode(phone)} className="font-bold text-teal-600 dark:text-[#d9ff00]">ارسال دوباره کد</button>
+          <button type="button" disabled={busy} onClick={() => phone && sendCode(phone)} className="font-bold text-teal-600 dark:text-[#C4B5FD]">ارسال دوباره کد</button>
         )}
       </div>
     </form>

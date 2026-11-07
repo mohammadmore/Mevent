@@ -28,19 +28,19 @@ export function HomeGreeting() {
   const { profile } = useAppData();
   const name = profile?.name?.trim().split(/\s+/)[0];
   return (
-    <section className="rounded-3xl p-5 sm:p-6 glass bg-gradient-to-br from-pink-50/60 via-violet-50/40 to-sky-50/50 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 border">
+    <section className="rounded-3xl p-5 sm:p-6 glass bg-gradient-to-br from-pink-50/60 via-violet-50/40 to-sky-50/50 dark:from-[#8B5CF6]/10 dark:via-white/5 dark:to-teal-500/10 border">
       <p className="text-sm text-gray-600 dark:text-gray-400">{greeting()}{name ? `، ${name}` : ''} 👋</p>
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">امروز دلت چی می‌خواد!؟</h1>
       <ScrollRow className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 -mx-1 px-1 pb-1">
         {Object.entries(MOODS).map(([key, m]) => (
           <button key={key} onClick={() => navigate(`/bored?mood=${key}`)}
-            className="shrink-0 px-3 py-2 rounded-full glass-soft border text-sm text-gray-800 dark:text-gray-200 hover:border-teal-500 dark:hover:border-[#d9ff00]/50">
+            className="shrink-0 px-3 py-2 rounded-full glass-soft border text-sm text-gray-800 dark:text-gray-200 hover:border-teal-500 dark:hover:border-[#8B5CF6]/50">
             <span aria-hidden>{m.emoji}</span> {m.label}
           </button>
         ))}
       </ScrollRow>
       <div className="flex flex-col sm:flex-row gap-2 mt-4">
-        <button onClick={() => navigate('/bored')} className="flex-1 py-3.5 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold shadow-sm">
+        <button onClick={() => navigate('/bored')} className="flex-1 py-3.5 rounded-2xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold shadow-sm">
           حوصله‌م سر رفته، یه چیزی پیشنهاد بده
         </button>
         <button onClick={() => navigate('/free')} className="sm:w-40 py-3.5 rounded-2xl glass border text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center justify-center gap-1.5">
@@ -55,10 +55,10 @@ function RowHeader({ title, subtitle, Icon, more }: { title: string; subtitle?: 
   return (
     <div className="flex items-end justify-between mb-3">
       <div>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><Icon className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> {title}</h2>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2"><Icon className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> {title}</h2>
         {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
       </div>
-      {more && <button onClick={more} className="text-xs font-bold text-teal-600 dark:text-[#d9ff00] flex items-center px-2 py-2.5 -my-2">همه <ChevronLeft className="w-4 h-4" /></button>}
+      {more && <button onClick={more} className="text-xs font-bold text-teal-600 dark:text-[#C4B5FD] flex items-center px-2 py-2.5 -my-2">همه <ChevronLeft className="w-4 h-4" /></button>}
     </div>
   );
 }

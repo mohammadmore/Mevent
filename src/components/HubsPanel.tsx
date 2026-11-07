@@ -98,7 +98,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
     api<any>('/api/reports', { body: { targetType: 'HUB', targetId: hub.id, reason } }).then(r => showToast(r.message, 'success')).catch(() => {});
   };
 
-  const input = 'w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#d9ff00]/30';
+  const input = 'w-full glass-soft border border-gray-300 dark:border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-[#8B5CF6]/30';
   const panel = 'glass rounded-2xl p-6 shadow-sm border max-w-5xl mx-auto w-full relative';
 
   if (creating) {
@@ -108,7 +108,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           <ArrowRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
         </button>
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00]"><PlusCircle className="w-6 h-6" /></div>
+          <div className="w-12 h-12 bg-teal-600/20 dark:bg-[#8B5CF6]/20 rounded-xl flex items-center justify-center text-teal-600 dark:text-[#C4B5FD]"><PlusCircle className="w-6 h-6" /></div>
           <div>
             <h2 className="text-2xl font-bold text-[#4C1D95] dark:text-gray-100">ایجاد اکیپ جدید</h2>
             <p className="text-sm text-gray-500 mt-1">اکیپ خود را بسازید و افراد هم‌فکر را دور هم جمع کنید.</p>
@@ -131,7 +131,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
               </div>
               <div className="flex-1">
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFileUpload} disabled={isUploading} className="w-full text-sm text-gray-500" />
-                {isUploading && <p className="text-xs text-teal-600 dark:text-[#d9ff00] mt-2 font-medium">در حال آپلود...</p>}
+                {isUploading && <p className="text-xs text-teal-600 dark:text-[#C4B5FD] mt-2 font-medium">در حال آپلود...</p>}
               </div>
             </div>
           </div>
@@ -139,11 +139,11 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
             <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نوع اکیپ</span>
             <div className="grid grid-cols-2 gap-4">
               {['عمومی', 'خصوصی'].map(t => (
-                <button type="button" key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`p-4 rounded-xl border text-sm font-medium ${type === t ? 'border-teal-600 dark:border-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 text-teal-600 dark:text-[#d9ff00]' : 'border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300'}`}>{t}</button>
+                <button type="button" key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`p-4 rounded-xl border text-sm font-medium ${type === t ? 'border-teal-600 dark:border-[#A78BFA] bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-teal-600 dark:text-[#C4B5FD]' : 'border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300'}`}>{t}</button>
               ))}
             </div>
           </div>
-          <button type="submit" disabled={busy || isUploading} className="w-full bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold py-3.5 rounded-xl disabled:opacity-50">
+          <button type="submit" disabled={busy || isUploading} className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold py-3.5 rounded-xl disabled:opacity-50">
             {busy ? 'در حال ایجاد...' : 'ایجاد اکیپ'}
           </button>
         </form>
@@ -157,7 +157,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
       return (
         <div className={`${panel} text-center py-16`}>
           <p className="font-bold text-gray-800 dark:text-gray-100 mb-3">این اکیپ پیدا نشد.</p>
-          <button onClick={onBack} className="text-sm font-bold text-teal-600 dark:text-[#d9ff00]">بازگشت به اکیپ‌ها</button>
+          <button onClick={onBack} className="text-sm font-bold text-teal-600 dark:text-[#C4B5FD]">بازگشت به اکیپ‌ها</button>
         </div>
       );
     }
@@ -167,13 +167,13 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           <ArrowRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
         </button>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-10 pb-10 border-b border-gray-200 dark:border-white/10">
-          <div className="w-24 h-24 bg-teal-600/10 dark:bg-[#d9ff00]/10 rounded-2xl overflow-hidden flex items-center justify-center text-teal-600 dark:text-[#d9ff00] shrink-0">
+          <div className="w-24 h-24 bg-teal-600/10 dark:bg-[#8B5CF6]/10 rounded-2xl overflow-hidden flex items-center justify-center text-teal-600 dark:text-[#C4B5FD] shrink-0">
             {selectedHub.imageUrl ? <img src={selectedHub.imageUrl} alt="" className="w-full h-full object-cover" /> : <Users className="w-12 h-12" />}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h2 className="text-3xl font-bold text-[#4C1D95] dark:text-gray-100">{selectedHub.name}</h2>
-              <span className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-2.5 py-1 rounded-full">{selectedHub.type}</span>
+              <span className="text-xs font-semibold text-teal-600 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10 px-2.5 py-1 rounded-full">{selectedHub.type}</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">{selectedHub.description || 'بدون توضیحات'}</p>
             <div className="flex items-center gap-6 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -186,7 +186,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
               <button
                 onClick={() => toggleMembership(selectedHub)}
                 disabled={busy}
-                className={`flex-1 md:flex-none px-8 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${selectedHub.isMember ? 'glass-soft text-gray-800 dark:text-gray-200' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}
+                className={`flex-1 md:flex-none px-8 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${selectedHub.isMember ? 'glass-soft text-gray-800 dark:text-gray-200' : 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white'}`}
               >
                 {selectedHub.isMember ? <><Check className="w-4 h-4" /> عضو هستید</> : 'پیوستن'}
               </button>
@@ -196,7 +196,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" /> رویدادهای اکیپ</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" /> رویدادهای اکیپ</h3>
         {hubEvents === null ? (
           <div className="h-40 rounded-2xl glass-soft animate-pulse" />
         ) : hubEvents.length > 0 ? (
@@ -207,7 +207,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
                 {event.imageUrl ? (
                   <div className="w-full h-40 overflow-hidden"><img src={event.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
                 ) : (
-                  <div className="w-full h-40 bg-teal-600/10 dark:bg-[#d9ff00]/10 flex items-center justify-center"><Calendar className="w-12 h-12 text-teal-600/60 dark:text-[#d9ff00]/60" /></div>
+                  <div className="w-full h-40 bg-teal-600/10 dark:bg-[#8B5CF6]/10 flex items-center justify-center"><Calendar className="w-12 h-12 text-teal-600/60 dark:text-[#C4B5FD]/60" /></div>
                 )}
                 <div className="p-4">
                   <h4 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-2">{event.title}</h4>
@@ -233,7 +233,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">اکیپ‌ها</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">به اکیپ‌های مورد علاقه بپیوندید یا اکیپ خودتان را بسازید.</p>
         </div>
-        <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-5 py-2.5 rounded-xl font-bold flex items-center gap-2">
+        <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2">
           <PlusCircle className="w-5 h-5" /> ایجاد اکیپ
         </button>
       </div>
@@ -245,16 +245,16 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           {hubs.map(hub => (
             <div key={hub.id} className="glass border p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all flex flex-col items-center text-center">
               <button onClick={() => onOpenHub(hub.id)} className="flex flex-col items-center w-full">
-                <span className="w-20 h-20 bg-teal-600/10 dark:bg-[#d9ff00]/10 rounded-full overflow-hidden flex items-center justify-center text-teal-600 dark:text-[#d9ff00] mb-4">
+                <span className="w-20 h-20 bg-teal-600/10 dark:bg-[#8B5CF6]/10 rounded-full overflow-hidden flex items-center justify-center text-teal-600 dark:text-[#C4B5FD] mb-4">
                   {hub.imageUrl ? <img src={hub.imageUrl} alt="" className="w-full h-full object-cover" /> : <Users className="w-10 h-10" />}
                 </span>
                 <span className="font-bold text-gray-900 dark:text-gray-100 text-lg mb-2">{hub.name}</span>
                 <span className="text-sm text-gray-500 mb-4 line-clamp-2">{hub.description || 'بدون توضیحات'}</span>
               </button>
               <div className="flex items-center justify-center gap-3 w-full border-t border-gray-100 dark:border-white/5 pt-4 mt-auto">
-                <span className="text-xs font-semibold text-teal-600 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10 px-2.5 py-1 rounded-full">{pNum(hub.followersCount)} عضو</span>
+                <span className="text-xs font-semibold text-teal-600 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10 px-2.5 py-1 rounded-full">{pNum(hub.followersCount)} عضو</span>
                 {!hub.isOwner && (
-                  <button onClick={() => toggleMembership(hub)} disabled={busy} className={`text-xs font-bold px-3 py-1 rounded-full ${hub.isMember ? 'glass-soft text-gray-700 dark:text-gray-300' : 'bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black'}`}>
+                  <button onClick={() => toggleMembership(hub)} disabled={busy} className={`text-xs font-bold px-3 py-1 rounded-full ${hub.isMember ? 'glass-soft text-gray-700 dark:text-gray-300' : 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white'}`}>
                     {hub.isMember ? 'عضو هستید' : 'پیوستن'}
                   </button>
                 )}
@@ -268,7 +268,7 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           <Users className="w-12 h-12 text-gray-400 mb-6" />
           <p className="text-center text-gray-900 dark:text-gray-100 font-bold text-xl mb-3">هنوز اکیپی وجود ندارد</p>
           <p className="text-center text-gray-500 mb-8 max-w-sm leading-relaxed">اولین نفری باشید که اکیپ خود را می‌سازد.</p>
-          <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black px-8 py-3 rounded-xl font-bold flex items-center gap-2"><PlusCircle className="w-5 h-5" /> ایجاد اولین اکیپ</button>
+          <button onClick={() => { if (requireLogin()) setCreating(true); }} className="bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2"><PlusCircle className="w-5 h-5" /> ایجاد اولین اکیپ</button>
         </div>
       )}
     </div>

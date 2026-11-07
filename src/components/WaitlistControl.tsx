@@ -57,7 +57,7 @@ export function WaitlistControl({ event, waitlist, onChange }: { event: Event; w
     );
   }
   return (
-    <button disabled={busy} onClick={join} className="w-full py-4 rounded-xl font-bold border-2 border-teal-600 dark:border-[#d9ff00] text-teal-700 dark:text-[#d9ff00] flex items-center justify-center gap-2 disabled:opacity-60">
+    <button disabled={busy} onClick={join} className="w-full py-4 rounded-xl font-bold border-2 border-teal-600 dark:border-[#A78BFA] text-teal-700 dark:text-[#C4B5FD] flex items-center justify-center gap-2 disabled:opacity-60">
       <Hourglass className="w-5 h-5" /> عضویت در لیست انتظار
     </button>
   );

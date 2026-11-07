@@ -31,7 +31,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
       {flows.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
+            <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#C4B5FD]" />
             جریان‌های روز
           </h2>
           <ScrollRow className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">

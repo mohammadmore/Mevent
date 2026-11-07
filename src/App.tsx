@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import Brand from './components/Brand';
 import { withBase } from './lib/basePath';
-import { Sun, Moon, MapPin, Sparkles, Search, Plane, Bell, WifiOff } from 'lucide-react';
+import { Sun, Moon, MapPin, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
 import { CheckoutModal } from './components/CheckoutModal';
 import { PhoneLogin } from './components/PhoneLogin';
@@ -64,7 +64,7 @@ const TAB_PATHS: Record<string, string> = { discover: '/', hubs: '/hubs', create
 function Spinner() {
   return (
     <div className="flex items-center justify-center h-full min-h-[200px]">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 dark:border-[#d9ff00]" />
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 dark:border-[#A78BFA]" />
     </div>
   );
 }
@@ -85,9 +85,6 @@ function LoginScreen() {
   const { config } = useAuth();
   return (
     <div className="flex flex-col items-center justify-center min-h-full text-center space-y-5 py-6">
-      <div className="w-20 h-20 bg-teal-600/20 dark:bg-[#d9ff00]/20 rounded-3xl flex items-center justify-center text-teal-600 dark:text-[#d9ff00] rotate-12">
-        <Sparkles className="w-10 h-10" />
-      </div>
       <div>
         <h1 className="mb-2"><Brand size="lg" /></h1>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">هر وقت حوصله‌ت سر رفت، یه برنامه‌ی خوب و یه همراه پیدا کن</p>
@@ -100,8 +97,8 @@ function LoginScreen() {
       )}
       <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
         ورود یا ثبت‌نام به معنای پذیرش{' '}
-        <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold inline-block py-2.5">قوانین</a> و{' '}
-        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold inline-block py-2.5">حریم خصوصی</a> می‌ونت است.
+        <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#C4B5FD] font-bold inline-block py-2.5">قوانین</a> و{' '}
+        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#C4B5FD] font-bold inline-block py-2.5">حریم خصوصی</a> می‌ونت است.
       </p>
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline px-4 py-2.5">فعلاً برنامه‌ها رو ببینم</button>
     </div>
@@ -261,7 +258,7 @@ function Shell() {
             <h1 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">این صفحه رو پیدا نکردیم</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">شاید لینک اشتباه باشه یا صفحه برداشته شده. ولی می‌تونیم یه برنامه‌ی خوب پیدا کنیم:</p>
             <div className="flex flex-col gap-2">
-              <button onClick={() => navigate('/bored')} className="py-3 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold">حوصله‌م سر رفته، یه چیزی پیشنهاد بده</button>
+              <button onClick={() => navigate('/bored')} className="py-3 rounded-2xl bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold">حوصله‌م سر رفته، یه چیزی پیشنهاد بده</button>
               <button onClick={() => navigate('/')} className="py-3 rounded-2xl glass-soft text-gray-800 dark:text-gray-200 font-bold text-sm">صفحه اصلی</button>
             </div>
           </div>
@@ -296,14 +293,14 @@ function Shell() {
                     onClick={requestLocation}
                     disabled={isLocating}
                     aria-pressed={!!userLocation}
-                    className={`text-xs font-medium mt-1 -mr-2 px-2 min-h-[36px] rounded-full flex items-center gap-1 disabled:opacity-50 ${userLocation ? 'text-teal-700 dark:text-[#d9ff00] bg-teal-600/10 dark:bg-[#d9ff00]/10' : 'text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#d9ff00]'}`}
+                    className={`text-xs font-medium mt-1 -mr-2 px-2 min-h-[36px] rounded-full flex items-center gap-1 disabled:opacity-50 ${userLocation ? 'text-teal-700 dark:text-[#C4B5FD] bg-teal-600/10 dark:bg-[#8B5CF6]/10' : 'text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-[#C4B5FD]'}`}
                   >
                     <MapPin className="w-3.5 h-3.5" />
                     {isLocating ? 'در حال پیدا کردن...' : userLocation ? 'اطراف من · لغو' : 'نزدیک من'}
                   </button>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold btn-gradient dark:bg-gradient-to-r dark:from-[#d9ff00] dark:to-lime-400 text-white dark:text-black px-3.5 py-2 rounded-full shadow-sm shrink-0">
+                  <button onClick={() => navigate('/trip-planner')} className="hidden sm:flex items-center gap-1.5 text-xs font-bold btn-gradient text-white px-3.5 py-2 rounded-full shadow-sm shrink-0">
                     <Plane className="w-4 h-4" /> <span className="hidden sm:inline">برنامه سفر</span>
                   </button>
                   <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
@@ -313,7 +310,7 @@ function Shell() {
                     {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </button>
                   {dbUserId ? (
-                    <button onClick={() => navigate('/notifications')} aria-label={`اعلان‌ها${unreadCount ? ` (${unreadCount} خوانده‌نشده)` : ''}`} className={`w-10 h-10 rounded-full flex items-center justify-center relative ${screenPath === '/notifications' ? 'bg-teal-600/20 text-teal-600 dark:bg-[#d9ff00]/20 dark:text-[#d9ff00]' : 'glass-soft text-gray-700 dark:text-gray-300'}`}>
+                    <button onClick={() => navigate('/notifications')} aria-label={`اعلان‌ها${unreadCount ? ` (${unreadCount} خوانده‌نشده)` : ''}`} className={`w-10 h-10 rounded-full flex items-center justify-center relative ${screenPath === '/notifications' ? 'bg-teal-600/20 text-teal-600 dark:bg-[#8B5CF6]/20 dark:text-[#C4B5FD]' : 'glass-soft text-gray-700 dark:text-gray-300'}`}>
                       <Bell className="w-5 h-5" />
                       {unreadCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-[#18181b]">{pNum(Math.min(unreadCount, 99))}</span>}
                     </button>
