@@ -40,16 +40,15 @@ export default function ScrollRow({ className = '', children }: { className?: st
   };
 
   const fade = edges.start && edges.end ? 'scroll-fade-both' : edges.start ? 'scroll-fade-start' : edges.end ? 'scroll-fade-end' : '';
-  const arrow = 'scroll-row-arrow absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass-strong border shadow-md items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-105 transition-transform';
+  const arrow = 'scroll-row-arrow absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full glass-strong border shadow-md items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-105 transition-[opacity,transform] duration-200';
   return (
     <div className="relative">
       <div ref={ref} className={`${className} ${fade}`}>{children}</div>
-      {edges.start && (
-        <button type="button" aria-label="قبلی" onClick={() => go(false)} className={`${arrow} right-1`}><ChevronRight className="w-5 h-5" /></button>
-      )}
-      {edges.end && (
-        <button type="button" aria-label="بعدی" onClick={() => go(true)} className={`${arrow} left-1`}><ChevronLeft className="w-5 h-5" /></button>
-      )}
+      {/* Always rendered, faded in and out (no popping). */}
+      <button type="button" aria-label="قبلی" onClick={() => go(false)} tabIndex={edges.start ? 0 : -1} aria-hidden={!edges.start}
+        className={`${arrow} right-1 ${edges.start ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}><ChevronRight className="w-5 h-5" /></button>
+      <button type="button" aria-label="بعدی" onClick={() => go(true)} tabIndex={edges.end ? 0 : -1} aria-hidden={!edges.end}
+        className={`${arrow} left-1 ${edges.end ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}><ChevronLeft className="w-5 h-5" /></button>
     </div>
   );
 }

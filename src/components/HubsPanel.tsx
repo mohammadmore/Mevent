@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Choice, SlideGroup } from './Slide';
 import { Users, PlusCircle, ArrowRight, Activity, Calendar, Check, Share2, Flag } from 'lucide-react';
 import { getEventBackgroundIcon } from '../lib/icons';
 import { useAuth } from '../lib/AuthContext';
@@ -137,11 +138,11 @@ export const HubsPanel = ({ selectedHubId, onOpenHub, onBack }: Props) => {
           </div>
           <div>
             <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">نوع اکیپ</span>
-            <div className="grid grid-cols-2 gap-4">
+            <SlideGroup><div className="grid grid-cols-2 gap-4">
               {['عمومی', 'خصوصی'].map(t => (
-                <button type="button" key={t} onClick={() => setType(t)} aria-pressed={type === t} className={`p-4 rounded-xl border text-sm font-medium ${type === t ? 'border-teal-600 dark:border-[#A78BFA] bg-teal-600/10 dark:bg-[#8B5CF6]/10 text-teal-600 dark:text-[#C4B5FD]' : 'border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300'}`}>{t}</button>
+                <Choice key={t} onClick={() => setType(t)} aria-pressed={type === t} selected={type === t} pill="rounded-xl bg-teal-600/10 dark:bg-[#8B5CF6]/15 border border-teal-600 dark:border-[#A78BFA]" className={`p-4 rounded-xl border text-sm font-medium ${type === t ? 'border-transparent text-teal-600 dark:text-[#C4B5FD]' : 'border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300'}`}>{t}</Choice>
               ))}
-            </div>
+            </div></SlideGroup>
           </div>
           <button type="submit" disabled={busy || isUploading} className="w-full bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold py-3.5 rounded-xl disabled:opacity-50">
             {busy ? 'در حال ایجاد...' : 'ایجاد اکیپ'}

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Choice, SlideGroup } from './Slide';
+const PILL = 'bg-teal-600 dark:bg-[#7C3AED]';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plane, Calendar, MapPin, X, Clock, Share2, Bookmark, Search, PlusCircle, Trash2, CalendarX } from 'lucide-react';
 import { Event, Place } from '../types';
@@ -183,6 +185,8 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
   const chip = (active: boolean) => `px-4 py-2 rounded-xl text-sm font-medium transition-colors ${active
     ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white font-bold'
     : 'glass-soft text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'}`;
+  // Selected chips get their background from the sliding highlight (Choice), not from here.
+  const choiceChip = (active: boolean) => `px-4 py-2 rounded-xl text-sm font-medium ${active ? 'text-white font-bold' : 'glass-soft text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'}`;
   const quickRange = (days: number) => { setStartDate(dayIso(0)); setEndDate(dayIso(days - 1)); };
 
   return (
@@ -216,7 +220,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
             </div>
           </div>
 
-          <div className="p-5 sm:p-6 overflow-y-auto flex-1">
+          <div key={loadingShared ? 'loading' : viewMode} className="p-5 sm:p-6 overflow-y-auto flex-1 screen-fade">
             {loadingShared ? (
               <div className="py-16 flex justify-center"><div className="w-10 h-10 rounded-full border-4 border-teal-600/20 border-t-teal-600 animate-spin" /></div>
             ) : viewMode === 'result' && plan ? (
@@ -294,11 +298,13 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   <label className="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" /> شهر مقصد
                   </label>
+                  <SlideGroup>
                   <div className="flex flex-wrap gap-2">
                     {POPULAR_CITIES.map(c => (
-                      <button key={c} type="button" onClick={() => { setCity(c); setCustomCity(''); }} className={chip(city === c && !customCity)}>{c}</button>
+                      <Choice key={c} selected={city === c && !customCity} pill={`rounded-xl ${PILL}`} onClick={() => { setCity(c); setCustomCity(''); }} className={choiceChip(city === c && !customCity)}>{c}</Choice>
                     ))}
                   </div>
+                  </SlideGroup>
                   <input
                     type="text"
                     aria-label="شهر دیگر"

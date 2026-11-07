@@ -1,8 +1,10 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import Brand from './components/Brand';
 import { withBase } from './lib/basePath';
 import { Sun, Moon, MapPin, Search, Plane, Bell, WifiOff } from 'lucide-react';
 import DockMenu from './components/DockMenu';
+import { AnimatePresence, motion } from 'motion/react';
 import { CheckoutModal } from './components/CheckoutModal';
 import { PhoneLogin } from './components/PhoneLogin';
 import { useAuth, rememberInviteCode } from './lib/AuthContext';
@@ -126,6 +128,22 @@ function Shell() {
     document.documentElement.classList.toggle('dark', isDarkMode);
     try { localStorage.setItem('mevent_theme', isDarkMode ? 'dark' : 'light'); } catch {}
   }, [isDarkMode]);
+
+  // Switching the theme cross-fades the whole page instead of jumping (View Transitions); where
+  // that is not available, colours still fade through the global colour transition.
+  const toggleTheme = () => {
+    const next = !isDarkMode;
+    const apply = () => {
+      document.documentElement.classList.toggle('dark', next);
+      flushSync(() => setIsDarkMode(next));
+    };
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const vt = (document as any).startViewTransition?.bind(document);
+    if (!vt || reduce) { apply(); return; }
+    const root = document.documentElement;
+    root.classList.add('theme-switching'); // the snapshot fade does the work; no per-element fades
+    vt(apply).finished.finally(() => root.classList.remove('theme-switching'));
+  };
 
   // Custom events still dispatched by detail components ("similar events", "nearby places").
   useEffect(() => {
@@ -306,7 +324,7 @@ function Shell() {
                   <button onClick={() => setShowSearch(true)} aria-label="جستجو" className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
                     <Search className="w-5 h-5" />
                   </button>
-                  <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? 'حالت روشن' : 'حالت تیره'} className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
+                  <button onClick={toggleTheme} aria-label={isDarkMode ? 'حالت روشن' : 'حالت تیره'} className="w-10 h-10 rounded-full flex items-center justify-center glass-soft text-gray-700 dark:text-gray-300">
                     {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </button>
                   {dbUserId ? (
@@ -323,17 +341,29 @@ function Shell() {
           )}
 
           <main className="flex-1 overflow-y-auto px-6 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom))] md:pb-8 scroll-smooth">
-            <Suspense fallback={<Spinner />}>{screen}</Suspense>
+            {/* A new screen fades in; moving within one section (e.g. /hubs -> /hubs/3) keeps it mounted. */}
+            <div key={screenPath.split('/')[1] || 'home'} className="screen-fade">
+              <Suspense fallback={<Spinner />}>{screen}</Suspense>
+            </div>
           </main>
         </div>
 
-        {showSearch && (
-          <div className="absolute inset-0 z-50 liquid-bg flex flex-col">
-            <Suspense fallback={<Spinner />}><QuickSearch onClose={() => setShowSearch(false)} /></Suspense>
-          </div>
-        )}
+        <AnimatePresence>
+          {showSearch && (
+            <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 z-50 liquid-bg flex flex-col">
+              <Suspense fallback={<Spinner />}><QuickSearch onClose={() => setShowSearch(false)} /></Suspense>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {overlay}
+        {/* Detail pages fade out when closed (they slide/fade in by themselves). */}
+        <AnimatePresence>
+          {overlay && (
+            <motion.div key={pathname} initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}>
+              {overlay}
+            </motion.div>
+          )}
+        </AnimatePresence>
         <CheckoutModal />
         {tripOpen && (
           <Suspense fallback={null}>

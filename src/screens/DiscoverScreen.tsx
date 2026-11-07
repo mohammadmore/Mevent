@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Choice, SlideGroup } from '../components/Slide';
 import ScrollRow from '../components/ScrollRow';
 import { motion } from 'motion/react';
 import { Search, Filter, MapPin, Plane, Sparkles, X, RefreshCw, Store } from 'lucide-react';
@@ -139,7 +140,8 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
   }, [hasMore, loading, events.length, params]);
 
   const filtersActive = price !== 'all' || date !== 'all';
-  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${active ? 'bg-gray-800 dark:bg-[#7C3AED] text-white dark:text-white' : 'glass border text-gray-700 dark:text-gray-300'}`;
+  const chip = (active: boolean) => `px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap border ${active ? 'text-white border-transparent' : 'glass text-gray-700 dark:text-gray-300'}`;
+  const CHIP_PILL = 'rounded-lg bg-teal-600 dark:bg-[#7C3AED]';
 
   const searchBox = (
       <div className="relative">
@@ -191,11 +193,11 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
       <div className="flex flex-col gap-4">
         {searchBox}
         {q && (
-          <div className="flex gap-2" role="tablist">
+          <SlideGroup><div className="flex gap-2" role="tablist">
             {([['all', 'همه نتایج'], ['events', 'رویدادها'], ['places', 'پاتوق‌ها']] as const).map(([key, label]) => (
-              <button key={key} role="tab" aria-selected={type === key} onClick={() => setParam({ type: key })} className={`px-3 py-1 rounded-full text-xs ${type === key ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>{label}</button>
+              <Choice key={key} role="tab" aria-selected={type === key} selected={type === key} pill="rounded-full bg-teal-600 dark:bg-[#7C3AED]" onClick={() => setParam({ type: key })} className={`px-3 min-h-[36px] rounded-full text-xs ${type === key ? 'text-white' : 'glass-soft text-gray-700 dark:text-gray-300'}`}>{label}</Choice>
             ))}
-          </div>
+          </div></SlideGroup>
         )}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <h2 className="text-xl font-bold text-[#4C1D95] dark:text-gray-100 flex items-center gap-2">
@@ -237,23 +239,23 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
           <div className="glass-soft border border-gray-200 dark:border-white/10 p-4 rounded-xl space-y-4">
             <div>
               <span className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 block">هزینه</span>
-              <div className="flex gap-2 flex-wrap">
-                {(['all', 'free', 'paid'] as const).map(t => <button key={t} onClick={() => setParam({ price: t })} className={chip(price === t)}>{t === 'all' ? 'همه' : t === 'free' ? 'رایگان' : 'پولی'}</button>)}
-              </div>
+              <SlideGroup><div className="flex gap-2 flex-wrap">
+                {(['all', 'free', 'paid'] as const).map(t => <Choice key={t} selected={price === t} pill={CHIP_PILL} onClick={() => setParam({ price: t })} className={chip(price === t)}>{t === 'all' ? 'همه' : t === 'free' ? 'رایگان' : 'پولی'}</Choice>)}
+              </div></SlideGroup>
             </div>
             <div>
               <span className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 block">زمان (به وقت تهران)</span>
-              <div className="flex gap-2 flex-wrap">
-                {(['all', 'today', 'weekend', 'week'] as const).map(t => <button key={t} onClick={() => setParam({ date: t })} className={chip(date === t)}>{{ all: 'همه زمان‌ها', today: 'امروز', weekend: 'آخر هفته (پنجشنبه و جمعه)', week: '۷ روز آینده' }[t]}</button>)}
-              </div>
+              <SlideGroup><div className="flex gap-2 flex-wrap">
+                {(['all', 'today', 'weekend', 'week'] as const).map(t => <Choice key={t} selected={date === t} pill={CHIP_PILL} onClick={() => setParam({ date: t })} className={chip(date === t)}>{{ all: 'همه زمان‌ها', today: 'امروز', weekend: 'آخر هفته (پنجشنبه و جمعه)', week: '۷ روز آینده' }[t]}</Choice>)}
+              </div></SlideGroup>
               {date !== 'all' && <p className="text-[11px] text-gray-500 mt-2">رویدادهای چندروزه و رویدادهای با زمان شناور (مثل «هر جمعه») هم نمایش داده می‌شوند.</p>}
             </div>
             {userLocation && (
               <div>
                 <span className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 block">شعاع جستجو</span>
-                <div className="flex gap-2 flex-wrap">
-                  {[5, 10, 20, 50].map(r => <button key={r} onClick={() => setParam({ radius: String(r) })} className={chip(radius === r)}>{pNum(r)} کیلومتر</button>)}
-                </div>
+                <SlideGroup><div className="flex gap-2 flex-wrap">
+                  {[5, 10, 20, 50].map(r => <Choice key={r} selected={radius === r} pill={CHIP_PILL} onClick={() => setParam({ radius: String(r) })} className={chip(radius === r)}>{pNum(r)} کیلومتر</Choice>)}
+                </div></SlideGroup>
               </div>
             )}
           </div>

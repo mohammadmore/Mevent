@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Choice, SlideGroup } from './Slide';
 import { BadgeCheck, ShieldAlert, Clock, Upload, FileCheck2 } from 'lucide-react';
 import { api, ApiError, showToast } from '../lib/apiClient';
 import { navigate } from '../lib/router';
@@ -119,14 +120,14 @@ export function KycCard() {
 
       {open && (
         <form onSubmit={submit} className="space-y-3">
-          <div className="flex gap-2" role="radiogroup" aria-label="نوع برگزارکننده">
+          <SlideGroup><div className="flex gap-2" role="radiogroup" aria-label="نوع برگزارکننده">
             {(['INDIVIDUAL', 'COMPANY'] as const).map(t => (
-              <button type="button" key={t} role="radio" aria-checked={type === t} onClick={() => setType(t)}
-                className={`flex-1 py-2 rounded-xl text-sm font-bold ${type === t ? 'bg-teal-600 dark:bg-[#7C3AED] text-white dark:text-white' : 'glass-soft border border-gray-200 dark:border-white/10'}`}>
+              <Choice key={t} role="radio" aria-checked={type === t} selected={type === t} pill="rounded-xl bg-teal-600 dark:bg-[#7C3AED]" onClick={() => setType(t)}
+                className={`flex-1 min-h-[44px] rounded-xl text-sm font-bold border ${type === t ? 'text-white border-transparent' : 'glass-soft border-gray-200 dark:border-white/10'}`}>
                 {t === 'INDIVIDUAL' ? 'شخص حقیقی' : 'شرکت / مؤسسه'}
-              </button>
+              </Choice>
             ))}
-          </div>
+          </div></SlideGroup>
 
           {type === 'INDIVIDUAL' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

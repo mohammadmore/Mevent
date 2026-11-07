@@ -253,3 +253,51 @@ html:not(.dark) .hover\:bg-teal-700:hover,
    so their panels are nearly opaque (still with the blur and border of the glass). */
 [class*="bg-black/"] .glass-strong { background-color: rgba(253, 250, 255, 0.95); }
 .dark [class*="bg-black/"] .glass-strong { background-color: rgba(26, 26, 31, 0.95); }
+
+/* ---------------------------------------------------------------------------------------------
+   Motion rule: nothing changes with a jump. Whole-screen changes fade; things that move slide.
+   --------------------------------------------------------------------------------------------- */
+
+/* 1. Colour changes (hover, selected, theme) fade everywhere. Only colours and shadows: transform
+      and opacity are left to the animation library and the keyframes below. */
+*, *::before, *::after {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* 2. Entrance animations (class names used across the app: animate-in fade-in slide-in-from-*). */
+@keyframes mevent-enter {
+  from {
+    opacity: var(--enter-opacity, 1);
+    transform: translate3d(var(--enter-x, 0), var(--enter-y, 0), 0) scale(var(--enter-scale, 1));
+  }
+}
+.animate-in {
+  animation-name: mevent-enter;
+  animation-duration: var(--tw-duration, 300ms);
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-fill-mode: both;
+}
+.fade-in { --enter-opacity: 0; }
+.slide-in-from-bottom-full { --enter-y: 100%; }
+.slide-in-from-bottom-10 { --enter-y: 2.5rem; --enter-opacity: 0; }
+.slide-in-from-bottom-4 { --enter-y: 1rem; --enter-opacity: 0; }
+.slide-in-from-right { --enter-x: 100%; }
+.zoom-in-95 { --enter-scale: 0.95; --enter-opacity: 0; }
+/* A screen that replaces another fades in. */
+/* Opacity only: a transform here would make fixed-position dialogs inside the screen move with it. */
+.screen-fade { animation: mevent-enter 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both; --enter-opacity: 0; }
+
+/* 3. Theme switch: the whole page cross-fades (View Transitions); see App.tsx. */
+.theme-switching *, .theme-switching *::before, .theme-switching *::after { transition: none !important; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 450ms;
+  animation-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 1ms !important; }
+  .animate-in, .screen-fade { animation-duration: 1ms !important; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 1ms; }
+}

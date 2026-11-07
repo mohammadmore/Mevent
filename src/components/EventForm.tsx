@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Choice, SlideGroup } from './Slide';
 import { VibePicker } from './VibeChips';
 import { api } from '../lib/apiClient';
 import { useState, useRef, FormEvent, useEffect, useMemo } from 'react';
@@ -718,11 +719,11 @@ export default function EventForm({ onSuccess, initialData, isAdmin = false }: {
                  رویدادهایی که تاریخ حدودی دارند، اولویت پایین‌تری خواهند داشت. بلافاصله بعد از مشخص شدن تاریخ دقیق رویداد، این بخش را ویرایش کنید.
                </p>
                
-               <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
-                 <button type="button" onClick={() => setFuzzyType('year')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'year' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>سال</button>
-                 <button type="button" onClick={() => setFuzzyType('season')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'season' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>فصل</button>
-                 <button type="button" onClick={() => setFuzzyType('month')} className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${fuzzyType === 'month' ? 'bg-teal-600 text-white dark:bg-[#7C3AED] dark:text-white' : 'bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>ماه</button>
-               </div>
+               <SlideGroup><div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+                 <Choice selected={fuzzyType === 'year'} pill="rounded-lg bg-teal-600 dark:bg-[#7C3AED]" onClick={() => setFuzzyType('year')} className={`whitespace-nowrap px-3 min-h-[36px] rounded-lg text-xs font-medium border ${fuzzyType === 'year' ? 'text-white border-transparent' : 'bg-white dark:bg-black/20 border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>سال</Choice>
+                 <Choice selected={fuzzyType === 'season'} pill="rounded-lg bg-teal-600 dark:bg-[#7C3AED]" onClick={() => setFuzzyType('season')} className={`whitespace-nowrap px-3 min-h-[36px] rounded-lg text-xs font-medium border ${fuzzyType === 'season' ? 'text-white border-transparent' : 'bg-white dark:bg-black/20 border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>فصل</Choice>
+                 <Choice selected={fuzzyType === 'month'} pill="rounded-lg bg-teal-600 dark:bg-[#7C3AED]" onClick={() => setFuzzyType('month')} className={`whitespace-nowrap px-3 min-h-[36px] rounded-lg text-xs font-medium border ${fuzzyType === 'month' ? 'text-white border-transparent' : 'bg-white dark:bg-black/20 border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300'}`}>ماه</Choice>
+               </div></SlideGroup>
 
                <div className="flex gap-3">
                  <input

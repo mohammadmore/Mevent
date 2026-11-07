@@ -1,4 +1,5 @@
 import { placeTypeLabel } from '../lib/format';
+import { Choice, SlideGroup } from './Slide';
 import ScrollRow from './ScrollRow';
 import React, { useState, useEffect } from 'react';
 import {
@@ -373,126 +374,126 @@ export default function AdminPanel() {
       </div>
 
       {/* Tabs Header */}
-      <ScrollRow className="flex border-b border-gray-300 dark:border-white/10 gap-2 overflow-x-auto">
-        <button
+      <SlideGroup><ScrollRow className="flex border-b border-gray-300 dark:border-white/10 gap-2 overflow-x-auto">
+        <Choice
+          selected={activeTab === 'moderation'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('moderation')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'moderation'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'moderation' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Inbox className="w-4 h-4" />
           کارهای در انتظار{stats?.pendingOrganizerRequests ? ` (${toPersianDigits(stats.pendingOrganizerRequests)})` : ''}
-        </button>
+        </Choice>
 
-        <button
+        <Choice
+          selected={activeTab === 'users'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('users')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'users'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'users' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Users className="w-4 h-4" />
           مدیریت کاربران ({toPersianDigits(users.length)})
-        </button>
+        </Choice>
 
-        <button
+        <Choice
+          selected={activeTab === 'events'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('events')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'events'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'events' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Calendar className="w-4 h-4" />
           مدیریت رویدادها ({toPersianDigits(events.length)})
-        </button>
+        </Choice>
 
-        <button
+        <Choice
+          selected={activeTab === 'support'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('support')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'support'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'support' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Inbox className="w-4 h-4" />
           پشتیبانی
-        </button>
+        </Choice>
 
-        <button
+        <Choice
+          selected={activeTab === 'metrics'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('metrics')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'metrics'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'metrics' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Server className="w-4 h-4" />
           سیستم و مانیتورینگ
-        </button>
+        </Choice>
 
-        <button
+        <Choice
+          selected={activeTab === 'places'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('places')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'places'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'places' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <MapPin className="w-4 h-4" />
           پاتوق‌ها ({toPersianDigits(places.length)})
-        </button>
-        <button
+        </Choice>
+        <Choice
+          selected={activeTab === 'chains'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('chains')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'chains'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'chains' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Film className="w-4 h-4" />
           فستیوال‌ها ({toPersianDigits(chains.length)})
-        </button>
-        <button
+        </Choice>
+        <Choice
+          selected={activeTab === 'vibes'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('vibes')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'vibes'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'vibes' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Wind className="w-4 h-4" />
           حال و هوا ({toPersianDigits(vibes.length)})
-        </button>
-        <button
+        </Choice>
+        <Choice
+          selected={activeTab === 'flows'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('flows')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'flows'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'flows' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Activity className="w-4 h-4" />
           جریان‌ها ({toPersianDigits(flows.length)})
-        </button>
-        <button
+        </Choice>
+        <Choice
+          selected={activeTab === 'settings'}
+          pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
           onClick={() => setActiveTab('settings')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
-            activeTab === 'settings'
-              ? 'border-teal-600 text-teal-600 dark:border-[#A78BFA] dark:text-[#C4B5FD]'
-              : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
+          className={`px-4 py-2.5 text-sm font-bold flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'settings' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
           }`}
         >
           <Settings className="w-4 h-4" />
           تنظیمات
-        </button>
-      </ScrollRow>
+        </Choice>
+      </ScrollRow></SlideGroup>
 
-      {/* Tab Contents */}
-      <div>
+      {/* Tab Contents: a new tab fades in */}
+      <div key={activeTab} className="screen-fade">
         {activeTab === 'moderation' ? (
           <ModerationCenter />
         ) : activeTab === 'support' ? (

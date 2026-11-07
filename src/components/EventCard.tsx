@@ -27,7 +27,7 @@ export function EventCard({ event, userLocation, onDismiss }: EventCardProps) {
 
   return (
     <article
-      className={`group break-inside-avoid rounded-2xl border-2 transition-all duration-300 relative overflow-hidden cursor-pointer mb-4 ${
+      className={`group break-inside-avoid rounded-2xl border-2 transition-all duration-300 animate-in fade-in relative overflow-hidden cursor-pointer mb-4 ${
  going
  ? 'bg-violet-50/85 dark:bg-[#8B5CF6]/10 border-violet-400 dark:border-[#8B5CF6]/50 dark:shadow-[0_0_15px_rgba(139,92,246,0.15)]'
  : saved

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Choice, SlideGroup } from './Slide';
 import { Event, User } from '../types';
 import { ArrowRight, MapPin, Calendar, Clock, DollarSign, Share2, Heart, ExternalLink, Activity, Users, Star } from 'lucide-react';
 import { getEventBackgroundIcon } from '../lib/icons';
@@ -132,25 +133,27 @@ export function OrganizerPublicProfile({ organizerId, onBack, onEventClick }: Or
           </div>
 
           {/* Tabs */}
-        <div className="flex gap-4 border-b border-gray-200 dark:border-white/10 mb-6">
-          <button 
+        <SlideGroup><div className="flex gap-4 border-b border-gray-200 dark:border-white/10 mb-6">
+          <Choice
+            selected={activeTab === 'ongoing'}
+            pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
             onClick={() => setActiveTab('ongoing')}
-            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'ongoing' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
+            className={`pb-3 text-sm font-bold ${activeTab === 'ongoing' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
           >
             رویدادهای جاری ({ongoingEvents.length})
-            {activeTab === 'ongoing' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#7C3AED] rounded-t-full"></div>}
-          </button>
-          <button 
+          </Choice>
+          <Choice
+            selected={activeTab === 'past'}
+            pill="top-auto h-0.5 rounded-t-full bg-teal-600 dark:bg-[#A78BFA]"
             onClick={() => setActiveTab('past')}
-            className={`pb-3 text-sm font-bold relative transition-colors ${activeTab === 'past' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
+            className={`pb-3 text-sm font-bold ${activeTab === 'past' ? 'text-teal-600 dark:text-[#C4B5FD]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'}`}
           >
             رویدادهای تمام‌شده ({pastEvents.length})
-            {activeTab === 'past' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-[#7C3AED] rounded-t-full"></div>}
-          </button>
-        </div>
+          </Choice>
+        </div></SlideGroup>
 
         {/* Event List */}
-        <div className="columns-1 sm:columns-2 gap-4 space-y-4">
+        <div key={activeTab} className="columns-1 sm:columns-2 gap-4 space-y-4 screen-fade">
           {displayEvents.length === 0 ? (
             <div className="col-span-full py-10 flex flex-col items-center justify-center text-center">
               <Calendar className="w-12 h-12 text-gray-300 dark:text-gray-700 mb-3" />

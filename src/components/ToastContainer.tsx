@@ -50,7 +50,7 @@ export const ToastContainer: React.FC = () => {
         return (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-center justify-between p-3.5 rounded-xl border backdrop-blur-md shadow-xl transition-all duration-300 ${bgColors[toast.type]}`}
+            className={`pointer-events-auto flex items-center justify-between p-3.5 rounded-xl border backdrop-blur-md shadow-xl animate-in slide-in-from-bottom-4 duration-300 ${bgColors[toast.type]}`}
           >
             <div className="flex items-center gap-2.5">
               {icons[toast.type]}

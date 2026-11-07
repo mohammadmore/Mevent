@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Choice, SlideGroup } from '../components/Slide';
+import { AnimatePresence, motion } from 'motion/react';
 import { AlertTriangle, HelpCircle, X } from 'lucide-react';
 
 // In-app replacements for window.alert / confirm / prompt: styled, RTL, keyboard friendly,
@@ -59,7 +61,8 @@ export function DialogHost() {
     }
   }, [current]);
 
-  if (!current) return null;
+  // Closing fades out (AnimatePresence keeps the last dialog on screen while it fades).
+  if (!current) return <AnimatePresence />;
 
   const close = (result: boolean) => {
     if (current.kind === 'confirm') current.resolve(result);
@@ -72,7 +75,11 @@ export function DialogHost() {
   const { opts } = current;
 
   return (
-    <div
+    <AnimatePresence>
+    <motion.div
+      key="dialog"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
       className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={() => close(false)}
       onKeyDown={(e) => { if (e.key === 'Escape') close(false); }}
@@ -101,18 +108,19 @@ export function DialogHost() {
         {current.kind === 'prompt' && (
           <div className="mb-4 space-y-3">
             {current.opts.choices && (
-              <div className="flex flex-wrap gap-2">
+              <SlideGroup><div className="flex flex-wrap gap-2">
                 {current.opts.choices.map(c => (
-                  <button
-                    type="button"
+                  <Choice
                     key={c}
+                    selected={value === c}
+                    pill="rounded-full bg-teal-600 dark:bg-[#7C3AED]"
                     onClick={() => setValue(c)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${value === c ? 'bg-teal-600 text-white border-teal-600 dark:bg-[#7C3AED] dark:text-white dark:border-[#A78BFA]' : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}
+                    className={`px-3 min-h-[36px] rounded-full text-xs font-medium border ${value === c ? 'text-white border-transparent' : 'border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'}`}
                   >
                     {c}
-                  </button>
+                  </Choice>
                 ))}
-              </div>
+              </div></SlideGroup>
             )}
             {current.opts.multiline ? (
               <textarea
@@ -151,6 +159,7 @@ export function DialogHost() {
           </button>
         </div>
       </form>
-    </div>
+    </motion.div>
+    </AnimatePresence>
   );
 }
