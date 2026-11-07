@@ -45,7 +45,7 @@ export default function GamificationPanel() {
 
   return (
     <div className="space-y-6 mt-6">
-      <div className="btn-gradient dark:bg-gradient-to-br dark:from-teal-600 dark:to-purple-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+      <div className="btn-gradient dark:bg-gradient-to-br dark:from-teal-800 dark:to-purple-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex-1 w-full min-w-0 text-center md:text-right">
             <h3 className="text-xl font-bold mb-2 flex items-center justify-center md:justify-start gap-2">

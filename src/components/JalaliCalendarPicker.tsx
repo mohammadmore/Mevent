@@ -233,21 +233,21 @@ export default function JalaliCalendarPicker({
           <button
             type="button"
             onClick={() => applyPreset(2)}
-            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-3 min-h-[40px] rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             آخر هفته (۲ روز)
           </button>
           <button
             type="button"
             onClick={() => applyPreset(3)}
-            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-3 min-h-[40px] rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             ۳ روز آینده
           </button>
           <button
             type="button"
             onClick={() => applyPreset(7)}
-            className="text-xs px-2.5 py-1 rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
+            className="text-xs px-3 min-h-[40px] rounded-lg glass-soft hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-medium transition-colors"
           >
             یک هفته
           </button>

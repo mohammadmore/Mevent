@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ScrollRow from './ScrollRow';
 import EventForm from './EventForm';
 import PlaceForm from './PlaceForm';
 import ChainForm from './ChainForm';
@@ -11,7 +12,7 @@ export default function CreatePanel({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden" dir="rtl">
-      <div className="flex overflow-x-auto gap-2 pb-4 mb-4 hide-scrollbar flex-shrink-0">
+      <ScrollRow className="flex overflow-x-auto gap-2 pb-4 mb-4 hide-scrollbar flex-shrink-0">
         <button
           onClick={() => setActiveForm('event')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${activeForm === 'event' ? 'bg-teal-600 text-white dark:bg-[#d9ff00] dark:text-gray-900' : 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-300'}`}
@@ -47,7 +48,7 @@ export default function CreatePanel({ onSuccess }: { onSuccess: () => void }) {
           <Sparkles className="w-4 h-4" />
           جریان
         </button>
-      </div>
+      </ScrollRow>
 
       <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
         {activeForm === 'event' && <EventForm onSuccess={onSuccess} />}

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import ScrollRow from '../components/ScrollRow';
 import { motion } from 'motion/react';
 import { Search, Filter, MapPin, Plane, Sparkles, X, RefreshCw, Store } from 'lucide-react';
 import { Event } from '../types';
@@ -259,14 +260,14 @@ export function DiscoverScreen({ userLocation, onPlanTrip, onOpenPlace, onOpenFl
         )}
 
         {!q && categories.length > 0 && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+          <ScrollRow className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
             {['all', ...categories].map(cat => (
               <button key={cat} onClick={() => setParam({ cat })} className="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium outline-none group" aria-pressed={category === cat}>
                 {category === cat && <motion.div layoutId="active-category" className="absolute inset-0 bg-teal-600 dark:bg-[#d9ff00] rounded-full z-0 shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
                 <span className={`relative z-10 ${category === cat ? 'text-white dark:text-black font-bold' : 'text-gray-700 dark:text-gray-300'}`}>{cat === 'all' ? 'همه' : cat}</span>
               </button>
             ))}
-          </div>
+          </ScrollRow>
         )}
       </div>
 

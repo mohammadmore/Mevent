@@ -194,7 +194,7 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className="relative w-full max-w-3xl glass-strong border rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
         >
-          <div className="p-5 bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-700 dark:from-[#18181b] dark:via-[#222226] dark:to-[#18181b] border-b border-white/10 text-white flex items-center justify-between shrink-0">
+          <div className="p-5 bg-gradient-to-l from-[#3B4FD8] via-[#6A2BC9] to-[#B01C82] dark:bg-gradient-to-r dark:from-[#18181b] dark:via-[#222226] dark:to-[#18181b] border-b border-white/10 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-white/10 dark:bg-[#d9ff00]/20 flex items-center justify-center text-white dark:text-[#d9ff00] border border-white/20">
                 <Plane className="w-5 h-5" />

@@ -10,7 +10,7 @@ export function VibeChips({ vibes, max = 2, className = '' }: { vibes?: string[]
       {ordered.map(k => {
         const v = isCompany(k) ? COMPANY[k] : MOODS[k as keyof typeof MOODS];
         return (
-          <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/70 dark:bg-[#d9ff00]/10 dark:text-[#e8ff7a] dark:border-[#d9ff00]/20">
+          <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-pink-50/80 text-[#6B1D5C] border border-pink-200/80 dark:bg-[#d9ff00]/10 dark:text-[#e8ff7a] dark:border-[#d9ff00]/20">
             <span aria-hidden>{v.emoji}</span> {v.label}
           </span>
         );

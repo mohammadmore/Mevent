@@ -1,4 +1,5 @@
 import { placeTypeLabel } from '../lib/format';
+import ScrollRow from './ScrollRow';
 import React, { useState, useEffect } from 'react';
 import {
   Shield, Users, Calendar, Activity, DollarSign, Edit, X, Settings, MapPin, Film, Wind,
@@ -309,19 +310,19 @@ export default function AdminPanel() {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-teal-800 to-slate-900 dark:from-[#1f1f23] dark:to-[#18181b] p-6 rounded-2xl text-white shadow-md border border-white/10" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-l from-[#3B4FD8] via-[#5B21B6] to-[#3B0764] dark:from-[#1f1f23] dark:via-[#1f1f23] dark:to-[#18181b] p-5 sm:p-6 rounded-2xl text-white shadow-md border border-white/10" dir="rtl">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-teal-500/20 dark:bg-[#d9ff00]/20 rounded-xl text-teal-300 dark:text-[#d9ff00]">
+          <div className="p-3 bg-white/15 dark:bg-[#d9ff00]/20 rounded-xl text-white dark:text-[#d9ff00] shrink-0">
             <Shield className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-extrabold">پنل فوق‌پیشرفته مدیریت سیستم</h2>
-            <p className="text-xs text-gray-300">مدیریت کاربران، رویدادها، مانیتورینگ عملکرد و پایداری زیرساخت</p>
+            <h2 className="text-xl font-extrabold">مدیریت سیستم</h2>
+            <p className="text-xs text-white/80">کاربران، رویدادها، کارهای در انتظار و وضعیت سرویس‌ها</p>
           </div>
         </div>
         <button
           onClick={fetchData}
-          className="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-sm font-medium flex items-center gap-2"
+          className="self-start sm:self-auto min-h-[44px] px-4 bg-white/15 hover:bg-white/25 rounded-xl transition-all text-sm font-medium flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           به‌روزرسانی
@@ -330,7 +331,7 @@ export default function AdminPanel() {
 
       {/* Overview Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4" dir="rtl">
-        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg">
             <Users className="w-5 h-5" />
           </div>
@@ -340,7 +341,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-[#d9ff00] rounded-lg">
             <Calendar className="w-5 h-5" />
           </div>
@@ -350,7 +351,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
             <Activity className="w-5 h-5" />
           </div>
@@ -360,7 +361,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="glass border p-4 rounded-xl shadow-sm flex items-center gap-4">
+        <div className="glass border p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
             <DollarSign className="w-5 h-5" />
           </div>
@@ -372,10 +373,10 @@ export default function AdminPanel() {
       </div>
 
       {/* Tabs Header */}
-      <div className="flex border-b border-gray-300 dark:border-white/10 gap-2 overflow-x-auto" dir="rtl">
+      <ScrollRow className="flex border-b border-gray-300 dark:border-white/10 gap-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab('moderation')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'moderation'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -387,7 +388,7 @@ export default function AdminPanel() {
 
         <button
           onClick={() => setActiveTab('users')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'users'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -399,7 +400,7 @@ export default function AdminPanel() {
 
         <button
           onClick={() => setActiveTab('events')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'events'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -411,7 +412,7 @@ export default function AdminPanel() {
 
         <button
           onClick={() => setActiveTab('support')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'support'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -423,7 +424,7 @@ export default function AdminPanel() {
 
         <button
           onClick={() => setActiveTab('metrics')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'metrics'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -435,7 +436,7 @@ export default function AdminPanel() {
 
         <button
           onClick={() => setActiveTab('places')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'places'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -446,7 +447,7 @@ export default function AdminPanel() {
         </button>
         <button
           onClick={() => setActiveTab('chains')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'chains'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -457,7 +458,7 @@ export default function AdminPanel() {
         </button>
         <button
           onClick={() => setActiveTab('vibes')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'vibes'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -468,7 +469,7 @@ export default function AdminPanel() {
         </button>
         <button
           onClick={() => setActiveTab('flows')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'flows'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -479,7 +480,7 @@ export default function AdminPanel() {
         </button>
         <button
           onClick={() => setActiveTab('settings')}
-          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'settings'
               ? 'border-teal-600 text-teal-600 dark:border-[#d9ff00] dark:text-[#d9ff00]'
               : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'
@@ -488,7 +489,7 @@ export default function AdminPanel() {
           <Settings className="w-4 h-4" />
           تنظیمات
         </button>
-      </div>
+      </ScrollRow>
 
       {/* Tab Contents */}
       <div>

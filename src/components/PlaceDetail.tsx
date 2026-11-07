@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { placeTypeLabel, hoursLabel } from '../lib/format';
+import ScrollRow from './ScrollRow';
+import { placeTypeLabel, hoursLabel, eventTimeLabel } from '../lib/format';
 import { api, showToast } from '../lib/apiClient';
 import { ArrowRight, MapPin, Map, Clock, Calendar, CheckCircle, X, Navigation, Compass, Camera, Share2, Flag } from 'lucide-react';
 import { promptDialog } from '../lib/dialog';
@@ -126,7 +127,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             </div>
             <button 
               type="button"
-              className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 transition-colors"
+              className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-[#d9ff00]/10 text-teal-700 dark:text-[#d9ff00] px-3 min-h-[40px] rounded-xl text-xs font-bold shrink-0 hover:bg-teal-100 dark:hover:bg-[#d9ff00]/20 transition-colors"
             >
               <Map className="w-3.5 h-3.5" />
               روی نقشه
@@ -168,23 +169,23 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Calendar className="text-teal-600 dark:text-[#d9ff00]" /> رویدادهای پیش رو در این مکان
             </h3>
-            <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
+            <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {p.events.map((ev: Event) => (
                 <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-32 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                      <Calendar className="text-gray-300 w-8 h-8" />
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-4">
                     <h4 className="font-bold text-gray-800 dark:text-gray-100 line-clamp-1">{ev.title}</h4>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-1">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">{eventTimeLabel(ev as any)}</p>
                   </div>
                 </div>
               ))}
-            </div>
+            </ScrollRow>
           </div>
         )}
 
@@ -193,23 +194,23 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Calendar className="text-teal-600 dark:text-[#d9ff00]" /> رویدادهای نزدیک
             </h3>
-            <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
+            <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {nearbyEvents.map((ev: Event) => (
                 <div key={ev.id} onClick={() => onEventClick(ev)} className="min-w-[200px] sm:min-w-[240px] glass border rounded-2xl overflow-hidden snap-start cursor-pointer group hover:border-teal-500 transition-colors">
                   {ev.imageUrl ? (
                     <img loading="lazy" src={ev.imageUrl} alt={ev.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-32 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                      <Calendar className="text-gray-300 w-8 h-8" />
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <Calendar aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-4">
                     <h4 className="font-bold text-gray-800 dark:text-gray-100 line-clamp-1">{ev.title}</h4>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-1">{ev.fuzzyTime?.startsWith('{') ? JSON.parse(ev.fuzzyTime).label : ev.fuzzyTime}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">{eventTimeLabel(ev as any)}</p>
                   </div>
                 </div>
               ))}
-            </div>
+            </ScrollRow>
           </div>
         )}
 
@@ -218,7 +219,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <MapPin className="text-teal-600 dark:text-[#d9ff00]" /> پاتوق‌های نزدیک
             </h3>
-            <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
+            <ScrollRow className="flex overflow-x-auto gap-4 pb-4 snap-x">
               {nearbyPlaces.map((np: any) => (
                 <div 
                   key={np.id} 
@@ -228,8 +229,8 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                   {np.imageUrl ? (
                     <img loading="lazy" src={np.imageUrl} alt={np.name} className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-24 glass-soft flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                      <span className="text-gray-400 text-xs font-medium">بدون عکس</span>
+                    <div className="w-full h-16 bg-gradient-to-l from-pink-100 via-violet-100 to-sky-100 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 flex items-center justify-center">
+                      <MapPin aria-hidden className="text-violet-500/70 dark:text-[#d9ff00]/60 w-6 h-6" />
                     </div>
                   )}
                   <div className="p-3">
@@ -238,7 +239,7 @@ export function PlaceDetail({ place, onBack, onEventClick, onPlaceClick }: Place
                   </div>
                 </div>
               ))}
-            </div>
+            </ScrollRow>
           </div>
         )}
       </div>

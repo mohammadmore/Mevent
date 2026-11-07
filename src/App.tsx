@@ -100,8 +100,8 @@ function LoginScreen() {
       )}
       <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
         ورود یا ثبت‌نام به معنای پذیرش{' '}
-        <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">قوانین</a> و{' '}
-        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold">حریم خصوصی</a> می‌ونت است.
+        <a href={withBase('/terms')} onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold inline-block py-2.5">قوانین</a> و{' '}
+        <a href={withBase('/privacy')} onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-teal-600 dark:text-[#d9ff00] font-bold inline-block py-2.5">حریم خصوصی</a> می‌ونت است.
       </p>
       <button onClick={() => navigate('/')} className="text-sm text-gray-500 hover:underline px-4 py-2.5">فعلاً برنامه‌ها رو ببینم</button>
     </div>
@@ -281,7 +281,7 @@ function Shell() {
           />
         )}
 
-        <div className="flex-1 flex flex-col h-full overflow-hidden relative pb-[120px]">
+        <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           {!online && (
             <div className="bg-amber-500 text-black text-xs font-bold px-4 py-2 flex items-center gap-2 justify-center" role="status">
               <WifiOff className="w-4 h-4" /> آفلاین هستید؛ آخرین اطلاعات ذخیره‌شده نمایش داده می‌شود.
@@ -325,7 +325,7 @@ function Shell() {
             </header>
           )}
 
-          <main className="flex-1 overflow-y-auto px-6 py-6 pb-24 md:pb-6 scroll-smooth">
+          <main className="flex-1 overflow-y-auto px-6 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom))] md:pb-8 scroll-smooth">
             <Suspense fallback={<Spinner />}>{screen}</Suspense>
           </main>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ScrollRow from './ScrollRow';
 import { Sparkles, Map, Network, Film } from 'lucide-react';
 import defaultFlowCover from '../assets/covers/flow.svg';
 import defaultChainCover from '../assets/covers/chain.svg';
@@ -33,7 +34,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
             <Sparkles className="w-5 h-5 text-teal-600 dark:text-[#d9ff00]" />
             جریان‌های روز
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          <ScrollRow className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
             {flows.map(flow => (
               <div key={flow.id} className="min-w-[280px] h-40 rounded-2xl relative overflow-hidden snap-center cursor-pointer group" onClick={() => onFlowSelect && onFlowSelect(flow)}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
@@ -44,7 +45,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
                 </div>
               </div>
             ))}
-          </div>
+          </ScrollRow>
         </div>
       )}
 
@@ -55,7 +56,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
             <Map className="w-5 h-5 text-indigo-500" />
             پیشنهادهای بی‌هزینه / حال و هوای شهر
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          <ScrollRow className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
             {vibes.map(vibe => (
               <div key={vibe.id} className="min-w-[220px] glass border rounded-2xl p-4 snap-center cursor-pointer hover:border-indigo-500 transition-colors" onClick={() => onVibeSelect && onVibeSelect(vibe)}>
                 <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1">{vibe.title}</h3>
@@ -65,7 +66,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
                 </div>
               </div>
             ))}
-          </div>
+          </ScrollRow>
         </div>
       )}
 
@@ -76,7 +77,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
             <Network className="w-5 h-5 text-orange-500" />
             فستیوال‌ها و دوره‌های در حال برگزاری
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          <ScrollRow className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
             {chains.map(chain => (
               <div key={chain.id} className="min-w-[250px] glass border rounded-2xl p-4 snap-center cursor-pointer flex items-center gap-4 hover:border-orange-500 transition-colors" onClick={() => onChainSelect && onChainSelect(chain)}>
                 <div className="w-16 h-16 rounded-xl glass-soft overflow-hidden shrink-0">
@@ -88,7 +89,7 @@ export default function DiscoveryHeader({ city, onFlowSelect, onVibeSelect, onCh
                 </div>
               </div>
             ))}
-          </div>
+          </ScrollRow>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ScrollRow from './ScrollRow';
 import { ChevronLeft, Heart, Wallet } from 'lucide-react';
 import { Event } from '../types';
 import { api, showToast } from '../lib/apiClient';
@@ -30,14 +31,14 @@ export function HomeGreeting() {
     <section className="rounded-3xl p-5 sm:p-6 glass bg-gradient-to-br from-pink-50/60 via-violet-50/40 to-sky-50/50 dark:from-[#d9ff00]/10 dark:via-white/5 dark:to-teal-500/10 border">
       <p className="text-sm text-gray-600 dark:text-gray-400">{greeting()}{name ? `، ${name}` : ''} 👋</p>
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">امروز دلت چی می‌خواد!؟</h1>
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 -mx-1 px-1 pb-1">
+      <ScrollRow className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 -mx-1 px-1 pb-1">
         {Object.entries(MOODS).map(([key, m]) => (
           <button key={key} onClick={() => navigate(`/bored?mood=${key}`)}
             className="shrink-0 px-3 py-2 rounded-full glass-soft border text-sm text-gray-800 dark:text-gray-200 hover:border-teal-500 dark:hover:border-[#d9ff00]/50">
             <span aria-hidden>{m.emoji}</span> {m.label}
           </button>
         ))}
-      </div>
+      </ScrollRow>
       <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <button onClick={() => navigate('/bored')} className="flex-1 py-3.5 rounded-2xl bg-teal-600 dark:bg-[#d9ff00] text-white dark:text-black font-bold shadow-sm">
           حوصله‌م سر رفته، یه چیزی پیشنهاد بده
@@ -86,11 +87,11 @@ export function ForYouRow({ city, userLocation }: { city?: string; userLocation:
     <section aria-label="برای تو">
       <RowHeader title="برای تو" Icon={Heart}
         subtitle={data.personalized ? 'از روی چیزهایی که دیدی و دوست داشتی' : 'هرچی بیشتر بگردی و ذخیره کنی، بهتر می‌شناسیمت'} />
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-2 snap-x">
+      <ScrollRow className="flex gap-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-2 snap-x">
         {data.data.map(e => (
           <div key={e.id} className="w-[290px] shrink-0 snap-start"><EventCard event={e} userLocation={userLocation} onDismiss={dismiss} /></div>
         ))}
-      </div>
+      </ScrollRow>
     </section>
   );
 }
@@ -103,9 +104,9 @@ export function FreeRow({ city, userLocation }: { city?: string; userLocation: L
   return (
     <section aria-label="بدون خرج">
       <RowHeader title="بدون خرج" subtitle="مجانی، همین امروز" Icon={Wallet} more={() => navigate('/free')} />
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-2">
+      <ScrollRow className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-2">
         {mix.map(p => <PickCard key={`${p.kind}:${p.id}`} pick={p} size="compact" />)}
-      </div>
+      </ScrollRow>
     </section>
   );
 }

@@ -734,8 +734,9 @@ export const defaultBackgroundIcons = [
 export const getEventBackgroundIcon = (bgIcon?: string, tags?: string[], isColored?: boolean) => {
   if (bgIcon === 'none') return null;
 
-  const colorClass = isColored ? 'text-white opacity-100 dark:text-gray-200 dark:opacity-20' : 'text-violet-400 opacity-30 dark:text-gray-200 dark:opacity-20';
-  const className = `absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-48 -rotate-12 pointer-events-none z-[5] ${colorClass}`;
+  // Decoration only: small and faint in the bottom corner, clear of the title and details.
+  const colorClass = isColored ? 'text-white opacity-25 dark:text-gray-200 dark:opacity-10' : 'text-violet-400 opacity-[0.14] dark:text-gray-200 dark:opacity-[0.07]';
+  const className = `absolute -left-6 -bottom-6 w-28 h-28 -rotate-12 pointer-events-none z-0 ${colorClass}`;
   
   if (bgIcon && availableIcons[bgIcon]) {
     const IconComponent = availableIcons[bgIcon];

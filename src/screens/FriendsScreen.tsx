@@ -132,7 +132,7 @@ export function FriendsScreen() {
       {data && (
         <label className={`${card} flex items-center gap-3 cursor-pointer`}>
           <span className="flex-1"><span className="block font-bold text-sm text-gray-900 dark:text-gray-100">دوستام ببینن کجا می‌رم</span><span className="text-xs text-gray-500">اگه خاموش باشه، اسمت توی «دوستات میان» نمیاد.</span></span>
-          <input type="checkbox" className="w-5 h-5" checked={data.shareAttendance} onChange={e => setShare(e.target.checked)} aria-label="دوستام ببینن کجا می‌رم" />
+          <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#d9ff00]" checked={data.shareAttendance} onChange={e => setShare(e.target.checked)} aria-label="دوستام ببینن کجا می‌رم" />
         </label>
       )}
     </div>

@@ -110,10 +110,10 @@ export function ProfileScreen() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div className="bg-orange-50 dark:bg-orange-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-orange-100 dark:border-orange-500/20">
-          <Star className="w-8 h-8 text-orange-500 mb-2" />
-          <span className="text-2xl font-bold text-orange-600">{pNum(profile.points)}</span>
-          <span className="text-sm text-orange-700 dark:text-orange-300">امتیاز • {profile.level?.name}</span>
+        <div className="bg-pink-50/80 dark:bg-orange-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-pink-100 dark:border-orange-500/20">
+          <Star className="w-8 h-8 text-pink-600 dark:text-orange-500 mb-2" />
+          <span className="text-2xl font-bold text-pink-700 dark:text-orange-400">{pNum(profile.points)}</span>
+          <span className="text-sm text-pink-800 dark:text-orange-300">امتیاز • {profile.level?.name}</span>
         </div>
         <button onClick={() => navigate('/tickets')} className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl flex flex-col items-center justify-center border border-blue-100 dark:border-blue-500/20">
           <CalendarCheck className="w-8 h-8 text-blue-500 mb-2" />
@@ -185,7 +185,7 @@ export function ProfileScreen() {
             <label className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 cursor-pointer">
               <MessageSquare className="w-5 h-5 text-gray-500" />
               <span className="flex-1"><span className="block font-bold text-gray-900 dark:text-gray-100">پیامک یادآوری رویدادها</span><span className="text-xs text-gray-500">یک روز قبل از رویدادهایی که در آن ثبت‌نام کرده‌اید. پیامک بلیت همیشه ارسال می‌شود.</span></span>
-              <input type="checkbox" className="w-5 h-5" checked={(profile as any).smsReminders !== false} onChange={(e) => setSmsReminders(e.target.checked)} aria-label="پیامک یادآوری رویدادها" />
+              <input type="checkbox" className="w-6 h-6 shrink-0 accent-teal-600 dark:accent-[#d9ff00]" checked={(profile as any).smsReminders !== false} onChange={(e) => setSmsReminders(e.target.checked)} aria-label="پیامک یادآوری رویدادها" />
             </label>
           )}
           {profile.phone && (

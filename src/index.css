@@ -17,10 +17,11 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  .scrollbar-hide {
+  .scrollbar-hide, .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
 }
 /* Custom Scrollbar for Webkit */
 ::-webkit-scrollbar {
@@ -51,6 +52,9 @@
        buttons get a deep blue-to-violet gradient (see the end of this file). */
     --color-teal-50: #EEF2FF;
     --color-teal-100: #E0E7FF;
+    --color-teal-200: #DDD6FE;
+    --color-teal-300: #C4B5FD;
+    --color-teal-400: #A78BFA;
     --color-teal-500: #7C3AED;
     --color-teal-600: #6D28D9;
     --color-teal-700: #5B21B6;
@@ -116,6 +120,10 @@
   --glass-strong-bg: rgba(253, 250, 255, 0.74);
   --glass-soft-bg: rgba(255, 255, 255, 0.46);
   --glass-soft-border: rgba(91, 33, 182, 0.10);
+  /* Secondary text sits on translucent glass over a coloured background, so the greys are a step
+     deeper than Tailwind's (gray-500 ≈ 6:1, gray-400 ≈ 3.6:1 on the lightest glass). */
+  --color-gray-400: #858a96;
+  --color-gray-500: #5c616e;
 }
 .dark {
   --liquid-base: linear-gradient(160deg, #0f0f11 0%, #141417 60%, #101012 100%);
@@ -130,6 +138,8 @@
   --glass-strong-bg: rgba(22, 22, 26, 0.72);
   --glass-soft-bg: rgba(255, 255, 255, 0.06);
   --glass-soft-border: rgba(255, 255, 255, 0.08);
+  /* On dark glass the plain greys are too dim for text. */
+  --color-gray-500: #a1a1aa;
 }
 
 @layer components {
@@ -225,3 +235,16 @@ html:not(.dark) .hover\:bg-teal-700:hover {
 @media (prefers-reduced-motion: reduce) {
   html:not(.dark) .bg-teal-600, html:not(.dark) .bg-teal-500, html:not(.dark) .btn-gradient { animation: none; }
 }
+
+/* Horizontal rows (ScrollRow): fade the edge where the row continues (RTL: it continues leftwards). */
+.scroll-fade-end   { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 40px); mask-image: linear-gradient(to right, transparent 0, #000 40px); }
+.scroll-fade-start { -webkit-mask-image: linear-gradient(to left, transparent 0, #000 40px); mask-image: linear-gradient(to left, transparent 0, #000 40px); }
+.scroll-fade-both  { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%); }
+/* Arrows only where there is a mouse; touch screens swipe. */
+.scroll-row-arrow { display: none; }
+@media (hover: hover) and (pointer: fine) { .scroll-row-arrow { display: flex; } }
+
+/* Dialogs sit on a dark overlay: there, glass that lets the black through looks muddy grey,
+   so their panels are nearly opaque (still with the blur and border of the glass). */
+[class*="bg-black/"] .glass-strong { background-color: rgba(253, 250, 255, 0.95); }
+.dark [class*="bg-black/"] .glass-strong { background-color: rgba(26, 26, 31, 0.95); }

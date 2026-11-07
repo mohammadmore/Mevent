@@ -20,10 +20,11 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuic
   const handlePointerEvent = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.type === 'pointermove' && e.buttons !== 1) return;
     if (!containerRef.current) return;
-    // Sliding a finger along the dock switches tabs.
+    // Sliding a finger along the dock switches tabs (horizontal bar on phones, vertical on desktop).
+    const vertical = window.matchMedia('(min-width: 768px)').matches;
     for (const button of Array.from(containerRef.current.querySelectorAll<HTMLElement>('button[data-id]'))) {
       const rect = button.getBoundingClientRect();
-      if (e.clientX >= rect.left && e.clientX <= rect.right) {
+      if (vertical ? e.clientY >= rect.top && e.clientY <= rect.bottom : e.clientX >= rect.left && e.clientX <= rect.right) {
         const tabId = button.getAttribute('data-id');
         if (tabId && tabId !== activeTab) {
           setShowQuickSearch(false);
@@ -35,12 +36,12 @@ export default function DockMenu({ activeTab, setActiveTab, profile, setShowQuic
   };
 
   return (
-    <nav aria-label="منوی اصلی" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center w-full max-w-lg px-3 pointer-events-none">
+    <nav aria-label="منوی اصلی" className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center w-full max-w-lg px-3 pointer-events-none md:static md:translate-x-0 md:w-auto md:max-w-none md:h-full md:justify-center md:px-3 md:py-6 md:shrink-0">
       <div
         ref={containerRef}
         onPointerDown={handlePointerEvent}
         onPointerMove={handlePointerEvent}
-        className="glass-strong border rounded-[2rem] p-1.5 flex items-center justify-center gap-0.5 shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] relative pointer-events-auto mx-auto w-max touch-none select-none"
+        className="glass-strong border rounded-[2rem] p-1.5 flex md:flex-col items-center justify-center gap-0.5 md:gap-1 shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] relative pointer-events-auto mx-auto w-max touch-none select-none"
       >
         {navItems.map((item) => {
           const isActive = activeTab === item.id;

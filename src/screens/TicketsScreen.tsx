@@ -157,9 +157,9 @@ export function TicketsScreen() {
                       <p className="mt-3 text-xs text-teal-700 dark:text-[#d9ff00]">در انتظار پذیرش <span dir="ltr">{pending.toPhone}</span> · <button onClick={() => respond(pending.id, 'cancel')} className="underline">لغو انتقال</button></p>
                     );
                     return (
-                      <div className="mt-3 flex gap-4">
-                        {row.canTransfer && <button onClick={() => transfer(row)} className="text-xs font-bold text-teal-700 dark:text-[#d9ff00] px-3 py-2.5 -my-1.5 rounded-xl bg-teal-600/10 dark:bg-[#d9ff00]/10">انتقال به دیگری</button>}
-                        {row.canCancel && <button onClick={() => cancel(row)} className="text-xs font-bold text-red-600 px-3 py-2.5 -my-1.5 rounded-xl bg-red-50 dark:bg-red-500/10">لغو بلیت</button>}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {row.canTransfer && <button onClick={() => transfer(row)} className="whitespace-nowrap min-h-[44px] text-sm font-bold text-teal-700 dark:text-[#d9ff00] px-4 rounded-xl bg-teal-600/10 dark:bg-[#d9ff00]/15">انتقال به دیگری</button>}
+                        {row.canCancel && <button onClick={() => cancel(row)} className="whitespace-nowrap min-h-[44px] text-sm font-bold text-red-700 dark:text-red-300 px-4 rounded-xl bg-red-50 dark:bg-red-500/15 border border-red-200 dark:border-red-400/30">لغو بلیت</button>}
                       </div>
                     );
                   })()}
