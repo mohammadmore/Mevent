@@ -42,7 +42,8 @@ const LEGACY_STORAGE_KEY = 'saved_trip_packages';
 // The last result survives closing the modal (e.g. to look at an event and come back).
 let lastPlan: TripPlan | null = null;
 
-const POPULAR_CITIES = ['تهران', 'شیراز', 'اصفهان', 'مشهد', 'تبریز', 'کیش', 'رشت', 'یزد', 'کاشان'];
+// Suggested destinations come from the server: only cities that have events or places, most first.
+type TripCity = { city: string; events: number; places: number };
 
 const isoDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tehran' });
 const shortDay = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { timeZone: 'Asia/Tehran', day: 'numeric', month: 'long' });
@@ -71,6 +72,21 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
   const [savedPlans, setSavedPlans] = useState<TripPlan[]>([]);
 
   useEffect(() => { lastPlan = plan; }, [plan]);
+
+  const [cities, setCities] = useState<TripCity[] | null>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    let alive = true;
+    api<{ data: TripCity[] }>('/api/trip-cities', { silent: true })
+      .then(d => {
+        if (!alive) return;
+        setCities(d.data);
+        // Start on the city with the most to do unless the visitor already picked one that has content.
+        setCity(cur => (d.data.some(c => c.city === cur) || !d.data.length ? cur : d.data[0].city));
+      })
+      .catch(() => alive && setCities([]));
+    return () => { alive = false; };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!dbUserId) { setSavedPlans([]); return; }
@@ -298,17 +314,29 @@ export default function TripPlannerModal({ isOpen, onClose, onSelectEvent, share
                   <label className="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-teal-600 dark:text-[#C4B5FD]" /> شهر مقصد
                   </label>
-                  <SlideGroup>
-                  <div className="flex flex-wrap gap-2">
-                    {POPULAR_CITIES.map(c => (
-                      <Choice key={c} selected={city === c && !customCity} pill={`rounded-xl ${PILL}`} onClick={() => { setCity(c); setCustomCity(''); }} className={choiceChip(city === c && !customCity)}>{c}</Choice>
-                    ))}
-                  </div>
-                  </SlideGroup>
+                  {cities === null ? (
+                    <div className="flex flex-wrap gap-2" aria-busy="true">
+                      {[64, 56, 72, 60].map((w, i) => <span key={i} className="h-10 rounded-xl glass-soft animate-pulse" style={{ width: w }} />)}
+                    </div>
+                  ) : cities.length ? (
+                    <SlideGroup>
+                    <div className="flex flex-wrap gap-2">
+                      {cities.map(({ city: c, events: ne, places: np }) => (
+                        <Choice key={c} selected={city === c && !customCity} pill={`rounded-xl ${PILL}`} onClick={() => { setCity(c); setCustomCity(''); }}
+                          title={`${pNum(ne)} رویداد و ${pNum(np)} پاتوق`} className={`${choiceChip(city === c && !customCity)} inline-flex items-center gap-1.5`}>
+                          {c}
+                          <span className={`text-[11px] font-normal ${city === c && !customCity ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>{pNum(ne + np)}</span>
+                        </Choice>
+                      ))}
+                    </div>
+                    </SlideGroup>
+                  ) : (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">هنوز در هیچ شهری رویداد یا پاتوقی ثبت نشده است. نام شهر را بنویسید:</p>
+                  )}
                   <input
                     type="text"
                     aria-label="شهر دیگر"
-                    placeholder="یا نام شهر دیگری را بنویسید"
+                    placeholder={cities && !cities.length ? 'نام شهر' : 'یا نام شهر دیگری را بنویسید'}
                     value={customCity}
                     onChange={(e) => setCustomCity(e.target.value)}
                     className="w-full bg-gray-50 dark:bg-[#222226] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-teal-600 dark:focus:border-[#A78BFA]"

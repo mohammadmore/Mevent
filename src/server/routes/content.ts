@@ -19,6 +19,7 @@ import { nudgeWaitlist } from '../waitlist.ts';
 export function invalidateEventCaches() {
   invalidateCachePattern('events_list');
   invalidateCachePattern('admin_stats');
+  invalidateCachePattern('trip_cities'); // the trip planner's destinations follow new events and places at once
 }
 
 /** Content from non-admins waits in the moderation queue unless it is saved as a draft. */
@@ -183,18 +184,21 @@ export function registerContentRoutes(app: Express) {
     payload.status = moderatedStatus(req, req.body.status);
     payload.createdById = req.dbUser!.id;
     const [place] = await db.insert(places).values(payload).returning();
+    invalidateEventCaches();
     if (place.status === 'PENDING') notifyAdmins('پاتوق جدید در انتظار بررسی', place.name);
     res.json({ ...normalizePlace(place), message: place.status === 'PENDING' ? 'پاتوق ثبت شد و پس از بررسی مدیر منتشر می‌شود.' : undefined });
   }));
 
   app.post('/api/admin/places', requireAdmin, asyncRoute(async (req: AuthRequest, res) => {
     const [place] = await db.insert(places).values({ ...buildPlacePayload(req.body, false), createdById: req.dbUser!.id }).returning();
+    invalidateEventCaches();
     res.json(normalizePlace(place));
   }));
 
   app.put('/api/admin/places/:id', requireAdmin, asyncRoute(async (req, res) => {
     const [place] = await db.update(places).set(buildPlacePayload(req.body, true)).where(eq(places.id, parseInt(req.params.id, 10))).returning();
     if (!place) return res.status(404).json({ error: 'Place not found' });
+    invalidateEventCaches();
     res.json(normalizePlace(place));
   }));
 

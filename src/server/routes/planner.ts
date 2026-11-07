@@ -1,9 +1,9 @@
 import { Express } from 'express';
 import { correctQuery } from '../spelling.ts';
-import { isNotNull } from 'drizzle-orm';
+import { isNotNull, eq, sql } from 'drizzle-orm';
 import { db } from '../../db/index.ts';
-import { events } from '../../db/schema.ts';
-import { queryEvents } from '../../db/events.ts';
+import { events, places } from '../../db/schema.ts';
+import { queryEvents, upcomingCondition, normalizedColumn } from '../../db/events.ts';
 import { asyncRoute, limiters } from '../infra.ts';
 import { formatEvents } from '../helpers.ts';
 import { getFromCache, setToCache } from '../../lib/sharedStore.ts';
@@ -33,7 +33,43 @@ function tehranDay(value: unknown): Date | null {
   return isNaN(d.getTime()) ? null : startOfTehranDay(d);
 }
 
+/**
+ * Cities that have something to offer: upcoming events and published places, counted per city
+ * (spelling variants such as «ي»/«ی» count as one city), most first. Empty cities are left out.
+ */
+export async function citiesWithContent(): Promise<{ city: string; events: number; places: number }[]> {
+  const cached = await getFromCache<{ city: string; events: number; places: number }[]>('trip_cities');
+  if (cached) return cached;
+  const key = normalizedColumn(events.city);
+  const placeKey = normalizedColumn(places.city);
+  const [ev, pl] = await Promise.all([
+    db.select({ key: sql<string>`${key}`, city: sql<string>`min(${events.city})`, n: sql<number>`count(*)::int` })
+      .from(events).where(upcomingCondition()).groupBy(sql`1`), // by the first column (the normalised city)
+    db.select({ key: sql<string>`${placeKey}`, city: sql<string>`min(${places.city})`, n: sql<number>`count(*)::int` })
+      .from(places).where(eq(places.status, 'PUBLISHED')).groupBy(sql`1`),
+  ]);
+  const byKey = new Map<string, { city: string; events: number; places: number }>();
+  // Shown with Persian letters whatever spelling the rows use (ي/ك -> ی/ک).
+  const display = (c: string) => c.trim().replace(/\u064A/g, '\u06CC').replace(/\u0643/g, '\u06A9');
+  for (const r of ev) if (r.key) byKey.set(r.key, { city: display(r.city), events: r.n, places: 0 });
+  for (const r of pl) {
+    if (!r.key) continue;
+    const row = byKey.get(r.key);
+    if (row) row.places = r.n; else byKey.set(r.key, { city: display(r.city), events: 0, places: r.n });
+  }
+  const list = [...byKey.values()]
+    .filter(c => c.city && c.events + c.places > 0)
+    .sort((a, b) => (b.events + b.places) - (a.events + a.places) || b.events - a.events || a.city.localeCompare(b.city, 'fa'));
+  await setToCache('trip_cities', list, 60_000); // also cleared whenever events or places change
+  return list;
+}
+
 export function registerPlannerRoutes(app: Express) {
+  // Destinations worth suggesting in the trip planner (only cities with events or places).
+  app.get('/api/trip-cities', asyncRoute(async (_req, res) => {
+    res.json({ data: (await citiesWithContent()).slice(0, 20) });
+  }));
+
   // Destination + dates -> the events in that city during the trip.
   app.post('/api/trip-planner', limiters.tripPlanner, asyncRoute(async (req, res) => {
     const city = String(req.body?.city || '').trim().slice(0, 50);
