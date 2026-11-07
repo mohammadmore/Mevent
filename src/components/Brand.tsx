@@ -18,11 +18,12 @@ export default function Brand({ size = 'md' }: { size?: 'md' | 'lg' }) {
       </span>
     );
   }
+  // Both the logotype and the name are wide, so the Persian name sits under the logo, centred.
   return (
-    <span className="inline-flex items-center gap-2.5 leading-none">
-      <span className="text-2xl font-bold text-[#4C1D95] dark:text-violet-200">می‌ونت</span>
-      <img src={logo320} srcSet={SRCSET} sizes="104px" width={104} height={33}
-        alt="Mevent" className="w-[104px] h-auto select-none" draggable={false} />
+    <span className="inline-flex flex-col items-center gap-1 leading-none">
+      <img src={logo320} srcSet={SRCSET} sizes="112px" width={112} height={35}
+        alt="Mevent" className="w-[112px] h-auto select-none" draggable={false} />
+      <span className="text-[15px] font-bold text-[#4C1D95] dark:text-violet-200">می‌ونت</span>
     </span>
   );
 }

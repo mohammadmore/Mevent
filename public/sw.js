@@ -1,6 +1,6 @@
 /* Mevent service worker: offline app shell, cached data for offline viewing (e.g. tickets at
    the venue), and Web Push notifications. */
-const VERSION = 'v3';
+const VERSION = 'v4';
 // The app may live under a sub-path (https://host/mevent): this worker's scope says which.
 // BASE is "" at the domain root, otherwise e.g. "/mevent"; app paths below are root-relative.
 const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, '');
